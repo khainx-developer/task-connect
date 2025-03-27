@@ -1,17 +1,41 @@
 version: '3.8'
+
+networks:
+  ez-apps-network:
+    name: ez-apps-network
+    driver: bridge
+
 services:
-  postgres:
+  identity-service-db:
     image: postgres:latest
-    container_name: postgres-db
+    container_name: identity-service-db
     restart: always
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: taskmanager
+      POSTGRES_DB: identity-service
     ports:
-      - "5432:5432"
+      - "25431:5432"
+    networks:
+      - ez-apps-network
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - identity_service_data:/var/lib/postgresql/data
+
+  task-manager-db:
+    image: postgres:latest
+    container_name: task-manager-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: task-manager
+    ports:
+      - "25432:5432"
+    networks:
+      - ez-apps-network
+    volumes:
+      - task_manager_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+  identity_service_data:
+  task_manager_data:

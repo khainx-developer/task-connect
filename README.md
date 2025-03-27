@@ -1,6 +1,6 @@
-# TaskManagerApp
+# ez Apps
 
-## EF migration
-```
-dotnet ef migrations add InitialCreate --startup-project ../TaskManager.API
+## Start database
+```bash
+docker-compose up -d
 ```
