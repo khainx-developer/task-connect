@@ -17,8 +17,6 @@
       "applicationUrl": "http://localhost:5246",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "FIREBASE_CREDENTIALS_PATH": "../secrets/ez-apps-admin-sdk.json",
-        "FIREBASE_PROJECT_ID": "ez-apps-5ee4b",
         "SECRETS_FILE_PATH": "../secrets/identity-service-secrets.json"
       }
     },

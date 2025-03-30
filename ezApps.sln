@@ -30,6 +30,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ezApps.IdentityService.Doma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ezApps.IdentityService.Infrastructure", "ezApps.IdentityService.Infrastructure\ezApps.IdentityService.Infrastructure.csproj", "{26CD087B-57CA-44F5-9C35-4CBB317C8BE0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Secrets", "Secrets", "{6B6A77F2-B82B-4983-9F5D-6D24FFE9204B}"
+	ProjectSection(SolutionItems) = preProject
+		secrets\ez-apps-admin-sdk.json = secrets\ez-apps-admin-sdk.json
+		secrets\identity-service-secrets.json = secrets\identity-service-secrets.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
