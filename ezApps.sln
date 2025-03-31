@@ -34,6 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Secrets", "Secrets", "{6B6A
 	ProjectSection(SolutionItems) = preProject
 		secrets\ez-apps-admin-sdk.json = secrets\ez-apps-admin-sdk.json
 		secrets\identity-service-secrets.json = secrets\identity-service-secrets.json
+		secrets\task-service-secrets.json = secrets\task-service-secrets.json
 	EndProjectSection
 EndProject
 Global
