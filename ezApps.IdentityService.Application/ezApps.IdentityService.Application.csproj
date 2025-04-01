@@ -15,8 +15,4 @@
     <ProjectReference Include="..\ezApps.IdentityService.Domain\ezApps.IdentityService.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
-
 </Project>

@@ -1,11 +1,25 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../lib/firebase";
+import { baseIdentityApi } from "../api";
+import { useUserStore } from "../store/userStore";
 
-const loginWithGoogle = async (navigate: (path: string) => void): Promise<void> => {
+const loginWithGoogle = async (
+  navigate: (path: string) => void
+): Promise<void> => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
-    console.log("User:", result.user);
+    const user = result.user;
+    if (user) {
+      const userData = await baseIdentityApi.auth.authVerifyUserCreate({});
+      useUserStore.getState().setUser({
+        id: userData.data.id ?? "",
+        email: user.email!,
+        name: user.displayName || "",
+        photoURL: user.photoURL || "",
+      });
+    }
+
     navigate("/dashboard"); // Redirect after login
   } catch (error) {
     console.error("Google Sign-in Error:", error);

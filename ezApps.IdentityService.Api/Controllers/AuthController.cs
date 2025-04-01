@@ -1,39 +1,37 @@
-﻿using FirebaseAdmin.Auth;
+﻿using ezApps.IdentityService.Domain.Entities;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ezApps.IdentityService.Api.Controllers
+namespace ezApps.IdentityService.Api.Controllers;
+
+[Authorize]
+[ApiController]
+[Route("api/auth")]
+public class AuthController : ControllerBase
 {
-    [ApiController]
-    [Route("api/auth")]
-    public class AuthController : ControllerBase
+    private readonly IMediator _mediator;
+
+    public AuthController(IMediator mediator)
     {
-        [HttpGet("health")]
-        public IActionResult HealthCheck()
-        {
-            return Ok(new { status = "Identity Service is running" });
-        }
-
-        [HttpPost("verify-token")]
-        public async Task<IActionResult> VerifyFirebaseToken([FromBody] VerifyTokenRequest request)
-        {
-            if (string.IsNullOrEmpty(request.IdToken))
-                return BadRequest("Token is required");
-
-            try
-            {
-                var decodedToken = await FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(request.IdToken);
-                var uid = decodedToken.Uid;
-                return Ok(new { UserId = uid });
-            }
-            catch
-            {
-                return Unauthorized("Invalid token");
-            }
-        }
+        _mediator = mediator;
     }
 
-    public class VerifyTokenRequest
+    [Authorize]
+    [HttpPost("verify-user")]
+    public async Task<ActionResult<User>> VerifyUser()
     {
-        public string IdToken { get; set; }
+        var firebaseUid = User.FindFirst("user_id")?.Value;
+        var email = User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+        var name = User.FindFirst("name")?.Value ?? "New User";
+        if (string.IsNullOrEmpty(firebaseUid) || string.IsNullOrEmpty(email))
+            return BadRequest(new { message = "Invalid Firebase user data" });
+
+        // Check if user exists
+        // Create new user
+        var user = await _mediator.Send(new GetUserByFirebaseUidQuery(firebaseUid)) ??
+                   await _mediator.Send(new CreateUserCommand(firebaseUid, email, name));
+
+        return Ok(user);
     }
 }

@@ -12,11 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 		.gitignore = .gitignore
-		IdentityService.md = IdentityService.md
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity Service", "Identity Service", "{A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}"
+	ProjectSection(SolutionItems) = preProject
+		IdentityService.md = IdentityService.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Task Manager Service", "Task Manager Service", "{7A1DF9B7-BA93-4B36-9223-266AC507190D}"
 EndProject

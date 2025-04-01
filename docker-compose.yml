@@ -9,7 +9,7 @@ services:
   identity-service-db:
     image: postgres:latest
     container_name: identity-service-db
-    restart: always
+    #restart: always
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
@@ -24,7 +24,7 @@ services:
   task-manager-db:
     image: postgres:latest
     container_name: task-manager-db
-    restart: always
+    #restart: always
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password

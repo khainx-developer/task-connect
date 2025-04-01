@@ -13,5 +13,7 @@ namespace ezApps.IdentityService.Domain.Entities
         public string? DisplayName { get; set; }
 
         public List<UserProduct> UserProducts { get; set; } = new();
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }
