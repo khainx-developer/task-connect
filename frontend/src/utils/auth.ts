@@ -43,4 +43,14 @@ const loginWithEmail = async (
     console.error("Email Sign-in Error:", error);
   }
 };
-export { loginWithGoogle, loginWithEmail };
+
+const signOut = async (navigate: (path: string) => void): Promise<void> => {
+  try {
+    await auth.signOut();
+    useUserStore.getState().clearUser();
+    navigate("/"); // Redirect after login
+  } catch (error) {
+    console.error("Google Sign-in Error:", error);
+  }
+};
+export { loginWithGoogle, loginWithEmail, signOut };
