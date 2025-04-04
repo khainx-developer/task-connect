@@ -21,8 +21,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity Service", "Identit
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Task Manager Service", "Task Manager Service", "{7A1DF9B7-BA93-4B36-9223-266AC507190D}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Billing Service", "Billing Service", "{3D9077E6-95D5-4B22-AAE7-BE128CA80FF6}"
+	ProjectSection(SolutionItems) = preProject
+		TaskManagerService.md = TaskManagerService.md
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ezApps.IdentityService.Api", "ezApps.IdentityService.Api\ezApps.IdentityService.Api.csproj", "{D64B5E10-2A63-4DFA-8DD6-BD63369B8CD0}"
 EndProject

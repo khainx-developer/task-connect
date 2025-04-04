@@ -45,6 +45,7 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -60,7 +61,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "Identity Service API",
+        Title = "Task Manager Service API",
         Version = "v1",
         Description = "API for user authentication using Firebase and JWT",
     });

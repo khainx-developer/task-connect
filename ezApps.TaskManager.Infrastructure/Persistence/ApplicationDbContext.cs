@@ -9,5 +9,6 @@ namespace ezApps.TaskManager.Infrastructure.Persistence
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<TaskItem> Tasks { get; set; }
+        public DbSet<Note> Notes { get; set; }
     }
 }

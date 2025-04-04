@@ -3,6 +3,10 @@ import {
   Api as IdentityApi,
   HttpClient as IdentityClient,
 } from "./identityApiClient";
+import {
+  Api as TaskManagerApi,
+  HttpClient as TaskManagerClient,
+} from "./taskManagerApiClient";
 import qs from "qs";
 import { AxiosInstance } from "axios";
 
@@ -36,3 +40,9 @@ const identityClient = new IdentityClient({
 applyAxiosInterceptors(identityClient.instance);
 
 export const baseIdentityApi = new IdentityApi(identityClient);
+
+const taskManagerClient = new TaskManagerClient({
+  baseURL: import.meta.env.VITE_TASK_MANAGER_SERVICE_URL,
+  paramsSerializer,
+});
+export const baseTaskManagerApi = new TaskManagerApi(taskManagerClient);

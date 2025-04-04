@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ezApps.IdentityService.Api.Controllers;
+namespace ezApps.TaskManager.Api.Controllers;
 
 [Route("")]
 [ApiController]

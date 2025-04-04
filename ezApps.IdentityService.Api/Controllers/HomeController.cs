@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ezApps.IdentityService.Api.Controllers;
 
-[Route("")]
+[Authorize]
 [ApiController]
+[Route("api/auth")]
 public class HomeController : ControllerBase
 {
     [HttpGet]
