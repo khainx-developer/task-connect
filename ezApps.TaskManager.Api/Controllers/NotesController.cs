@@ -80,4 +80,17 @@ public class NoteController : ControllerBase
 
         return NoContent();
     }
+
+    // Pin or unpin note
+    [HttpPatch("{id}/pin")]
+    public async Task<ActionResult<NoteResponseModel>> Pin(Guid id, [FromBody] bool pin)
+    {
+        var userId = User.FindFirst("user_id")?.Value;
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        var command = new PinNoteCommand(id, userId, pin);
+        await _mediator.Send(command);
+
+        return await GetById(id);
+    }
 }
