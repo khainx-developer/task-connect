@@ -16,11 +16,12 @@ const NotesGrid = () => {
 
   useEffect(() => {
     const fetchNotes = async () => {
-      const response = await baseTaskManagerApi.note.noteList();
+      const response = await baseTaskManagerApi.notes.getAllNotes();
 
       const notesData: Note[] = response.data.map(
         (note: NoteResponseModel) => ({
           id: note.id,
+          pinned: note.pinned,
           title: note.title ?? "",
           content: note.content ?? "",
         })
@@ -42,11 +43,10 @@ const NotesGrid = () => {
   const handleAddNote = async () => {
     if (!newNote.title.trim() && !newNote.content.trim()) return;
 
-    const saveNote = await baseTaskManagerApi.note.noteCreate({
+    const saveNote = await baseTaskManagerApi.notes.createNote({
       title: newNote.title,
       content: newNote.content,
     });
-    // if (saveNote.status !== 200) return;
 
     setNotes([...notes, newNote]);
     setNewNote({
@@ -60,28 +60,66 @@ const NotesGrid = () => {
   };
 
   const handleDeleteNote = async (id: string) => {
-    await baseTaskManagerApi.note.noteDelete(id);
+    await baseTaskManagerApi.notes.deleteNoteById(id);
     toast.success("Successfully created note");
     setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
   };
 
+  const handlePinNote = async (id: string, pinned: boolean) => {
+    await baseTaskManagerApi.notes.pinOrUnpinNote(id, pinned);
+    toast.success(pinned ? "Pinned note" : "Unpinned note");
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === id ? { ...note, pinned: pinned } : note
+      )
+    );
+    console.log(notes);
+  };
+
   return (
     <div className="p-4">
-      {/* Add Note Button */}
       <div className="flex justify-end mb-4">
         <Button startIcon={<PlusIcon />} onClick={openModal}>
           Add Note
         </Button>
       </div>
+      {notes.filter((note: Note) => note.pinned).length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          <div>
+            <h2 className="text-lg font-semibold mb-2">Pinned Notes</h2>
+            {notes
+              .filter((note) => note.pinned)
+              .map((note, index) => (
+                <NoteCard
+                  key={note.id}
+                  index={index}
+                  note={note}
+                  onDelete={handleDeleteNote}
+                  onPin={handlePinNote}
+                />
+              ))}
+          </div>
+        </div>
+      )}
+      {notes.filter((note: Note) => !note.pinned).length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <h2 className="text-lg font-semibold mb-2">Other Notes</h2>
+            {notes
+              .filter((note) => !note.pinned)
+              .map((note, index) => (
+                <NoteCard
+                  key={note.id}
+                  index={index}
+                  note={note}
+                  onDelete={handleDeleteNote}
+                  onPin={handlePinNote}
+                />
+              ))}
+          </div>
+        </div>
+      )}
 
-      {/* Notes Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {notes.map((note, index) => (
-          <NoteCard index={index} note={note} onDelete={handleDeleteNote} />
-        ))}
-      </div>
-
-      {/* Modal */}
       <Modal
         isOpen={isOpen}
         onClose={closeModal}

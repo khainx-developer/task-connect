@@ -21,5 +21,5 @@ Add the firebase admin sdk credentials `ez-apps-admin-sdk.json` to the `secrets`
 
 ## EF migration
 ```
-dotnet ef migrations add AddNoteEntity --project ./ezApps.TaskManager.Infrastructure --startup-project ./ezApps.TaskManager.Api
+dotnet ef migrations add UpdateNote --project ./ezApps.TaskManager.Infrastructure --startup-project ./ezApps.TaskManager.Api
 ```

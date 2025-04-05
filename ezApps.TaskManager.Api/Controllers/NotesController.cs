@@ -13,19 +13,18 @@ namespace ezApps.TaskManager.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class NoteController : ControllerBase
+public class NotesController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public NoteController(IMapper mapper, IMediator mediator)
+    public NotesController(IMapper mapper, IMediator mediator)
     {
         _mapper = mapper;
         _mediator = mediator;
     }
 
-    // Create Note
-    [HttpPost]
+    [HttpPost(Name = "Create Note")]
     public async Task<ActionResult<NoteResponseModel>> Create([FromBody] NoteCreateModel model)
     {
         var userId = User.FindFirst("user_id")?.Value;
@@ -37,8 +36,7 @@ public class NoteController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
-    // Get all notes for the logged-in user
-    [HttpGet]
+    [HttpGet(Name = "Get all notes")]
     public async Task<ActionResult<List<NoteResponseModel>>> GetAll()
     {
         var userId = User.FindFirst("user_id")?.Value;
@@ -50,8 +48,7 @@ public class NoteController : ControllerBase
         return Ok(result);
     }
 
-    // Get note by ID
-    [HttpGet("{id}")]
+    [HttpGet("{id}", Name = "Get note by ID")]
     public async Task<ActionResult<NoteResponseModel>> GetById(Guid id)
     {
         var userId = User.FindFirst("user_id")?.Value;
@@ -68,8 +65,7 @@ public class NoteController : ControllerBase
         return Ok(result);
     }
 
-    // delete note by ID
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}", Name = "Delete note by ID")]
     public async Task<ActionResult<bool>> Delete(Guid id)
     {
         var userId = User.FindFirst("user_id")?.Value;
@@ -81,8 +77,7 @@ public class NoteController : ControllerBase
         return NoContent();
     }
 
-    // Pin or unpin note
-    [HttpPatch("{id}/pin")]
+    [HttpPatch("{id}/pin", Name = "Pin or unpin note")]
     public async Task<ActionResult<NoteResponseModel>> Pin(Guid id, [FromBody] bool pin)
     {
         var userId = User.FindFirst("user_id")?.Value;

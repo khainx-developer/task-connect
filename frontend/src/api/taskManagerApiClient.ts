@@ -191,18 +191,18 @@ export class Api<SecurityDataType extends unknown> {
         ...params,
       }),
   };
-  note = {
+  notes = {
     /**
      * No description
      *
-     * @tags Note
-     * @name NoteCreate
-     * @request POST:/api/Note
+     * @tags Notes
+     * @name CreateNote
+     * @request POST:/api/Notes
      * @secure
      */
-    noteCreate: (data: NoteCreateModel, params: RequestParams = {}) =>
+    createNote: (data: NoteCreateModel, params: RequestParams = {}) =>
       this.http.request<NoteResponseModel, any>({
-        path: `/api/Note`,
+        path: `/api/Notes`,
         method: "POST",
         body: data,
         secure: true,
@@ -214,14 +214,14 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
-     * @tags Note
-     * @name NoteList
-     * @request GET:/api/Note
+     * @tags Notes
+     * @name GetAllNotes
+     * @request GET:/api/Notes
      * @secure
      */
-    noteList: (params: RequestParams = {}) =>
+    getAllNotes: (params: RequestParams = {}) =>
       this.http.request<NoteResponseModel[], any>({
-        path: `/api/Note`,
+        path: `/api/Notes`,
         method: "GET",
         secure: true,
         format: "json",
@@ -231,14 +231,14 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
-     * @tags Note
-     * @name NoteDetail
-     * @request GET:/api/Note/{id}
+     * @tags Notes
+     * @name GetNoteById
+     * @request GET:/api/Notes/{id}
      * @secure
      */
-    noteDetail: (id: string, params: RequestParams = {}) =>
+    getNoteById: (id: string, params: RequestParams = {}) =>
       this.http.request<NoteResponseModel, any>({
-        path: `/api/Note/${id}`,
+        path: `/api/Notes/${id}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -248,16 +248,35 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
-     * @tags Note
-     * @name NoteDelete
-     * @request DELETE:/api/Note/{id}
+     * @tags Notes
+     * @name DeleteNoteById
+     * @request DELETE:/api/Notes/{id}
      * @secure
      */
-    noteDelete: (id: string, params: RequestParams = {}) =>
+    deleteNoteById: (id: string, params: RequestParams = {}) =>
       this.http.request<boolean, any>({
-        path: `/api/Note/${id}`,
+        path: `/api/Notes/${id}`,
         method: "DELETE",
         secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name PinOrUnpinNote
+     * @request PATCH:/api/Notes/{id}/pin
+     * @secure
+     */
+    pinOrUnpinNote: (id: string, data: boolean, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}/pin`,
+        method: "PATCH",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
