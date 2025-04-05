@@ -15,6 +15,18 @@ export interface NoteCreateModel {
   pinned?: boolean;
 }
 
+export interface NoteResponseModel {
+  /** @format uuid */
+  id?: string;
+  title?: string | null;
+  content?: string | null;
+  pinned?: boolean;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string;
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
 import axios from "axios";
 
@@ -189,12 +201,13 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     noteCreate: (data: NoteCreateModel, params: RequestParams = {}) =>
-      this.http.request<void, any>({
+      this.http.request<NoteResponseModel, any>({
         path: `/api/Note`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
@@ -207,10 +220,11 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     noteList: (params: RequestParams = {}) =>
-      this.http.request<void, any>({
+      this.http.request<NoteResponseModel[], any>({
         path: `/api/Note`,
         method: "GET",
         secure: true,
+        format: "json",
         ...params,
       }),
 
@@ -223,10 +237,11 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     noteDetail: (id: string, params: RequestParams = {}) =>
-      this.http.request<void, any>({
+      this.http.request<NoteResponseModel, any>({
         path: `/api/Note/${id}`,
         method: "GET",
         secure: true,
+        format: "json",
         ...params,
       }),
   };

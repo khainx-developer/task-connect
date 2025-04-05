@@ -26,7 +26,7 @@ public class NoteController : ControllerBase
 
     // Create Note
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] NoteCreateModel model)
+    public async Task<ActionResult<NoteResponseModel>> Create([FromBody] NoteCreateModel model)
     {
         var userId = User.FindFirst("user_id")?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
@@ -39,20 +39,20 @@ public class NoteController : ControllerBase
 
     // Get all notes for the logged-in user
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<List<NoteResponseModel>>> GetAll()
     {
         var userId = User.FindFirst("user_id")?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
         var query = new GetAllNotesQuery(userId);
         var result = await _mediator.Send(query);
-            
+
         return Ok(result);
     }
 
     // Get note by ID
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<ActionResult<NoteResponseModel>> GetById(Guid id)
     {
         var userId = User.FindFirst("user_id")?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized();

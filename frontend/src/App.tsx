@@ -14,10 +14,10 @@ import BarChart from "./pages/Charts/BarChart";
 import Calendar from "./pages/Calendar";
 import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
-import Home from "./pages/Home";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Dashboard from "./pages/Dashboard/Index";
+import Notes from "./pages/Notes/Index";
 import PrivateRoute from "./components/PrivateRoute";
 
 export default function App() {
@@ -27,14 +27,15 @@ export default function App() {
         <ScrollToTop />
         <Routes>
           {/* Public Page */}
-          <Route path="/" element={<Home />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
 
           {/* Dashboard Layout */}
           <Route element={<PrivateRoute />}>
             <Route element={<AppLayout />}>
-              <Route index path="/dashboard" element={<Dashboard />} />
+              <Route path="/" element={<Notes />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/notes" element={<Notes />} />
 
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />
