@@ -30,7 +30,7 @@ public class GetAllNotesQueryHandler : IRequestHandler<GetAllNotesQuery, List<No
     public async Task<List<NoteResponseModel>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
     {
         var notes = await _context.Notes
-            .Where(n => n.UserId == request.UserId)
+            .Where(n => n.UserId == request.UserId && !n.IsArchived)
             .ToListAsync(cancellationToken);
 
         return _mapper.Map<List<NoteResponseModel>>(notes);

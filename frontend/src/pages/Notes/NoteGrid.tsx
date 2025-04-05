@@ -3,26 +3,33 @@ import { PlusIcon } from "../../icons";
 import { Modal } from "../../components/ui/modal";
 import Input from "../../components/form/input/InputField";
 import TextArea from "../../components/form/input/TextArea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { baseTaskManagerApi } from "../../api";
 import NoteCard from "./NoteCard";
 import { Note } from "./note";
 import { toast } from "react-toastify";
+import { NoteResponseModel } from "../../api/taskManagerApiClient";
 
 const NotesGrid = () => {
-  const [notes, setNotes] = useState<Note[]>([
-    {
-      id: "1",
-      title: "Meeting Notes",
-      content: "Discuss project goals and deadlines.",
-    },
-    {
-      id: "2",
-      title: "Shopping List",
-      content: "Milk, Eggs, Bread, Butter",
-    },
-  ]);
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const response = await baseTaskManagerApi.note.noteList();
+
+      const notesData: Note[] = response.data.map(
+        (note: NoteResponseModel) => ({
+          id: note.id,
+          title: note.title ?? "",
+          content: note.content ?? "",
+        })
+      );
+      setNotes(notesData);
+    };
+
+    fetchNotes();
+  }, []);
 
   const { isOpen, openModal, closeModal } = useModal();
 
@@ -40,9 +47,6 @@ const NotesGrid = () => {
       content: newNote.content,
     });
     // if (saveNote.status !== 200) return;
-    debugger
-
-    toast.success("Successfully created note");
 
     setNotes([...notes, newNote]);
     setNewNote({
@@ -51,6 +55,14 @@ const NotesGrid = () => {
       content: "",
     });
     closeModal();
+
+    toast.success("Successfully created note");
+  };
+
+  const handleDeleteNote = async (id: string) => {
+    await baseTaskManagerApi.note.noteDelete(id);
+    toast.success("Successfully created note");
+    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
   };
 
   return (
@@ -65,7 +77,7 @@ const NotesGrid = () => {
       {/* Notes Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {notes.map((note, index) => (
-          <NoteCard index={index} note={note} />
+          <NoteCard index={index} note={note} onDelete={handleDeleteNote} />
         ))}
       </div>
 

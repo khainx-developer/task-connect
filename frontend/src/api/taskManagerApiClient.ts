@@ -244,5 +244,22 @@ export class Api<SecurityDataType extends unknown> {
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Note
+     * @name NoteDelete
+     * @request DELETE:/api/Note/{id}
+     * @secure
+     */
+    noteDelete: (id: string, params: RequestParams = {}) =>
+      this.http.request<boolean, any>({
+        path: `/api/Note/${id}`,
+        method: "DELETE",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
   };
 }

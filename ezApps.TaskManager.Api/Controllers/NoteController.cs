@@ -67,4 +67,17 @@ public class NoteController : ControllerBase
 
         return Ok(result);
     }
+
+    // delete note by ID
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<bool>> Delete(Guid id)
+    {
+        var userId = User.FindFirst("user_id")?.Value;
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        var command = new DeleteNoteCommand(id, userId);
+        await _mediator.Send(command);
+
+        return NoContent();
+    }
 }
