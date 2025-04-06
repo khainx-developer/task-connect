@@ -7,6 +7,7 @@ public class Note
     public string? Title { get; set; }
     public string? Content { get; set; }
     public bool Pinned { get; set; } = false;
+    public string Color { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public bool IsArchived { get; set; }

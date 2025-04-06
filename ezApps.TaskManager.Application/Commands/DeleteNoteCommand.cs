@@ -33,6 +33,7 @@ public class DeleteNoteCommandHandler : IRequestHandler<DeleteNoteCommand, bool>
         }
 
         note.IsArchived = true; // Soft delete
+        note.UpdatedAt = DateTime.Now.ToUniversalTime();
         await _context.SaveChangesAsync(cancellationToken);
 
         return true;

@@ -3,30 +3,30 @@ using MediatR;
 
 namespace ezApps.TaskManager.Application.Commands;
 
-public class PinNoteCommand : IRequest<bool>
+public class ChangeNoteColorCommand : IRequest<bool>
 {
     public Guid Id { get; }
     public string UserId { get; }
-    public bool Pinned { get; set; } = false;
+    public string Color { get; set; }
 
-    public PinNoteCommand(Guid id, string userId, bool pinned)
+    public ChangeNoteColorCommand(Guid id, string userId, string color)
     {
         Id = id;
         UserId = userId;
-        Pinned = pinned;
+        Color = color;
     }
 }
 
-public class PinNoteCommandHandler : IRequestHandler<PinNoteCommand, bool>
+public class ChangeNoteColorCommandHandler : IRequestHandler<ChangeNoteColorCommand, bool>
 {
     private readonly IApplicationDbContext _context;
 
-    public PinNoteCommandHandler(IApplicationDbContext context)
+    public ChangeNoteColorCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<bool> Handle(PinNoteCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(ChangeNoteColorCommand request, CancellationToken cancellationToken)
     {
         var note = await _context.Notes.FindAsync([request.Id], cancellationToken);
         if (note == null || note.UserId != request.UserId)
@@ -34,7 +34,7 @@ public class PinNoteCommandHandler : IRequestHandler<PinNoteCommand, bool>
             return false;
         }
 
-        note.Pinned = request.Pinned;
+        note.Color = request.Color;
         note.UpdatedAt = DateTime.Now.ToUniversalTime();
         await _context.SaveChangesAsync(cancellationToken);
 

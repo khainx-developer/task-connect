@@ -23,6 +23,7 @@ const NotesGrid = () => {
           id: note.id,
           pinned: note.pinned,
           title: note.title ?? "",
+          color: note.color ?? "",
           content: note.content ?? "",
         })
       );
@@ -73,7 +74,16 @@ const NotesGrid = () => {
         note.id === id ? { ...note, pinned: pinned } : note
       )
     );
-    console.log(notes);
+  };
+
+  const handleChangeNoteColor = async (id: string, color: string) => {
+    await baseTaskManagerApi.notes.updateNoteColor(id, color);
+    toast.success("Note color updated");
+    setNotes((prevNotes) =>
+      prevNotes.map((note) =>
+        note.id === id ? { ...note, color: color } : note
+      )
+    );
   };
 
   return (
@@ -83,10 +93,11 @@ const NotesGrid = () => {
           Add Note
         </Button>
       </div>
+
       {notes.filter((note: Note) => note.pinned).length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Pinned Notes</h2>
+        <>
+          <h2 className="text-lg font-semibold mb-2">Pinned</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
             {notes
               .filter((note) => note.pinned)
               .map((note, index) => (
@@ -96,27 +107,29 @@ const NotesGrid = () => {
                   note={note}
                   onDelete={handleDeleteNote}
                   onPin={handlePinNote}
+                  onColorChange={handleChangeNoteColor}
                 />
               ))}
           </div>
-        </div>
+        </>
+      )}
+      {notes.filter((note: Note) => !note.pinned).length > 0 && (
+        <h2 className="text-lg font-semibold mb-2">Other</h2>
       )}
       {notes.filter((note: Note) => !note.pinned).length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <h2 className="text-lg font-semibold mb-2">Other Notes</h2>
-            {notes
-              .filter((note) => !note.pinned)
-              .map((note, index) => (
-                <NoteCard
-                  key={note.id}
-                  index={index}
-                  note={note}
-                  onDelete={handleDeleteNote}
-                  onPin={handlePinNote}
-                />
-              ))}
-          </div>
+          {notes
+            .filter((note) => !note.pinned)
+            .map((note, index) => (
+              <NoteCard
+                key={note.id}
+                index={index}
+                note={note}
+                onDelete={handleDeleteNote}
+                onPin={handlePinNote}
+                onColorChange={handleChangeNoteColor}
+              />
+            ))}
         </div>
       )}
 

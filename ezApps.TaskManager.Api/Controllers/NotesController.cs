@@ -88,4 +88,16 @@ public class NotesController : ControllerBase
 
         return await GetById(id);
     }
+    
+    [HttpPatch("{id}/color", Name = "Update note color")]
+    public async Task<ActionResult<NoteResponseModel>> ChangeColor(Guid id, [FromBody] string color)
+    {
+        var userId = User.FindFirst("user_id")?.Value;
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        var command = new ChangeNoteColorCommand(id, userId, color);
+        await _mediator.Send(command);
+
+        return await GetById(id);
+    }
 }

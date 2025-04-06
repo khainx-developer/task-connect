@@ -20,6 +20,7 @@ export interface NoteResponseModel {
   id?: string;
   title?: string | null;
   content?: string | null;
+  color?: string | null;
   pinned?: boolean;
   /** @format date-time */
   createdAt?: string;
@@ -273,6 +274,25 @@ export class Api<SecurityDataType extends unknown> {
     pinOrUnpinNote: (id: string, data: boolean, params: RequestParams = {}) =>
       this.http.request<NoteResponseModel, any>({
         path: `/api/Notes/${id}/pin`,
+        method: "PATCH",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name UpdateNoteColor
+     * @request PATCH:/api/Notes/{id}/color
+     * @secure
+     */
+    updateNoteColor: (id: string, data: string, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}/color`,
         method: "PATCH",
         body: data,
         secure: true,
