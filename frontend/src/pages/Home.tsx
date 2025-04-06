@@ -25,7 +25,7 @@ export default function Home() {
             tasks effectively.
           </p>
 
-          <Button onClick={() => navigate("/dashboard")}>
+          <Button onClick={() => navigate("/")}>
             Go to Dashboard
           </Button>
         </div>

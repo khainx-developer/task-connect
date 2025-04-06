@@ -20,7 +20,7 @@ const loginWithGoogle = async (
       });
     }
 
-    navigate("/dashboard"); // Redirect after login
+    navigate("/"); // Redirect after login
   } catch (error) {
     console.error("Google Sign-in Error:", error);
   }
@@ -38,7 +38,7 @@ const loginWithEmail = async (
       password
     );
     console.log("User:", userCredential.user);
-    navigate("/dashboard"); // Redirect after login
+    navigate("/"); // Redirect after login
   } catch (error) {
     console.error("Email Sign-in Error:", error);
   }

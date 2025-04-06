@@ -18,11 +18,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity Service", "Identity Service", "{A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}"
 	ProjectSection(SolutionItems) = preProject
 		IdentityService.md = IdentityService.md
+		ezapps-user-api.dockerfile = ezapps-user-api.dockerfile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Task Manager Service", "Task Manager Service", "{7A1DF9B7-BA93-4B36-9223-266AC507190D}"
 	ProjectSection(SolutionItems) = preProject
 		TaskManagerService.md = TaskManagerService.md
+		ezapps-taskmanager-api.dockerfile = ezapps-taskmanager-api.dockerfile
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ezApps.IdentityService.Api", "ezApps.IdentityService.Api\ezApps.IdentityService.Api.csproj", "{D64B5E10-2A63-4DFA-8DD6-BD63369B8CD0}"
@@ -38,6 +40,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Secrets", "Secrets", "{6B6A
 		secrets\ez-apps-admin-sdk.json = secrets\ez-apps-admin-sdk.json
 		secrets\identity-service-secrets.json = secrets\identity-service-secrets.json
 		secrets\task-service-secrets.json = secrets\task-service-secrets.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GithubAction", "GithubAction", "{466536B4-5A11-44F9-9A1C-D99E2CD05281}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-task-service.yml = .github\workflows\build-task-service.yml
+		.github\workflows\build-user-service.yml = .github\workflows\build-user-service.yml
+		.github\workflows\build-fe.yml = .github\workflows\build-fe.yml
 	EndProjectSection
 EndProject
 Global
@@ -88,5 +97,7 @@ Global
 		{B8046496-C155-4B70-AA04-429FAED4A47A} = {A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}
 		{4A20583D-00CE-454F-9BDC-534FFED76BAC} = {A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}
 		{26CD087B-57CA-44F5-9C35-4CBB317C8BE0} = {A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}
+		{6B6A77F2-B82B-4983-9F5D-6D24FFE9204B} = {1F5BCC07-B841-40AB-92CF-D84858783E34}
+		{466536B4-5A11-44F9-9A1C-D99E2CD05281} = {1F5BCC07-B841-40AB-92CF-D84858783E34}
 	EndGlobalSection
 EndGlobal

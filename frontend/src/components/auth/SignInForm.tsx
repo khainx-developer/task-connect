@@ -30,9 +30,9 @@ export default function SignInForm() {
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
               Sign In
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            {/* <p className="text-sm text-gray-500 dark:text-gray-400">
               Enter your email and password to sign in!
-            </p>
+            </p> */}
           </div>
           <div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
@@ -67,7 +67,7 @@ export default function SignInForm() {
                 Sign in with Google
               </button>
             </div>
-            <div className="relative py-3 sm:py-5">
+            {/* <div className="relative py-3 sm:py-5">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
               </div>
@@ -147,7 +147,7 @@ export default function SignInForm() {
                   Sign Up
                 </Link>
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -29,67 +29,85 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    path: "/dashboard"
+    path: "/dashboard",
   },
   {
-    icon: <CalenderIcon />,
-    name: "Calendar",
-    path: "/calendar",
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "User Profile",
-    path: "/profile",
-  },
-  {
-    name: "Forms",
+    name: "Tasks",
     icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
-  },
-  {
-    name: "Tables",
-    icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-  },
-  {
-    name: "Pages",
-    icon: <PageIcon />,
     subItems: [
-      { name: "Home Page", path: "/", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
+      { name: "All Tasks", path: "/tasks" },
+      { name: "My Tasks", path: "/tasks" },
+      { name: "Completed Tasks", path: "/tasks" },
     ],
   },
+  {
+    icon: <PageIcon />,
+    name: "Notes",
+    subItems: [
+      { name: "All Notes", path: "/notes" },
+      { name: "Favorites", path: "/tasks" },
+      { name: "Archived", path: "/tasks" },
+    ],
+  },
+  // {
+  //   icon: <CalenderIcon />,
+  //   name: "Calendar",
+  //   path: "/calendar",
+  // },
+  {
+    icon: <UserCircleIcon />,
+    name: "Projects",
+    path: "/projects",
+  },
+  // {
+  //   name: "Forms",
+  //   icon: <ListIcon />,
+  //   subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+  // },
+  // {
+  //   name: "Tables",
+  //   icon: <TableIcon />,
+  //   subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+  // },
+  // {
+  //   name: "Pages",
+  //   icon: <PageIcon />,
+  //   subItems: [
+  //     { name: "Home Page", path: "/", pro: false },
+  //     { name: "404 Error", path: "/error-404", pro: false },
+  //   ],
+  // },
 ];
 
 const othersItems: NavItem[] = [
-  {
-    icon: <PieChartIcon />,
-    name: "Charts",
-    subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-    ],
-  },
-  {
-    icon: <BoxCubeIcon />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
-    ],
-  },
+  // {
+  //   icon: <PieChartIcon />,
+  //   name: "Charts",
+  //   subItems: [
+  //     { name: "Line Chart", path: "/line-chart", pro: false },
+  //     { name: "Bar Chart", path: "/bar-chart", pro: false },
+  //   ],
+  // },
+  // {
+  //   icon: <BoxCubeIcon />,
+  //   name: "UI Elements",
+  //   subItems: [
+  //     { name: "Alerts", path: "/alerts", pro: false },
+  //     { name: "Avatar", path: "/avatars", pro: false },
+  //     { name: "Badge", path: "/badge", pro: false },
+  //     { name: "Buttons", path: "/buttons", pro: false },
+  //     { name: "Images", path: "/images", pro: false },
+  //     { name: "Videos", path: "/videos", pro: false },
+  //   ],
+  // },
+  // {
+  //   icon: <PlugInIcon />,
+  //   name: "Authentication",
+  //   subItems: [
+  //     { name: "Sign In", path: "/signin", pro: false },
+  //     { name: "Sign Up", path: "/signup", pro: false },
+  //   ],
+  // },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -290,8 +308,8 @@ const AppSidebar: React.FC = () => {
           isExpanded || isMobileOpen
             ? "w-[290px]"
             : isHovered
-            ? "w-[290px]"
-            : "w-[90px]"
+              ? "w-[290px]"
+              : "w-[90px]"
         }
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
@@ -350,7 +368,7 @@ const AppSidebar: React.FC = () => {
               </h2>
               {renderMenuItems(navItems, "main")}
             </div>
-            <div className="">
+            {/* <div className="">
               <h2
                 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
                   !isExpanded && !isHovered
@@ -365,10 +383,10 @@ const AppSidebar: React.FC = () => {
                 )}
               </h2>
               {renderMenuItems(othersItems, "others")}
-            </div>
+            </div> */}
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
+        {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
       </div>
     </aside>
   );

@@ -15,6 +15,18 @@ export interface NoteCreateModel {
   pinned?: boolean;
 }
 
+export interface NoteResponseModel {
+  /** @format uuid */
+  id?: string;
+  title?: string | null;
+  content?: string | null;
+  pinned?: boolean;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string;
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
 import axios from "axios";
 
@@ -179,54 +191,93 @@ export class Api<SecurityDataType extends unknown> {
         ...params,
       }),
   };
-  note = {
+  notes = {
     /**
      * No description
      *
-     * @tags Note
-     * @name NoteCreate
-     * @request POST:/api/Note
+     * @tags Notes
+     * @name CreateNote
+     * @request POST:/api/Notes
      * @secure
      */
-    noteCreate: (data: NoteCreateModel, params: RequestParams = {}) =>
-      this.http.request<void, any>({
-        path: `/api/Note`,
+    createNote: (data: NoteCreateModel, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 
     /**
      * No description
      *
-     * @tags Note
-     * @name NoteList
-     * @request GET:/api/Note
+     * @tags Notes
+     * @name GetAllNotes
+     * @request GET:/api/Notes
      * @secure
      */
-    noteList: (params: RequestParams = {}) =>
-      this.http.request<void, any>({
-        path: `/api/Note`,
+    getAllNotes: (params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel[], any>({
+        path: `/api/Notes`,
         method: "GET",
         secure: true,
+        format: "json",
         ...params,
       }),
 
     /**
      * No description
      *
-     * @tags Note
-     * @name NoteDetail
-     * @request GET:/api/Note/{id}
+     * @tags Notes
+     * @name GetNoteById
+     * @request GET:/api/Notes/{id}
      * @secure
      */
-    noteDetail: (id: string, params: RequestParams = {}) =>
-      this.http.request<void, any>({
-        path: `/api/Note/${id}`,
+    getNoteById: (id: string, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}`,
         method: "GET",
         secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name DeleteNoteById
+     * @request DELETE:/api/Notes/{id}
+     * @secure
+     */
+    deleteNoteById: (id: string, params: RequestParams = {}) =>
+      this.http.request<boolean, any>({
+        path: `/api/Notes/${id}`,
+        method: "DELETE",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name PinOrUnpinNote
+     * @request PATCH:/api/Notes/{id}/pin
+     * @secure
+     */
+    pinOrUnpinNote: (id: string, data: boolean, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}/pin`,
+        method: "PATCH",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
         ...params,
       }),
   };
