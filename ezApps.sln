@@ -46,6 +46,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GithubAction", "GithubActio
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build-task-service.yml = .github\workflows\build-task-service.yml
 		.github\workflows\build-user-service.yml = .github\workflows\build-user-service.yml
+		.github\workflows\build-fe.yml = .github\workflows\build-fe.yml
 	EndProjectSection
 EndProject
 Global

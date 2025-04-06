@@ -26,26 +26,39 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  // {
-  //   icon: <GridIcon />,
-  //   name: "Dashboard",
-  //   path: "/dashboard"
-  // },
+  {
+    icon: <GridIcon />,
+    name: "Dashboard",
+    path: "/dashboard",
+  },
+  {
+    name: "Tasks",
+    icon: <ListIcon />,
+    subItems: [
+      { name: "All Tasks", path: "/tasks" },
+      { name: "My Tasks", path: "/tasks" },
+      { name: "Completed Tasks", path: "/tasks" },
+    ],
+  },
   {
     icon: <PageIcon />,
-    name: "All Notes",
-    path: "/notes"
+    name: "Notes",
+    subItems: [
+      { name: "All Notes", path: "/notes" },
+      { name: "Favorites", path: "/tasks" },
+      { name: "Archived", path: "/tasks" },
+    ],
   },
   // {
   //   icon: <CalenderIcon />,
   //   name: "Calendar",
   //   path: "/calendar",
   // },
-  // {
-  //   icon: <UserCircleIcon />,
-  //   name: "User Profile",
-  //   path: "/profile",
-  // },
+  {
+    icon: <UserCircleIcon />,
+    name: "Projects",
+    path: "/projects",
+  },
   // {
   //   name: "Forms",
   //   icon: <ListIcon />,
@@ -295,8 +308,8 @@ const AppSidebar: React.FC = () => {
           isExpanded || isMobileOpen
             ? "w-[290px]"
             : isHovered
-            ? "w-[290px]"
-            : "w-[90px]"
+              ? "w-[290px]"
+              : "w-[90px]"
         }
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}

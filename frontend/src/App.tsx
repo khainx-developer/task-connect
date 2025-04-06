@@ -33,7 +33,7 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<PrivateRoute />}>
             <Route element={<AppLayout />}>
-              <Route path="/" element={<Notes />} />
+              <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/notes" element={<Notes />} />
 
