@@ -6,36 +6,36 @@ networks:
     driver: bridge
 
 services:
-  identity-service-db:
+  user-service-db:
     image: postgres:latest
-    container_name: identity-service-db
+    container_name: user-service-db
     #restart: always
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: identity-service
+      POSTGRES_DB: user-service
     ports:
       - "25431:5432"
     networks:
       - ez-apps-network
     volumes:
-      - identity_service_data:/var/lib/postgresql/data
+      - user_service_data:/var/lib/postgresql/data
 
-  task-manager-db:
+  task-service-db:
     image: postgres:latest
-    container_name: task-manager-db
+    container_name: task-service-db
     #restart: always
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: task-manager
+      POSTGRES_DB: task-service
     ports:
       - "25432:5432"
     networks:
       - ez-apps-network
     volumes:
-      - task_manager_data:/var/lib/postgresql/data
+      - task_service_data:/var/lib/postgresql/data
 
 volumes:
-  identity_service_data:
-  task_manager_data:
+  user_service_data:
+  task_service_data:

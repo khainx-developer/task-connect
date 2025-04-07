@@ -59,7 +59,7 @@ const paramsSerializer = (params: unknown): string => {
   return qs.stringify(params, { arrayFormat: "repeat" }); // Customize array handling, e.g., 'repeat', 'indices', 'brackets'
 };
 const identityClient = new IdentityClient({
-  baseURL: import.meta.env.VITE_IDENTITY_SERVICE_URL,
+  baseURL: import.meta.env.VITE_USER_SERVICE_URL,
   paramsSerializer,
 });
 
@@ -68,7 +68,7 @@ applyAxiosInterceptors(identityClient.instance);
 export const baseIdentityApi = new IdentityApi(identityClient);
 
 const taskManagerClient = new TaskManagerClient({
-  baseURL: import.meta.env.VITE_TASK_MANAGER_SERVICE_URL,
+  baseURL: import.meta.env.VITE_TASK_SERVICE_URL,
   paramsSerializer,
 });
 

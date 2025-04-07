@@ -1,4 +1,4 @@
-name: Build and Push Docker Image of TaskManager.Api
+name: Build and Push Docker Image of TaskService.Api
 
 on:
   workflow_dispatch:
@@ -33,7 +33,7 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          docker build -f ezapps-taskmanager-api.dockerfile \
+          docker build -f ezapps-task-api.dockerfile \
             -t ${{ secrets.DOCKER_USERNAME }}/ezapps-task-service:${{ env.TAG }} \
             -t ${{ secrets.DOCKER_USERNAME }}/ezapps-task-service:latest .
 
