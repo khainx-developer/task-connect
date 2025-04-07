@@ -7,9 +7,9 @@ ENV ASPNETCORE_URLS=http://+:80
 # Use the SDK image to build the app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["ezApps.TaskService.Api/ezApps.TaskService.Api.csproj", "ezApps.TaskService.Api/"]
+COPY ["TaskService/ezApps.TaskService.Api/ezApps.TaskService.Api.csproj", "ezApps.TaskService.Api/"]
 RUN dotnet restore "ezApps.TaskService.Api/ezApps.TaskService.Api.csproj"
-COPY . .
+COPY ./TaskService .
 WORKDIR "/src/ezApps.TaskService.Api"
 RUN dotnet build "ezApps.TaskService.Api.csproj" -c Release -o /app/build
 
