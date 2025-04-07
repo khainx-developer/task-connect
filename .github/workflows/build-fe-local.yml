@@ -49,5 +49,5 @@ jobs:
 
       - name: Push Docker images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/ezapps-fe:${{ env.TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/ezapps-fe:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/ezapps-local-fe:${{ env.TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/ezapps-local-fe:latest
