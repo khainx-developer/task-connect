@@ -5,7 +5,7 @@ namespace ezApps.UserService.Api.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/auth")]
+[Route("")]
 public class HomeController : ControllerBase
 {
     [HttpGet]
