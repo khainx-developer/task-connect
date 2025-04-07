@@ -48,6 +48,7 @@ const NotesGrid = () => {
       title: newNote.title,
       content: newNote.content,
     });
+    newNote.id = saveNote.data.id ?? "";
 
     setNotes([...notes, newNote]);
     setNewNote({
@@ -113,7 +114,7 @@ const NotesGrid = () => {
           </div>
         </>
       )}
-      {notes.filter((note: Note) => !note.pinned).length > 0 && (
+      {notes.filter((note: Note) => note.pinned).length > 0 && (
         <h2 className="text-lg font-semibold mb-2">Other</h2>
       )}
       {notes.filter((note: Note) => !note.pinned).length > 0 && (
