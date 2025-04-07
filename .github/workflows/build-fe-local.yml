@@ -44,8 +44,8 @@ jobs:
       - name: Build and tag Docker image
         run: |
           docker build -f ezapps-fe.dockerfile \
-            -t ${{ secrets.DOCKER_USERNAME }}/ezapps-fe:${{ env.TAG }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/ezapps-fe:latest .
+            -t ${{ secrets.DOCKER_USERNAME }}/ezapps-local-fe:${{ env.TAG }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/ezapps-local-fe:latest .
 
       - name: Push Docker images
         run: |
