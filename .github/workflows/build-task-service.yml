@@ -1,4 +1,4 @@
-name: Build and Push Docker Image of TaskService.Api
+name: Build and Push Docker Image of Task Service
 
 on:
   workflow_dispatch:
