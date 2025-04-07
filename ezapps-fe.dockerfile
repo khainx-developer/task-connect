@@ -4,7 +4,6 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY ./frontend .
 COPY ./frontend/.env ./.env
-RUN cat .env
 
 RUN npm install
 RUN npm run build
