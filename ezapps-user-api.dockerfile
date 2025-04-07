@@ -9,7 +9,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["ezApps.UserService.Api/ezApps.UserService.Api.csproj", "ezApps.UserService.Api/"]
 RUN dotnet restore "ezApps.UserService.Api/ezApps.UserService.Api.csproj"
-COPY . .
+COPY ./ezApps.UserService.Api .
+COPY ./ezApps.UserService.Application .
+COPY ./ezApps.UserService.Domain .
+COPY ./ezApps.UserService.Infrastructure .
 WORKDIR "/src/ezApps.UserService.Api"
 RUN dotnet build "ezApps.UserService.Api.csproj" -c Release -o /app/build
 
