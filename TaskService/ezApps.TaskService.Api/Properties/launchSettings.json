@@ -17,7 +17,7 @@
       "applicationUrl": "http://localhost:5245",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "SECRETS_FILE_PATH": "../secrets/task-service-secrets.json"
+        "SECRETS_FILE_PATH": "../../secrets/task-service-secrets.json"
       }
     },
     "https": {

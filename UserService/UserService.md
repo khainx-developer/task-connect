@@ -1,4 +1,4 @@
-# Identity Service
+# User Service
 
 ## Update secret
 
