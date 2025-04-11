@@ -1,8 +1,8 @@
 version: '3.8'
 
 networks:
-  ez-apps-network:
-    name: ez-apps-network
+  eztalo-network:
+    name: eztalo-network
     driver: bridge
 
 services:
@@ -17,7 +17,7 @@ services:
     ports:
       - "25431:5432"
     networks:
-      - ez-apps-network
+      - eztalo-network
     volumes:
       - user_service_data:/var/lib/postgresql/data
 
@@ -32,7 +32,7 @@ services:
     ports:
       - "25432:5432"
     networks:
-      - ez-apps-network
+      - eztalo-network
     volumes:
       - task_service_data:/var/lib/postgresql/data
 
