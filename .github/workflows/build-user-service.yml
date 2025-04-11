@@ -33,11 +33,11 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          docker build -f ezapps-user-api.dockerfile \
-            -t ${{ secrets.DOCKER_USERNAME }}/ezapps-user-service:${{ env.TAG }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/ezapps-user-service:latest .
+          docker build -f eztalo-user-api.dockerfile \
+            -t ${{ secrets.DOCKER_USERNAME }}/eztalo-user-service:${{ env.TAG }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/eztalo-user-service:latest .
 
       - name: Push Docker images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/ezapps-user-service:${{ env.TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/ezapps-user-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/eztalo-user-service:${{ env.TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/eztalo-user-service:latest

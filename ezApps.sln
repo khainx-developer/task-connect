@@ -34,9 +34,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GithubActions", "GithubActi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dockerfiles", "dockerfiles", "{DF5363C8-55F7-4BA0-B696-0FEEBC6A4B02}"
 	ProjectSection(SolutionItems) = preProject
-		ezapps-fe.dockerfile = ezapps-fe.dockerfile
-		ezapps-task-api.dockerfile = ezapps-task-api.dockerfile
-		ezapps-user-api.dockerfile = ezapps-user-api.dockerfile
+		eztalo-fe.dockerfile = eztalo-fe.dockerfile
+		eztalo-task-api.dockerfile = eztalo-task-api.dockerfile
+		eztalo-user-api.dockerfile = eztalo-user-api.dockerfile
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ezApps.TaskService.Api", "TaskService\ezApps.TaskService.Api\ezApps.TaskService.Api.csproj", "{3DB7BC9A-DBA6-401B-BD1F-379C620BC2C6}"

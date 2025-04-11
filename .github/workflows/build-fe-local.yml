@@ -42,11 +42,11 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          docker build --no-cache -f ezapps-fe.dockerfile \
-            -t ${{ secrets.DOCKER_USERNAME }}/ezapps-local-fe:${{ env.TAG }} \
-            -t ${{ secrets.DOCKER_USERNAME }}/ezapps-local-fe:latest .
+          docker build --no-cache -f eztalo-fe.dockerfile \
+            -t ${{ secrets.DOCKER_USERNAME }}/eztalo-local-fe:${{ env.TAG }} \
+            -t ${{ secrets.DOCKER_USERNAME }}/eztalo-local-fe:latest .
 
       - name: Push Docker images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/ezapps-local-fe:${{ env.TAG }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/ezapps-local-fe:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/eztalo-local-fe:${{ env.TAG }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/eztalo-local-fe:latest
