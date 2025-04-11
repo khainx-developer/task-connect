@@ -1,0 +1,12 @@
+﻿using Microsoft.EntityFrameworkCore;
+using eztalo.TaskService.Domain.Entities;
+
+namespace eztalo.TaskService.Application.Common.Interfaces
+{
+    public interface IApplicationDbContext
+    {
+        DbSet<TaskItem> Tasks { get; }
+        DbSet<Note> Notes { get; }
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+    }
+}

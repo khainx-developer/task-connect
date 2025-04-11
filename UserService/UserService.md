@@ -21,5 +21,5 @@ Add the firebase admin sdk credentials `ez-apps-admin-sdk.json` to the `secrets`
 
 ## EF migration
 ```
-dotnet ef migrations add InitDatabase --project ./ezApps.UserService.Infrastructure --startup-project ./ezApps.UserService.Api
+dotnet ef migrations add InitDatabase --project ./eztalo.UserService.Infrastructure --startup-project ./eztalo.UserService.Api
 ```

@@ -1,0 +1,109 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{1F5BCC07-B841-40AB-92CF-D84858783E34}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		.gitignore = .gitignore
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User Service", "User Service", "{A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}"
+	ProjectSection(SolutionItems) = preProject
+		UserService\UserService.md = UserService\UserService.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Task Service", "Task Service", "{7A1DF9B7-BA93-4B36-9223-266AC507190D}"
+	ProjectSection(SolutionItems) = preProject
+		TaskService\TaskService.md = TaskService\TaskService.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Secrets", "Secrets", "{6B6A77F2-B82B-4983-9F5D-6D24FFE9204B}"
+	ProjectSection(SolutionItems) = preProject
+		secrets\ez-apps-admin-sdk.json = secrets\ez-apps-admin-sdk.json
+		secrets\task-service-secrets.json = secrets\task-service-secrets.json
+		secrets\user-service-secrets.json = secrets\user-service-secrets.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GithubActions", "GithubActions", "{466536B4-5A11-44F9-9A1C-D99E2CD05281}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-task-service.yml = .github\workflows\build-task-service.yml
+		.github\workflows\build-user-service.yml = .github\workflows\build-user-service.yml
+		.github\workflows\build-fe.yml = .github\workflows\build-fe.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dockerfiles", "dockerfiles", "{DF5363C8-55F7-4BA0-B696-0FEEBC6A4B02}"
+	ProjectSection(SolutionItems) = preProject
+		eztalo-fe.dockerfile = eztalo-fe.dockerfile
+		eztalo-task-api.dockerfile = eztalo-task-api.dockerfile
+		eztalo-user-api.dockerfile = eztalo-user-api.dockerfile
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.TaskService.Api", "TaskService\eztalo.TaskService.Api\eztalo.TaskService.Api.csproj", "{3DB7BC9A-DBA6-401B-BD1F-379C620BC2C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.TaskService.Application", "TaskService\eztalo.TaskService.Application\eztalo.TaskService.Application.csproj", "{F47BC92B-0BEF-4218-91D0-4CA9776F2CE5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.TaskService.Infrastructure", "TaskService\eztalo.TaskService.Infrastructure\eztalo.TaskService.Infrastructure.csproj", "{08A593BC-FDEB-4B2B-AFBE-1A128799AAAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.TaskService.Domain", "TaskService\eztalo.TaskService.Domain\eztalo.TaskService.Domain.csproj", "{641B0349-E007-4239-8BFC-A26930F8DD88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.UserService.Infrastructure", "UserService\eztalo.UserService.Infrastructure\eztalo.UserService.Infrastructure.csproj", "{F490A041-515D-4F25-9EC7-A10119EC0CA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.UserService.Domain", "UserService\eztalo.UserService.Domain\eztalo.UserService.Domain.csproj", "{BA51B335-F43A-49D1-969C-C94549B63D4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.UserService.Api", "UserService\eztalo.UserService.Api\eztalo.UserService.Api.csproj", "{C6B0D556-9A8F-4C1E-ABB8-242EC75D6E93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.UserService.Application", "UserService\eztalo.UserService.Application\eztalo.UserService.Application.csproj", "{D040B652-62FA-4E22-A578-653C0380927A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3DB7BC9A-DBA6-401B-BD1F-379C620BC2C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DB7BC9A-DBA6-401B-BD1F-379C620BC2C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DB7BC9A-DBA6-401B-BD1F-379C620BC2C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DB7BC9A-DBA6-401B-BD1F-379C620BC2C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F47BC92B-0BEF-4218-91D0-4CA9776F2CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F47BC92B-0BEF-4218-91D0-4CA9776F2CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F47BC92B-0BEF-4218-91D0-4CA9776F2CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F47BC92B-0BEF-4218-91D0-4CA9776F2CE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08A593BC-FDEB-4B2B-AFBE-1A128799AAAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08A593BC-FDEB-4B2B-AFBE-1A128799AAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08A593BC-FDEB-4B2B-AFBE-1A128799AAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08A593BC-FDEB-4B2B-AFBE-1A128799AAAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{641B0349-E007-4239-8BFC-A26930F8DD88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{641B0349-E007-4239-8BFC-A26930F8DD88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{641B0349-E007-4239-8BFC-A26930F8DD88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{641B0349-E007-4239-8BFC-A26930F8DD88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F490A041-515D-4F25-9EC7-A10119EC0CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F490A041-515D-4F25-9EC7-A10119EC0CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F490A041-515D-4F25-9EC7-A10119EC0CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F490A041-515D-4F25-9EC7-A10119EC0CA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA51B335-F43A-49D1-969C-C94549B63D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA51B335-F43A-49D1-969C-C94549B63D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA51B335-F43A-49D1-969C-C94549B63D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA51B335-F43A-49D1-969C-C94549B63D4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6B0D556-9A8F-4C1E-ABB8-242EC75D6E93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6B0D556-9A8F-4C1E-ABB8-242EC75D6E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6B0D556-9A8F-4C1E-ABB8-242EC75D6E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6B0D556-9A8F-4C1E-ABB8-242EC75D6E93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D040B652-62FA-4E22-A578-653C0380927A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D040B652-62FA-4E22-A578-653C0380927A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D040B652-62FA-4E22-A578-653C0380927A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D040B652-62FA-4E22-A578-653C0380927A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6B6A77F2-B82B-4983-9F5D-6D24FFE9204B} = {1F5BCC07-B841-40AB-92CF-D84858783E34}
+		{466536B4-5A11-44F9-9A1C-D99E2CD05281} = {1F5BCC07-B841-40AB-92CF-D84858783E34}
+		{DF5363C8-55F7-4BA0-B696-0FEEBC6A4B02} = {1F5BCC07-B841-40AB-92CF-D84858783E34}
+		{3DB7BC9A-DBA6-401B-BD1F-379C620BC2C6} = {7A1DF9B7-BA93-4B36-9223-266AC507190D}
+		{F47BC92B-0BEF-4218-91D0-4CA9776F2CE5} = {7A1DF9B7-BA93-4B36-9223-266AC507190D}
+		{08A593BC-FDEB-4B2B-AFBE-1A128799AAAC} = {7A1DF9B7-BA93-4B36-9223-266AC507190D}
+		{641B0349-E007-4239-8BFC-A26930F8DD88} = {7A1DF9B7-BA93-4B36-9223-266AC507190D}
+		{F490A041-515D-4F25-9EC7-A10119EC0CA1} = {A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}
+		{BA51B335-F43A-49D1-969C-C94549B63D4D} = {A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}
+		{C6B0D556-9A8F-4C1E-ABB8-242EC75D6E93} = {A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}
+		{D040B652-62FA-4E22-A578-653C0380927A} = {A729B6C2-BEFE-4D63-8500-3CC2CBE50B53}
+	EndGlobalSection
+EndGlobal
