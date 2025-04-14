@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -104,6 +105,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Add health checks
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -133,5 +137,14 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+// Enable Prometheus HTTP request metrics middleware
+app.UseHttpMetrics();
+
+// Expose /metrics endpoint
+app.MapMetrics();
+
+// Expose native ASP.NET Core /health endpoint (optional)
+app.MapHealthChecks("/health");
 
 await app.RunAsync();
