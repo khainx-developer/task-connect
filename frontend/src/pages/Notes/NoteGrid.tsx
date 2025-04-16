@@ -151,7 +151,11 @@ const NotesGrid = () => {
   };
 
   const handleDrop = async (targetId: string, pinned: boolean) => {
-    if (!draggedNote || draggedNote.id === targetId || draggedNote.pinned !== pinned) {
+    if (
+      !draggedNote ||
+      draggedNote.id === targetId ||
+      draggedNote.pinned !== pinned
+    ) {
       return;
     }
 
@@ -172,7 +176,10 @@ const NotesGrid = () => {
       const noteOrder = reorderedNotes
         .filter((note) => note.pinned === pinned)
         .map((note) => note.id!);
-      await baseTaskManagerApi.notes.updateNoteOrder({ order: noteOrder, pinned });
+      await baseTaskManagerApi.notes.updateNoteOrder({
+        order: noteOrder,
+        pinned,
+      });
       toast.success("Note order updated");
     } catch (error) {
       console.error("Failed to update note order:", error);
@@ -184,7 +191,11 @@ const NotesGrid = () => {
   return (
     <div className="p-4">
       <div className="flex justify-end mb-4">
-        <Button startIcon={<PlusIcon />} onClick={handleOpenAddModal}>
+        <Button
+          size="tiny"
+          startIcon={<PlusIcon />}
+          onClick={handleOpenAddModal}
+        >
           Add Note
         </Button>
       </div>
@@ -261,7 +272,7 @@ const NotesGrid = () => {
               {modalMode === "add" ? "Create New Note" : "Edit Note"}
             </h5>
           </div>
-          <div className="mt-8">
+          <div className="mt-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                 Title
@@ -282,17 +293,19 @@ const NotesGrid = () => {
               </label>
               <TextArea
                 value={noteForm.content}
-                onChange={(value) => setNoteForm({ ...noteForm, content: value })}
+                onChange={(value) =>
+                  setNoteForm({ ...noteForm, content: value })
+                }
                 placeholder="Write your note..."
                 rows={4}
               />
             </div>
           </div>
           <div className="flex items-center gap-3 mt-6 modal-footer sm:justify-end">
-            <Button variant="outline" onClick={handleCloseModal}>
+            <Button size="tiny" variant="outline" onClick={handleCloseModal}>
               Cancel
             </Button>
-            <Button onClick={handleSaveNote}>
+            <Button size="tiny" onClick={handleSaveNote}>
               {modalMode === "add" ? "Save" : "Update"}
             </Button>
           </div>
