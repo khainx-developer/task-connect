@@ -193,7 +193,7 @@ const NotesGrid = () => {
         <>
           <h2 className="text-lg font-semibold mb-2">Pinned</h2>
           <div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 auto-rows-fr"
             onDragOver={(e) => e.preventDefault()}
           >
             {notes
@@ -224,7 +224,7 @@ const NotesGrid = () => {
       )}
       {notes.filter((note: Note) => !note.pinned).length > 0 && (
         <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr"
           onDragOver={(e) => e.preventDefault()}
         >
           {notes

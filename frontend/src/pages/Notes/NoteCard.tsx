@@ -56,22 +56,19 @@ const NoteCard = ({
     if (note.id) {
       onColorChange(note.id, color);
       setShowColorMenu(false);
-      note.color = color; // Update the note's color immediately
     }
   };
-
-  console.log("note color", note.color);
 
   return (
     <div
       key={index}
-      className={`rounded-xl border border-gray-200 p-4 ${note.color} mb-3 cursor-move`}
+      className={`rounded-xl border border-gray-200 p-4 ${note.color} mb-3 cursor-move flex flex-col h-72`}
       draggable
       onDragStart={() => note.id && onDragStart(note.id, !!note.pinned)}
       onDragEnd={onDragEnd}
     >
       <h3 className="font-semibold text-lg mb-2">{note.title}</h3>
-      <p className="text-gray-700 whitespace-pre-line">{note.content}</p>
+      <p className="text-gray-700 whitespace-pre-line flex-grow overflow-y-auto">{note.content}</p>
       <div className="flex justify-between items-center mt-4">
         <div className="flex gap-2 items-center">
           <div className="relative">
