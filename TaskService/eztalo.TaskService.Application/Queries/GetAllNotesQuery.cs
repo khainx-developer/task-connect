@@ -31,6 +31,8 @@ public class GetAllNotesQueryHandler : IRequestHandler<GetAllNotesQuery, List<No
     {
         var notes = await _context.Notes
             .Where(n => n.UserId == request.UserId && !n.IsArchived)
+            .OrderByDescending(n => n.Pinned)
+            .ThenBy(n => n.Order)
             .ToListAsync(cancellationToken);
 
         return _mapper.Map<List<NoteResponseModel>>(notes);

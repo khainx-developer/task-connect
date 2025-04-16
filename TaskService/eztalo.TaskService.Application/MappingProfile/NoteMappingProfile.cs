@@ -6,7 +6,7 @@ public class NoteMappingProfile : Profile
 {
     public NoteMappingProfile()
     {
-        CreateMap<NoteCreateModel, Note>();
+        CreateMap<NoteCreateUpdateModel, Note>();
         CreateMap<Note, NoteResponseModel>();
     }
 }

@@ -3,6 +3,7 @@ import {
   faTrash,
   faThumbtack,
   faPalette,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Note } from "./note";
@@ -14,12 +15,18 @@ const NoteCard = ({
   onDelete,
   onPin,
   onColorChange,
+  onDragStart,
+  onDragEnd,
+  onEdit,
 }: {
   index: number;
   note: Note;
   onDelete: (id: string) => void;
   onPin: (id: string, pinned: boolean) => void;
   onColorChange: (id: string, color: string) => void;
+  onDragStart: (id: string, pinned: boolean) => void;
+  onDragEnd: () => void;
+  onEdit: (id: string) => void;
 }) => {
   const [showColorMenu, setShowColorMenu] = useState(false);
 
@@ -32,6 +39,7 @@ const NoteCard = ({
     "bg-purple-100",
     "bg-gray-100",
   ];
+
   const handleDelete = () => {
     if (note.id) {
       onDelete(note.id);
@@ -57,7 +65,10 @@ const NoteCard = ({
   return (
     <div
       key={index}
-      className={`rounded-xl border border-gray-200 p-4 ${note.color} mb-3`}
+      className={`rounded-xl border border-gray-200 p-4 ${note.color} mb-3 cursor-move`}
+      draggable
+      onDragStart={() => note.id && onDragStart(note.id, !!note.pinned)}
+      onDragEnd={onDragEnd}
     >
       <h3 className="font-semibold text-lg mb-2">{note.title}</h3>
       <p className="text-gray-700 whitespace-pre-line">{note.content}</p>
@@ -83,6 +94,12 @@ const NoteCard = ({
               </div>
             )}
           </div>
+          <button
+            onClick={() => note.id && onEdit(note.id)}
+            className="text-blue-500 hover:text-blue-700"
+          >
+            <FontAwesomeIcon icon={faEdit} className="h-5 w-5" />
+          </button>
           <button
             onClick={handleDelete}
             className="text-red-500 hover:text-red-700"

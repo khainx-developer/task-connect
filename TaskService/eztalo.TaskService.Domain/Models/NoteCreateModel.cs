@@ -1,11 +1,9 @@
-﻿namespace eztalo.TaskService.Domain.Models
+﻿namespace eztalo.TaskService.Domain.Models;
+
+public class NoteCreateUpdateModel
 {
-    public class NoteCreateModel
-    {
-        public string Title { get; set; }
+    public Guid Id { get; set; }
+    public string Title { get; set; }
 
-        public string Content { get; set; }
-
-        public bool Pinned { get; set; } = false;
-    }
+    public string Content { get; set; }
 }

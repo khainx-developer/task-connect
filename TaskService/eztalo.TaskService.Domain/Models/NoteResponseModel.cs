@@ -10,6 +10,7 @@
         public string Color { get; set; }
 
         public bool Pinned { get; set; }
+        public int Order { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

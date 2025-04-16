@@ -23,12 +23,12 @@ public class NotesController : ControllerBase
     }
 
     [HttpPost(Name = "Create Note")]
-    public async Task<ActionResult<NoteResponseModel>> Create([FromBody] NoteCreateModel model)
+    public async Task<ActionResult<NoteResponseModel>> Create([FromBody] NoteCreateUpdateModel updateModel)
     {
         var userId = User.FindFirst("user_id")?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        var command = new CreateNoteCommand(userId, model.Title, model.Content, model.Pinned);
+        var command = new CreateNoteCommand(userId, updateModel.Title, updateModel.Content);
         var result = await _mediator.Send(command);
 
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
@@ -86,7 +86,7 @@ public class NotesController : ControllerBase
 
         return await GetById(id);
     }
-    
+
     [HttpPatch("{id}/color", Name = "Update note color")]
     public async Task<ActionResult<NoteResponseModel>> ChangeColor(Guid id, [FromBody] string color)
     {
@@ -97,5 +97,33 @@ public class NotesController : ControllerBase
         await _mediator.Send(command);
 
         return await GetById(id);
+    }
+
+    [HttpPut("{id}", Name = "Update note")]
+    public async Task<ActionResult<NoteResponseModel>> ChangeColor(Guid id,
+        [FromBody] NoteCreateUpdateModel updateModel)
+    {
+        var userId = User.FindFirst("user_id")?.Value;
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        var command = new UpdateNoteCommand(id, userId, updateModel.Title, updateModel.Content);
+        await _mediator.Send(command);
+
+        return await GetById(id);
+    }
+
+    [HttpPut(Name = "Update note order")]
+    public async Task<IActionResult> UpdateNoteOrder(
+        [FromBody] UpdateNoteOrderModel updateModel)
+    {
+        var userId = User.FindFirst("user_id")?.Value;
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+
+        var command = new UpdateNoteOrderCommand()
+        {
+            Order = updateModel.Order, Pinned = updateModel.Pinned
+        };
+        await _mediator.Send(command);
+        return Ok();
     }
 }

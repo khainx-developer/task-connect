@@ -9,56 +9,31 @@
  * ---------------------------------------------------------------
  */
 
-export interface Product {
+export interface NoteCreateUpdateModel {
   /** @format uuid */
   id?: string;
-  /** @minLength 1 */
-  name: string;
-  userProducts?: UserProduct[] | null;
-  roles?: Role[] | null;
+  title?: string | null;
+  content?: string | null;
 }
 
-export interface Role {
+export interface NoteResponseModel {
   /** @format uuid */
   id?: string;
-  /** @minLength 1 */
-  name: string;
-  /** @format uuid */
-  productId: string;
-  product?: Product;
-}
-
-export interface User {
-  id?: string | null;
-  /** @minLength 1 */
-  email: string;
-  displayName?: string | null;
-  userProducts?: UserProduct[] | null;
+  title?: string | null;
+  content?: string | null;
+  color?: string | null;
+  pinned?: boolean;
+  /** @format int32 */
+  order?: number;
   /** @format date-time */
   createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string;
 }
 
-export interface UserProduct {
-  /** @format uuid */
-  id?: string;
-  /** @minLength 1 */
-  userId: string;
-  user?: User;
-  /** @format uuid */
-  productId: string;
-  product?: Product;
-  userRoles?: UserRole[] | null;
-}
-
-export interface UserRole {
-  /** @format uuid */
-  id?: string;
-  /** @format uuid */
-  userProductId: string;
-  userProduct?: UserProduct;
-  /** @format uuid */
-  roleId: string;
-  role?: Role;
+export interface UpdateNoteOrderModel {
+  order?: string[] | null;
+  pinned?: boolean;
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
@@ -196,7 +171,7 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title Identity Service API
+ * @title Task Manager Service API
  * @version v1
  *
  * API for user authentication using Firebase and JWT
@@ -208,24 +183,6 @@ export class Api<SecurityDataType extends unknown> {
     this.http = http;
   }
 
-  auth = {
-    /**
-     * No description
-     *
-     * @tags Auth
-     * @name AuthVerifyUserCreate
-     * @request POST:/api/auth/verify-user
-     * @secure
-     */
-    authVerifyUserCreate: (params: RequestParams = {}) =>
-      this.http.request<User, any>({
-        path: `/api/auth/verify-user`,
-        method: "POST",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-  };
   home = {
     /**
      * No description
@@ -240,6 +197,152 @@ export class Api<SecurityDataType extends unknown> {
         path: `/`,
         method: "GET",
         secure: true,
+        ...params,
+      }),
+  };
+  notes = {
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name CreateNote
+     * @request POST:/api/Notes
+     * @secure
+     */
+    createNote: (data: NoteCreateUpdateModel, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name GetAllNotes
+     * @request GET:/api/Notes
+     * @secure
+     */
+    getAllNotes: (params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel[], any>({
+        path: `/api/Notes`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name UpdateNoteOrder
+     * @request PUT:/api/Notes
+     * @secure
+     */
+    updateNoteOrder: (data: UpdateNoteOrderModel, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/Notes`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name GetNoteById
+     * @request GET:/api/Notes/{id}
+     * @secure
+     */
+    getNoteById: (id: string, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name DeleteNoteById
+     * @request DELETE:/api/Notes/{id}
+     * @secure
+     */
+    deleteNoteById: (id: string, params: RequestParams = {}) =>
+      this.http.request<boolean, any>({
+        path: `/api/Notes/${id}`,
+        method: "DELETE",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name UpdateNote
+     * @request PUT:/api/Notes/{id}
+     * @secure
+     */
+    updateNote: (id: string, data: NoteCreateUpdateModel, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name PinOrUnpinNote
+     * @request PATCH:/api/Notes/{id}/pin
+     * @secure
+     */
+    pinOrUnpinNote: (id: string, data: boolean, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}/pin`,
+        method: "PATCH",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name UpdateNoteColor
+     * @request PATCH:/api/Notes/{id}/color
+     * @secure
+     */
+    updateNoteColor: (id: string, data: string, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}/color`,
+        method: "PATCH",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
         ...params,
       }),
   };

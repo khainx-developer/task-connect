@@ -1,12 +1,12 @@
 import { getAuth } from "firebase/auth";
 import {
   Api as IdentityApi,
-  HttpClient as IdentityClient,
-} from "./identityApiClient";
+  HttpClient as UserClient,
+} from "./userApiClient";
 import {
   Api as TaskManagerApi,
-  HttpClient as TaskManagerClient,
-} from "./taskManagerApiClient";
+  HttpClient as TaskClient,
+} from "./taskApiClient";
 import qs from "qs";
 import { AxiosInstance } from "axios";
 import { toast } from "react-toastify";
@@ -58,16 +58,16 @@ const applyAxiosInterceptors = (instance: AxiosInstance) => {
 const paramsSerializer = (params: unknown): string => {
   return qs.stringify(params, { arrayFormat: "repeat" }); // Customize array handling, e.g., 'repeat', 'indices', 'brackets'
 };
-const identityClient = new IdentityClient({
+const userClient = new UserClient({
   baseURL: import.meta.env.VITE_USER_SERVICE_URL,
   paramsSerializer,
 });
 
-applyAxiosInterceptors(identityClient.instance);
+applyAxiosInterceptors(userClient.instance);
 
-export const baseIdentityApi = new IdentityApi(identityClient);
+export const baseIdentityApi = new IdentityApi(userClient);
 
-const taskManagerClient = new TaskManagerClient({
+const taskManagerClient = new TaskClient({
   baseURL: import.meta.env.VITE_TASK_SERVICE_URL,
   paramsSerializer,
 });

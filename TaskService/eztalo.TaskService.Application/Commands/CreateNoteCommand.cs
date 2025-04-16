@@ -6,7 +6,7 @@ using MediatR;
 
 namespace eztalo.TaskService.Application.Commands;
 
-public record CreateNoteCommand(string UserId, string Title, string Content, bool Pinned)
+public record CreateNoteCommand(string UserId, string Title, string Content)
     : IRequest<NoteResponseModel>;
 
 public class CreateNoteHandler : IRequestHandler<CreateNoteCommand, NoteResponseModel>
@@ -28,7 +28,6 @@ public class CreateNoteHandler : IRequestHandler<CreateNoteCommand, NoteResponse
             UserId = request.UserId,
             Title = request.Title,
             Content = request.Content,
-            Pinned = request.Pinned,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
