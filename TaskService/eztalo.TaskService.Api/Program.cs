@@ -47,17 +47,36 @@ builder.Services
     });
 
 const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
-var corsOrigin = builder.Configuration["Cors"] ?? "http://localhost:5173";
+var allowedOrigins = builder.Configuration.GetSection("CorsOrigins").Get<List<string>>() ?? new List<string>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: myAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins(corsOrigin)
+            policy.SetIsOriginAllowed(origin =>
+                {
+                    foreach (var allowedOrigin in allowedOrigins)
+                    {
+                        if (allowedOrigin.StartsWith("."))
+                        {
+                            // Wildcard subdomain check
+                            if (origin.EndsWith(allowedOrigin))
+                                return true;
+                        }
+                        else
+                        {
+                            // Exact match
+                            if (origin == allowedOrigin)
+                                return true;
+                        }
+                    }
+
+                    return false;
+                })
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials(); // If using authentication
+                .AllowCredentials();
         });
 });
 
