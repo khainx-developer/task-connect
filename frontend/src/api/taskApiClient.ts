@@ -228,10 +228,17 @@ export class Api<SecurityDataType extends unknown> {
      * @request GET:/api/Notes
      * @secure
      */
-    getAllNotes: (params: RequestParams = {}) =>
+    getAllNotes: (
+      query?: {
+        /** @default false */
+        isArchived?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
       this.http.request<NoteResponseModel[], any>({
         path: `/api/Notes`,
         method: "GET",
+        query: query,
         secure: true,
         format: "json",
         ...params,

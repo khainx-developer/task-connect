@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using eztalo.TaskService.Application.Commands;
+﻿using eztalo.TaskService.Application.Commands;
 using eztalo.TaskService.Application.Queries;
 using eztalo.TaskService.Domain.Models;
 using MediatR;
@@ -13,12 +12,10 @@ namespace eztalo.TaskService.Api.Controllers;
 [Route("api/[controller]")]
 public class NotesController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IMediator _mediator;
 
-    public NotesController(IMapper mapper, IMediator mediator)
+    public NotesController(IMediator mediator)
     {
-        _mapper = mapper;
         _mediator = mediator;
     }
 
@@ -35,12 +32,12 @@ public class NotesController : ControllerBase
     }
 
     [HttpGet(Name = "Get all notes")]
-    public async Task<ActionResult<List<NoteResponseModel>>> GetAll()
+    public async Task<ActionResult<List<NoteResponseModel>>> GetAll(bool isArchived = false)
     {
         var userId = User.FindFirst("user_id")?.Value;
         if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        var query = new GetAllNotesQuery(userId);
+        var query = new GetAllNotesQuery(userId, isArchived);
         var result = await _mediator.Send(query);
 
         return Ok(result);

@@ -11,7 +11,7 @@ import { Note } from "./note";
 import { toast } from "react-toastify";
 import { NoteResponseModel } from "../../api/taskApiClient";
 
-const NotesGrid = () => {
+const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [draggedNote, setDraggedNote] = useState<{
     id: string;
@@ -27,7 +27,7 @@ const NotesGrid = () => {
 
   useEffect(() => {
     const fetchNotes = async () => {
-      const response = await baseTaskManagerApi.notes.getAllNotes();
+      const response = await baseTaskManagerApi.notes.getAllNotes({isArchived: isArchived});
       const notesData: Note[] = response.data.map(
         (note: NoteResponseModel) => ({
           id: note.id,
@@ -41,7 +41,7 @@ const NotesGrid = () => {
     };
 
     fetchNotes();
-  }, []);
+  }, [isArchived]);
 
   const { isOpen, openModal, closeModal } = useModal();
 

@@ -36,7 +36,8 @@ export default function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/notes" element={<Notes />} />
-
+              <Route path="/archived-notes" element={<Notes isArchived={true} />} />
+              
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />
               <Route path="/calendar" element={<Calendar />} />

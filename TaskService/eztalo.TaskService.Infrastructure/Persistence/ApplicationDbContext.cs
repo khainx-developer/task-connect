@@ -12,6 +12,9 @@ namespace eztalo.TaskService.Infrastructure.Persistence
 
         public DbSet<TaskItem> Tasks { get; set; }
         public DbSet<Note> Notes { get; set; }
+        public DbSet<Tag> Tags { get; }
+        public DbSet<Project> Projects { get; }
+        public DbSet<WorkLog> WorkLogs { get; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

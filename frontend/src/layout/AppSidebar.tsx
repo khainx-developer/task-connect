@@ -39,8 +39,7 @@ const navItems: NavItem[] = [
     name: "Notes",
     subItems: [
       { name: "All Notes", path: "/notes" },
-      { name: "Favorites", path: "/tasks" },
-      { name: "Archived", path: "/tasks" },
+      { name: "Archived", path: "/archived-notes" },
     ],
   },
   // {

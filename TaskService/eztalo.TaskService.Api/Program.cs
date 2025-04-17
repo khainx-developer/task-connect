@@ -1,6 +1,7 @@
 using System.Text.Json;
 using eztalo.TaskService.Application.Common.Interfaces;
 using eztalo.TaskService.Application.Queries;
+using eztalo.TaskService.Application.Queries.NoteQueries;
 using eztalo.TaskService.Infrastructure.Persistence;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;

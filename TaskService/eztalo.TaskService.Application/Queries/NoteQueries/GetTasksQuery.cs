@@ -1,9 +1,9 @@
-﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using eztalo.TaskService.Application.Common.Interfaces;
 using eztalo.TaskService.Domain.Entities;
-using eztalo.TaskService.Application.Common.Interfaces;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
-namespace eztalo.TaskService.Application.Queries
+namespace eztalo.TaskService.Application.Queries.NoteQueries
 {
     public class GetTasksQuery : IRequest<List<TaskItem>> { }
 

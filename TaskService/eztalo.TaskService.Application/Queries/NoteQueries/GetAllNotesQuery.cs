@@ -10,9 +10,12 @@ public class GetAllNotesQuery : IRequest<List<NoteResponseModel>>
 {
     public string UserId { get; }
 
-    public GetAllNotesQuery(string userId)
+    public bool IsArchived { get; set; }
+
+    public GetAllNotesQuery(string userId, bool isArchived = false)
     {
         UserId = userId;
+        IsArchived = isArchived;
     }
 }
 
@@ -30,7 +33,7 @@ public class GetAllNotesQueryHandler : IRequestHandler<GetAllNotesQuery, List<No
     public async Task<List<NoteResponseModel>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
     {
         var notes = await _context.Notes
-            .Where(n => n.UserId == request.UserId && !n.IsArchived)
+            .Where(n => n.UserId == request.UserId && n.IsArchived == request.IsArchived)
             .OrderByDescending(n => n.Pinned)
             .ThenBy(n => n.Order)
             .ToListAsync(cancellationToken);

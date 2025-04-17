@@ -16,4 +16,9 @@
     <ProjectReference Include="..\eztalo.TaskService.Domain\eztalo.TaskService.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\ProjectCommands\" />
+    <Folder Include="Queries\ProjectQueries\" />
+  </ItemGroup>
+
 </Project>
