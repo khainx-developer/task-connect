@@ -17,7 +17,7 @@ import {
 interface CalendarEvent extends EventInput {
   id: string; // Worklog ID
   title: string; // Task title
-  start: string;
+  start?: string;
   end?: string;
   allDay: boolean;
   extendedProps: {
@@ -33,11 +33,10 @@ const TaskCalendar: React.FC = () => {
   );
   const [selectedWorkLog, setSelectedWorkLog] =
     useState<WorkLogResponseModel | null>(null);
-  const [modalMode, setModalMode] = useState<"task" | "worklog">("task");
+  const [modalMode, setModalMode] = useState<"task" | "workLog">("task");
   const [eventTitle, setEventTitle] = useState("");
   const [eventStartDate, setEventStartDate] = useState("");
   const [eventEndDate, setEventEndDate] = useState("");
-  const [eventLevel, setEventLevel] = useState("");
   const [eventProject, setEventProject] = useState("");
   const [eventNewProject, setEventNewProject] = useState("");
   const [eventTags, setEventTags] = useState("");
@@ -68,7 +67,7 @@ const TaskCalendar: React.FC = () => {
     fetchProjects();
   }, []);
 
-  // Fetch tasks and worklogs based on calendar date range
+  // Fetch tasks and workLogs based on calendar date range
   const fetchTasks = async (start: Date, end: Date) => {
     try {
       const response = await baseTaskManagerApi.tasks.getAllTasks({
@@ -80,20 +79,21 @@ const TaskCalendar: React.FC = () => {
       setTasks(fetchedTasks);
 
       // Map workLogs to calendar events
-      const calendarEvents: CalendarEvent[] = fetchedTasks.flatMap((task) =>
-        task.workLogs?.map((workLog: WorkLogResponseModel) => ({
+      const calendarEvents: CalendarEvent[] = fetchedTasks.flatMap((task) => {
+        const workLogs = task.workLogs || [];
+        return workLogs.map((workLog: WorkLogResponseModel) => ({
           id: workLog.id ?? "",
           title: `${task.title}: ${new Date(workLog.fromTime ?? "").toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}–${new Date(workLog.toTime ?? "").toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
           start: workLog.fromTime,
           end: workLog.toTime,
           allDay: false,
           extendedProps: {
-            taskId: task.id,
-            workLogId: workLog.id,
-            taskTitle: task.title,
+            taskId: task.id ?? "",
+            workLogId: workLog.id ?? "",
+            taskTitle: task.title ?? "",
           },
-        }))
-      );
+        }));
+      });
 
       setEvents(calendarEvents);
     } catch (error) {
@@ -131,29 +131,32 @@ const TaskCalendar: React.FC = () => {
   };
 
   const handleEventClick = (clickInfo: EventClickArg) => {
-    const worklogId = clickInfo.event.extendedProps.worklogId;
+    const workLogId = clickInfo.event.extendedProps.workLogId;
     const taskId = clickInfo.event.extendedProps.taskId;
     const task = tasks.find((t) => t.id === taskId);
-    const worklog = task?.worklogs.find((w) => w.id === worklogId);
+    const workLog = task?.workLogs?.find((w) => w.id === workLogId);
 
-    if (task && worklog) {
+    if (task && workLog) {
       setSelectedTask(task);
-      setSelectedWorkLog(worklog);
-      setModalMode("worklog");
-      setEventTitle(task.title);
-      setEventStartDate(new Date(worklog.start).toISOString().slice(0, 16));
-      setEventEndDate(new Date(worklog.end).toISOString().slice(0, 16));
-      setEventLevel(task.calendar || "Primary");
+      setSelectedWorkLog(workLog);
+      setModalMode("workLog");
+      setEventTitle(task.title ?? "");
+      setEventStartDate(
+        new Date(workLog.fromTime ?? "").toISOString().slice(0, 16)
+      );
+      setEventEndDate(
+        new Date(workLog.toTime ?? "").toISOString().slice(0, 16)
+      );
       setEventProject(task.project || "");
       setEventTags((task.tags || []).join(", "));
-      setEventDescription(worklog.description || "");
+      setEventDescription(workLog.note || "");
       openModal();
     }
   };
 
   const handleAddOrUpdateTask = async () => {
-    if (!eventTitle || !eventStartDate || !eventLevel) {
-      alert("Title, Start Date, and Level are required.");
+    if (!eventTitle || !eventStartDate ) {
+      alert("Title, Start Date are required.");
       return;
     }
 
@@ -169,15 +172,14 @@ const TaskCalendar: React.FC = () => {
       id: selectedTask ? selectedTask.id : Date.now().toString(),
       title: eventTitle,
       project: projectName,
-      calendar: eventLevel,
       tags: eventTags
         ? eventTags
             .split(",")
             .map((tag) => tag.trim())
             .filter(Boolean)
         : [],
-      worklogs: selectedTask
-        ? [...selectedTask.worklogs, newWorklog]
+      workLogs: selectedTask
+        ? [...selectedTask.workLogs, newWorklog]
         : [newWorklog],
     };
 
@@ -200,14 +202,14 @@ const TaskCalendar: React.FC = () => {
           project: newTask.project,
           calendar: newTask.calendar,
           tags: newTask.tags,
-          worklogs: [newWorklog],
+          workLogs: [newWorklog],
         });
         newTask.id = response.data.id;
         setTasks((prevTasks) => [...prevTasks, newTask]);
       }
 
-      // Add worklog to backend
-      await baseTaskManagerApi.post(`/worklogs`, {
+      // Add workLog to backend
+      await baseTaskManagerApi.post(`/workLogs`, {
         taskId: newTask.id,
         start: newWorklog.start,
         end: newWorklog.end,
@@ -234,44 +236,44 @@ const TaskCalendar: React.FC = () => {
       return;
     }
 
-    const newWorklog: Worklog = {
+    const newWorkLog: WorkLogResponseModel = {
       id: selectedWorkLog ? selectedWorkLog.id : Date.now().toString(),
-      start: eventStartDate,
-      end: eventEndDate || eventStartDate,
-      description: eventDescription,
+      fromTime: eventStartDate,
+      toTime: eventEndDate || eventStartDate,
+      note: eventDescription,
     };
 
     try {
       if (selectedWorkLog) {
-        await baseTaskManagerApi.put(`/worklogs/${selectedWorkLog.id}`, {
+        await baseTaskManagerApi.put(`/workLogs/${selectedWorkLog.id}`, {
           taskId: selectedTask.id,
-          start: newWorklog.start,
-          end: newWorklog.end,
-          description: newWorklog.description,
+          start: newWorkLog.fromTime,
+          end: newWorkLog.toTime,
+          description: newWorkLog.note,
         });
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
             task.id === selectedTask.id
               ? {
                   ...task,
-                  worklogs: task.worklogs.map((w) =>
-                    w.id === selectedWorkLog.id ? newWorklog : w
+                  workLogs: task.workLogs.map((w) =>
+                    w.id === selectedWorkLog.id ? newWorkLog : w
                   ),
                 }
               : task
           )
         );
       } else {
-        await baseTaskManagerApi.post(`/worklogs`, {
+        await baseTaskManagerApi.post(`/workLogs`, {
           taskId: selectedTask.id,
-          start: newWorklog.start,
-          end: newWorklog.end,
-          description: newWorklog.description,
+          start: newWorkLog.start,
+          end: newWorkLog.end,
+          description: newWorkLog.description,
         });
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
             task.id === selectedTask.id
-              ? { ...task, worklogs: [...task.worklogs, newWorklog] }
+              ? { ...task, workLogs: [...task.workLogs, newWorkLog] }
               : task
           )
         );
@@ -286,8 +288,8 @@ const TaskCalendar: React.FC = () => {
       closeModal();
       resetModalFields();
     } catch (error) {
-      console.error("Failed to save worklog:", error);
-      alert("Failed to save worklog.");
+      console.error("Failed to save workLog:", error);
+      alert("Failed to save workLog.");
     }
   };
 
@@ -315,13 +317,13 @@ const TaskCalendar: React.FC = () => {
   const handleDeleteWorklog = async () => {
     if (selectedTask && selectedWorkLog) {
       try {
-        await baseTaskManagerApi.delete(`/worklogs/${selectedWorkLog.id}`);
+        await baseTaskManagerApi.delete(`/workLogs/${selectedWorkLog.id}`);
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
             task.id === selectedTask.id
               ? {
                   ...task,
-                  worklogs: task.worklogs.filter(
+                  workLogs: task.workLogs.filter(
                     (w) => w.id !== selectedWorkLog.id
                   ),
                 }
@@ -334,8 +336,8 @@ const TaskCalendar: React.FC = () => {
         closeModal();
         resetModalFields();
       } catch (error) {
-        console.error("Failed to delete worklog:", error);
-        alert("Failed to delete worklog.");
+        console.error("Failed to delete workLog:", error);
+        alert("Failed to delete workLog.");
       }
     }
   };
@@ -344,7 +346,6 @@ const TaskCalendar: React.FC = () => {
     setEventTitle("");
     setEventStartDate("");
     setEventEndDate("");
-    setEventLevel("");
     setEventProject("");
     setEventNewProject("");
     setEventTags("");
@@ -374,7 +375,7 @@ const TaskCalendar: React.FC = () => {
     <>
       <PageMeta
         title="Task Calendar | Eztalo"
-        description="Manage your project tasks and worklogs in a calendar view."
+        description="Manage your project tasks and workLogs in a calendar view."
       />
       <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
         <div className="custom-calendar">
@@ -469,28 +470,6 @@ const TaskCalendar: React.FC = () => {
                     onChange={(e) => setEventEndDate(e.target.value)}
                     className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
                   />
-                </div>
-                <div className="mt-4">
-                  <label
-                    htmlFor="eventLevel"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-                  >
-                    Level <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="eventLevel"
-                    value={eventLevel}
-                    onChange={(e) => setEventLevel(e.target.value)}
-                    className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
-                    required
-                  >
-                    <option value="">Select Level</option>
-                    {Object.keys(calendarsEvents).map((key) => (
-                      <option key={key} value={key}>
-                        {key}
-                      </option>
-                    ))}
-                  </select>
                 </div>
                 <div className="mt-4">
                   <label
@@ -635,7 +614,7 @@ const TaskCalendar: React.FC = () => {
                   Delete Task
                 </button>
               )}
-              {modalMode === "worklog" && selectedWorkLog && (
+              {modalMode === "workLog" && selectedWorkLog && (
                 <button
                   onClick={handleDeleteWorklog}
                   className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
