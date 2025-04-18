@@ -16,7 +16,7 @@ public class StopTaskCommandHandler : IRequestHandler<StopTaskCommand, bool>
 
     public async Task<bool> Handle(StopTaskCommand request, CancellationToken cancellationToken)
     {
-        var workLog = await _context.WorkLogs.FindAsync(request.WorkLogId);
+        var workLog = await _context.WorkLogs.FindAsync(request.WorkLogId, cancellationToken);
 
         if (workLog == null) throw new Exception("WorkLog not found");
 

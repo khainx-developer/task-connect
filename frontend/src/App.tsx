@@ -11,7 +11,7 @@ import Avatars from "./pages/UiElements/Avatars";
 import Buttons from "./pages/UiElements/Buttons";
 import LineChart from "./pages/Charts/LineChart";
 import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Calendar";
+import TaskCalendar from "./pages/Tasks/Calendar";
 import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
 import AppLayout from "./layout/AppLayout";
@@ -35,12 +35,14 @@ export default function App() {
             <Route element={<AppLayout />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
+              
               <Route path="/notes" element={<Notes />} />
               <Route path="/archived-notes" element={<Notes isArchived={true} />} />
               
+              <Route path="/tasks" element={<TaskCalendar />} />
+              
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />
-              <Route path="/calendar" element={<Calendar />} />
 
               {/* Forms */}
               <Route path="/form-elements" element={<FormElements />} />

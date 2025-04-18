@@ -2,6 +2,7 @@
 using eztalo.TaskService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Task = eztalo.TaskService.Domain.Entities.Task;
 
 namespace eztalo.TaskService.Application.Commands.TaskCommands;
 
@@ -47,7 +48,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Guid>
             }
         }
 
-        var task = new TaskItem
+        var task = new Task
         {
             Id = Guid.NewGuid(),
             Title = request.Title,

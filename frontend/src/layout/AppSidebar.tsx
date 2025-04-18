@@ -30,8 +30,8 @@ const navItems: NavItem[] = [
     icon: <ListIcon />,
     subItems: [
       { name: "All Tasks", path: "/tasks" },
-      { name: "My Tasks", path: "/tasks" },
-      { name: "Completed Tasks", path: "/tasks" },
+      { name: "My Tasks", path: "/my-tasks" },
+      { name: "Completed Tasks", path: "/completed-tasks" },
     ],
   },
   {
@@ -42,11 +42,6 @@ const navItems: NavItem[] = [
       { name: "Archived", path: "/archived-notes" },
     ],
   },
-  // {
-  //   icon: <CalenderIcon />,
-  //   name: "Calendar",
-  //   path: "/calendar",
-  // },
   {
     icon: <UserCircleIcon />,
     name: "Projects",

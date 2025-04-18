@@ -1,7 +1,7 @@
 using System.Text.Json;
 using eztalo.TaskService.Application.Common.Interfaces;
 using eztalo.TaskService.Application.Queries;
-using eztalo.TaskService.Application.Queries.NoteQueries;
+using eztalo.TaskService.Application.Queries.TaskQueries;
 using eztalo.TaskService.Infrastructure.Persistence;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
@@ -89,7 +89,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetTasksQuery).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllTasksQuery).Assembly));
 builder.Services.AddControllers();
 
 // Add Swagger

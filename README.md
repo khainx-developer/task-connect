@@ -9,7 +9,7 @@ docker-compose up -d
 Remove the database
 ```bash
 docker-compose down
-docker volume rm ez-apps_user_service_data
-docker volume rm ez-apps_task_service_data
+docker volume rm eztalo_task_service_data
+docker volume rm eztalo_user_service_data
 ```
 

@@ -9,5 +9,5 @@ public class WorkLog
     public int? PercentCompleteAfter { get; set; }
     public string Note { get; set; }
 
-    public TaskItem Task { get; set; } = null!;
+    public Task Task { get; set; } = null!;
 }
