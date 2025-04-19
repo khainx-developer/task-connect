@@ -1,41 +1,27 @@
 ﻿using AutoMapper;
-using eztalo.TaskService.Domain.Models;
 using eztalo.TaskService.Application.Common.Interfaces;
+using eztalo.TaskService.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace eztalo.TaskService.Application.Queries;
+namespace eztalo.TaskService.Application.Queries.NoteQueries;
 
-public class GetNoteByIdQuery : IRequest<NoteResponseModel?>
+public class GetNoteByIdQuery(Guid id, string ownerId) : IRequest<NoteResponseModel>
 {
-    public Guid Id { get; }
-    public string UserId { get; }
-
-    public GetNoteByIdQuery(Guid id, string userId)
-    {
-        Id = id;
-        UserId = userId;
-    }
+    public Guid Id { get; } = id;
+    public string OwnerId { get; } = ownerId;
 }
 
-public class GetNoteByIdQueryHandler : IRequestHandler<GetNoteByIdQuery, NoteResponseModel?>
+public class GetNoteByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<GetNoteByIdQuery, NoteResponseModel>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetNoteByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public async Task<NoteResponseModel> Handle(GetNoteByIdQuery request, CancellationToken cancellationToken)
     {
-        _context = context;
-        _mapper = mapper;
-    }
-
-    public async Task<NoteResponseModel?> Handle(GetNoteByIdQuery request, CancellationToken cancellationToken)
-    {
-        var note = await _context.Notes
-            .FirstOrDefaultAsync(n => n.Id == request.Id && n.OwnerId == request.UserId && !n.IsArchived, cancellationToken);
+        var note = await context.Notes
+            .FirstOrDefaultAsync(n => n.Id == request.Id && n.OwnerId == request.OwnerId && !n.IsArchived, cancellationToken);
 
         if (note == null) return null;
 
-        return _mapper.Map<NoteResponseModel>(note);
+        return mapper.Map<NoteResponseModel>(note);
     }
 }

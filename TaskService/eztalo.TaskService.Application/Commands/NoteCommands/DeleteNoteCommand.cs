@@ -3,16 +3,10 @@ using MediatR;
 
 namespace eztalo.TaskService.Application.Commands;
 
-public class DeleteNoteCommand : IRequest<bool>
+public class DeleteNoteCommand(Guid id, string ownerId) : IRequest<bool>
 {
-    public Guid Id { get; }
-    public string UserId { get; }
-
-    public DeleteNoteCommand(Guid id, string userId)
-    {
-        Id = id;
-        UserId = userId;
-    }
+    public Guid Id { get; } = id;
+    public string OwnerId { get; } = ownerId;
 }
 
 public class DeleteNoteCommandHandler : IRequestHandler<DeleteNoteCommand, bool>
@@ -27,7 +21,7 @@ public class DeleteNoteCommandHandler : IRequestHandler<DeleteNoteCommand, bool>
     public async Task<bool> Handle(DeleteNoteCommand request, CancellationToken cancellationToken)
     {
         var note = await _context.Notes.FindAsync([request.Id], cancellationToken);
-        if (note == null || note.OwnerId != request.UserId)
+        if (note == null || note.OwnerId != request.OwnerId)
         {
             return false;
         }

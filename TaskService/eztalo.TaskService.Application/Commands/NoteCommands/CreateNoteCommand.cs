@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
+using eztalo.TaskService.Application.Common.Interfaces;
 using eztalo.TaskService.Domain.Entities;
 using eztalo.TaskService.Domain.Models;
-using eztalo.TaskService.Application.Common.Interfaces;
 using MediatR;
 
-namespace eztalo.TaskService.Application.Commands;
+namespace eztalo.TaskService.Application.Commands.NoteCommands;
 
-public record CreateNoteCommand(string UserId, string Title, string Content)
+public record CreateNoteCommand(string OwnerId, string Title, string Content)
     : IRequest<NoteResponseModel>;
 
 public class CreateNoteHandler : IRequestHandler<CreateNoteCommand, NoteResponseModel>
@@ -25,7 +25,7 @@ public class CreateNoteHandler : IRequestHandler<CreateNoteCommand, NoteResponse
         var note = new Note
         {
             Id = Guid.NewGuid(),
-            OwnerId = request.UserId,
+            OwnerId = request.OwnerId,
             Title = request.Title,
             Content = request.Content,
             CreatedAt = DateTime.UtcNow,

@@ -7,29 +7,22 @@ namespace eztalo.TaskService.Application.Commands.WorkLogCommands;
 
 public record CreateWorkLogCommand(
     string Title,
-    string UserId,
+    string OwnerId,
     Guid? TaskItemId,
     Guid? ProjectId,
     DateTime FromDateTime,
     DateTime? ToDateTime
 ) : IRequest<Guid>;
 
-public class CreateWorkLogCommandHandler : IRequestHandler<CreateWorkLogCommand, Guid>
+public class CreateWorkLogCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateWorkLogCommand, Guid>
 {
-    private readonly IApplicationDbContext _context;
-
-    public CreateWorkLogCommandHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<Guid> Handle(CreateWorkLogCommand request, CancellationToken cancellationToken)
     {
         // Find existing task if provided
         TaskItem taskItem;
         if (request.TaskItemId.HasValue)
         {
-            taskItem = await _context.TaskItems
+            taskItem = await context.TaskItems
                 .FirstOrDefaultAsync(x => x.Id == request.TaskItemId.Value, cancellationToken);
 
             if (taskItem == null)
@@ -42,14 +35,14 @@ public class CreateWorkLogCommandHandler : IRequestHandler<CreateWorkLogCommand,
             {
                 Id = Guid.NewGuid(),
                 Title = request.Title,
-                OwnerId = request.UserId,
+                OwnerId = request.OwnerId,
                 CreatedAt = DateTime.UtcNow
             };
 
             // Attach to project if ProjectId is provided
             if (request.ProjectId.HasValue)
             {
-                var project = await _context.Projects
+                var project = await context.Projects
                     .FirstOrDefaultAsync(x => x.Id == request.ProjectId.Value, cancellationToken);
 
                 if (project == null)
@@ -58,7 +51,7 @@ public class CreateWorkLogCommandHandler : IRequestHandler<CreateWorkLogCommand,
                 taskItem.ProjectId = project.Id;
             }
 
-            await _context.TaskItems.AddAsync(taskItem, cancellationToken);
+            await context.TaskItems.AddAsync(taskItem, cancellationToken);
         }
 
         // Create new worklog for the task
@@ -70,10 +63,10 @@ public class CreateWorkLogCommandHandler : IRequestHandler<CreateWorkLogCommand,
             ToTime = request.ToDateTime,
         };
 
-        await _context.WorkLogs.AddAsync(workLog, cancellationToken);
+        await context.WorkLogs.AddAsync(workLog, cancellationToken);
 
         // Save all changes
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         // Return the new worklog ID
         return workLog.Id;

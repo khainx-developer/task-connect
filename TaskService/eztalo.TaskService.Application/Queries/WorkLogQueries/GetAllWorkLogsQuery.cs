@@ -6,34 +6,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eztalo.TaskService.Application.Queries.WorkLogQueries;
 
-public class GetAllWorkLogsQuery : IRequest<List<WorkLogResponseModel>>
+public class GetAllWorkLogsQuery(
+    string ownerId,
+    bool isArchived = false,
+    DateTime from = default,
+    DateTime to = default)
+    : IRequest<List<WorkLogResponseModel>>
 {
-    public string UserId { get; set;}
-    public bool IsArchived { get; set; }
-    public DateTime From { get; set; }
-    public DateTime To { get; set; }
+    public string OwnerId { get; set;} = ownerId;
+    public bool IsArchived { get; set; } = isArchived;
+    public DateTime From { get; set; } = from;
+    public DateTime To { get; set; } = to;
 }
 
-public class GetAllWorkLogsQueryHandler : IRequestHandler<GetAllWorkLogsQuery, List<WorkLogResponseModel>>
+public class GetAllWorkLogsQueryHandler(IApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<GetAllWorkLogsQuery, List<WorkLogResponseModel>>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetAllWorkLogsQueryHandler(IApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
-
     public async Task<List<WorkLogResponseModel>> Handle(GetAllWorkLogsQuery request, CancellationToken cancellationToken)
     {
-        var projects = await _context.WorkLogs
-            .Where(workLog => workLog.TaskItem.OwnerId == request.UserId && workLog.TaskItem.IsArchived == request.IsArchived &&
+        var projects = await context.WorkLogs
+            .Where(workLog => workLog.TaskItem.OwnerId == request.OwnerId && workLog.TaskItem.IsArchived == request.IsArchived &&
                         workLog.IsArchived == request.IsArchived &&
                         workLog.FromTime >= request.From && workLog.ToTime <= request.To)
             .Include(workLog=> workLog.TaskItem.Project)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<List<WorkLogResponseModel>>(projects);
+        return mapper.Map<List<WorkLogResponseModel>>(projects);
     }
 }

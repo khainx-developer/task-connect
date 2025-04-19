@@ -1,26 +1,24 @@
-﻿using eztalo.TaskService.Application.Common.Interfaces;
+﻿using AutoMapper;
+using eztalo.TaskService.Application.Common.Interfaces;
 using eztalo.TaskService.Domain.Entities;
+using eztalo.TaskService.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace eztalo.TaskService.Application.Queries.TaskQueries;
 
-public record GetTaskByIdQuery(Guid Id) : IRequest<TaskItem>;
+public record GetTaskByIdQuery(Guid Id, string OwnerId) : IRequest<TaskResponseModel>;
 
-public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskItem>
+public class GetTaskByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<GetTaskByIdQuery, TaskResponseModel>
 {
-    private readonly IApplicationDbContext _context;
-
-    public GetTaskByIdQueryHandler(IApplicationDbContext context)
+    public async Task<TaskResponseModel> Handle(GetTaskByIdQuery request, CancellationToken cancellationToken)
     {
-        _context = context;
-    }
-
-    public async Task<TaskItem> Handle(GetTaskByIdQuery request, CancellationToken cancellationToken)
-    {
-        return await _context.TaskItems
+        var taskItem = await context.TaskItems
             .Include(t => t.Project)
             .Include(t => t.WorkLogs)
-            .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(t => t.Id == request.Id && t.OwnerId == request.OwnerId, cancellationToken);
+
+        return mapper.Map<TaskItem, TaskResponseModel>(taskItem);
     }
 }

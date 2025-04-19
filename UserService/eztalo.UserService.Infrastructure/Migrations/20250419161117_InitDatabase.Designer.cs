@@ -12,7 +12,7 @@ using eztalo.UserService.Infrastructure.Persistence;
 namespace eztalo.UserService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250419090620_InitDatabase")]
+    [Migration("20250419161117_InitDatabase")]
     partial class InitDatabase
     {
         /// <inheritdoc />

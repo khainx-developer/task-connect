@@ -447,12 +447,17 @@ export interface ParameterInfo {
   metadataToken?: number;
 }
 
+export interface ProjectCreateModel {
+  title?: string | null;
+  description?: string | null;
+}
+
 export interface ProjectResponseModel {
   /** @format uuid */
   id?: string;
   name?: string | null;
   description?: string | null;
-  userId?: string | null;
+  ownerId?: string | null;
   /** @format date-time */
   createdAt?: string;
   /** @format date-time */
@@ -527,6 +532,13 @@ export interface Task {
   creationOptions?: TaskCreationOptions;
   asyncState?: any;
   isFaulted?: boolean;
+}
+
+export interface TaskCreateModel {
+  title?: string | null;
+  description?: string | null;
+  /** @format uuid */
+  projectId?: string | null;
 }
 
 /** @format int32 */
@@ -1130,8 +1142,7 @@ export class Api<SecurityDataType extends unknown> {
      */
     getAllProjects: (
       query?: {
-        /** @default false */
-        isArchived?: boolean;
+        searchText?: string;
       },
       params: RequestParams = {},
     ) =>
@@ -1139,6 +1150,42 @@ export class Api<SecurityDataType extends unknown> {
         path: `/api/Projects`,
         method: "GET",
         query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Projects
+     * @name CreateProject
+     * @request POST:/api/Projects
+     * @secure
+     */
+    createProject: (data: ProjectCreateModel, params: RequestParams = {}) =>
+      this.http.request<ProjectResponseModel, any>({
+        path: `/api/Projects`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Projects
+     * @name GetProjectById
+     * @request GET:/api/Projects/{projectId}
+     * @secure
+     */
+    getProjectById: (projectId: string, params: RequestParams = {}) =>
+      this.http.request<ProjectResponseModel, any>({
+        path: `/api/Projects/${projectId}`,
+        method: "GET",
         secure: true,
         format: "json",
         ...params,
@@ -1155,12 +1202,7 @@ export class Api<SecurityDataType extends unknown> {
      */
     getAllTasks: (
       query?: {
-        /** @format date-time */
-        from?: string;
-        /** @format date-time */
-        to?: string;
-        /** @default false */
-        isArchived?: boolean;
+        searchText?: string;
       },
       params: RequestParams = {},
     ) =>
@@ -1168,6 +1210,42 @@ export class Api<SecurityDataType extends unknown> {
         path: `/api/Tasks`,
         method: "GET",
         query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tasks
+     * @name CreateTask
+     * @request POST:/api/Tasks
+     * @secure
+     */
+    createTask: (data: TaskCreateModel, params: RequestParams = {}) =>
+      this.http.request<TaskResponseModel, any>({
+        path: `/api/Tasks`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tasks
+     * @name GetTaskById
+     * @request GET:/api/Tasks/{taskItemId}
+     * @secure
+     */
+    getTaskById: (taskItemId: string, params: RequestParams = {}) =>
+      this.http.request<TaskResponseModel, any>({
+        path: `/api/Tasks/${taskItemId}`,
+        method: "GET",
         secure: true,
         format: "json",
         ...params,

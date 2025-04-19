@@ -6,17 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eztalo.TaskService.Application.Queries.ProjectQueries;
 
-public class GetAllProjectsQuery : IRequest<List<ProjectResponseModel>>
+public class GetAllProjectsQuery(string ownerId, string searchText) : IRequest<List<ProjectResponseModel>>
 {
-    public string UserId { get; }
+    public string OwnerId { get; } = ownerId;
 
-    public bool IsArchived { get; set; }
-
-    public GetAllProjectsQuery(string userId, bool isArchived = false)
-    {
-        UserId = userId;
-        IsArchived = isArchived;
-    }
+    public string SearchText { get; set; } = searchText;
 }
 
 public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, List<ProjectResponseModel>>
@@ -30,12 +24,21 @@ public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, L
         _mapper = mapper;
     }
 
-    public async Task<List<ProjectResponseModel>> Handle(GetAllProjectsQuery request, CancellationToken cancellationToken)
+    public async Task<List<ProjectResponseModel>> Handle(GetAllProjectsQuery request,
+        CancellationToken cancellationToken)
     {
-        var projects = await _context.Projects
-            .Where(n => n.UserId == request.UserId && n.IsArchived == request.IsArchived)
-            .OrderByDescending(n => n.Title)
-            .ToListAsync(cancellationToken);
+        var query = _context.Projects
+            .Where(n => n.OwnerId == request.OwnerId)
+            .OrderBy(n => n.Title)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(request.SearchText))
+        {
+            var searchText = request.SearchText.ToLower();
+            query = query.Where(t => t.Title.ToLower().Contains(searchText));
+        }
+
+        var projects = await query.ToListAsync(cancellationToken);
 
         return _mapper.Map<List<ProjectResponseModel>>(projects);
     }

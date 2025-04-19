@@ -26,13 +26,11 @@ public class WorkLogsController : ControllerBase
     public async Task<ActionResult<List<WorkLogResponseModel>>> GetAll(DateTime from, DateTime to,
         bool isArchived = false)
     {
-        var query = new GetAllWorkLogsQuery
-        {
-            UserId = _contextService.UserId,
-            IsArchived = isArchived,
-            From = from,
-            To = to
-        };
+        var query = new GetAllWorkLogsQuery(
+            _contextService.UserId,
+            isArchived,
+            from,
+            to);
         var result = await _mediator.Send(query);
 
         return Ok(result);

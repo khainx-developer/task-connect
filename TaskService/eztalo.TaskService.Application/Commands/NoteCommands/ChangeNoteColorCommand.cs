@@ -1,21 +1,9 @@
 ﻿using eztalo.TaskService.Application.Common.Interfaces;
 using MediatR;
 
-namespace eztalo.TaskService.Application.Commands;
+namespace eztalo.TaskService.Application.Commands.NoteCommands;
 
-public class ChangeNoteColorCommand : IRequest<bool>
-{
-    public Guid Id { get; }
-    public string UserId { get; }
-    public string Color { get; set; }
-
-    public ChangeNoteColorCommand(Guid id, string userId, string color)
-    {
-        Id = id;
-        UserId = userId;
-        Color = color;
-    }
-}
+public record ChangeNoteColorCommand(Guid Id, string OwnerId, string Color) : IRequest<bool>;
 
 public class ChangeNoteColorCommandHandler : IRequestHandler<ChangeNoteColorCommand, bool>
 {
@@ -29,7 +17,7 @@ public class ChangeNoteColorCommandHandler : IRequestHandler<ChangeNoteColorComm
     public async Task<bool> Handle(ChangeNoteColorCommand request, CancellationToken cancellationToken)
     {
         var note = await _context.Notes.FindAsync([request.Id], cancellationToken);
-        if (note == null || note.OwnerId != request.UserId)
+        if (note == null || note.OwnerId != request.OwnerId)
         {
             return false;
         }

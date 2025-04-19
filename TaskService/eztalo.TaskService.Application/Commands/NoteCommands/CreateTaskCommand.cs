@@ -1,37 +1,29 @@
-﻿using MediatR;
+﻿using eztalo.TaskService.Application.Common.Interfaces;
 using eztalo.TaskService.Domain.Entities;
-using eztalo.TaskService.Application.Common.Interfaces;
+using MediatR;
 
-namespace eztalo.TaskService.Application.Commands
+namespace eztalo.TaskService.Application.Commands.NoteCommands
 {
-    public class CreateTaskCommand : IRequest<TaskItem>
+    public record CreateTaskCommand(string Title, string Description, Guid? ProjectId, string OwnerId) : IRequest<Guid>;
+
+    public class CreateTaskCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateTaskCommand, Guid>
     {
-        public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-    }
-
-    public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, TaskItem>
-    {
-        private readonly IApplicationDbContext _context;
-
-        public CreateTaskCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<TaskItem> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
         {
             var task = new TaskItem
             {
+                Id = Guid.NewGuid(),
                 Title = request.Title,
+                ProjectId = request.ProjectId,
                 Description = request.Description,
+                OwnerId = request.OwnerId,
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.TaskItems.Add(task);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.TaskItems.Add(task);
+            await context.SaveChangesAsync(cancellationToken);
 
-            return task;
+            return task.Id;
         }
     }
 }

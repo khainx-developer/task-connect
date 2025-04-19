@@ -2,6 +2,7 @@
 using eztalo.TaskService.Application.Commands;
 using eztalo.TaskService.Application.Commands.NoteCommands;
 using eztalo.TaskService.Application.Queries;
+using eztalo.TaskService.Application.Queries.NoteQueries;
 using eztalo.TaskService.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

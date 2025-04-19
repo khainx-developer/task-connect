@@ -12,7 +12,7 @@ using eztalo.TaskService.Infrastructure.Persistence;
 namespace eztalo.TaskService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250419090811_InitDatabase")]
+    [Migration("20250419161112_InitDatabase")]
     partial class InitDatabase
     {
         /// <inheritdoc />
@@ -82,14 +82,14 @@ namespace eztalo.TaskService.Infrastructure.Migrations
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("text");
+
                     b.Property<string>("Title")
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

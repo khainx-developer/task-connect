@@ -1,43 +1,29 @@
 ﻿using AutoMapper;
-using eztalo.TaskService.Domain.Models;
 using eztalo.TaskService.Application.Common.Interfaces;
+using eztalo.TaskService.Domain.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace eztalo.TaskService.Application.Queries;
+namespace eztalo.TaskService.Application.Queries.NoteQueries;
 
-public class GetAllNotesQuery : IRequest<List<NoteResponseModel>>
+public class GetAllNotesQuery(string ownerId, bool isArchived = false) : IRequest<List<NoteResponseModel>>
 {
-    public string UserId { get; }
+    public string OwnerId { get; } = ownerId;
 
-    public bool IsArchived { get; set; }
-
-    public GetAllNotesQuery(string userId, bool isArchived = false)
-    {
-        UserId = userId;
-        IsArchived = isArchived;
-    }
+    public bool IsArchived { get; set; } = isArchived;
 }
 
-public class GetAllNotesQueryHandler : IRequestHandler<GetAllNotesQuery, List<NoteResponseModel>>
+public class GetAllNotesQueryHandler(IApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<GetAllNotesQuery, List<NoteResponseModel>>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetAllNotesQueryHandler(IApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
-
     public async Task<List<NoteResponseModel>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
     {
-        var notes = await _context.Notes
-            .Where(n => n.OwnerId == request.UserId && n.IsArchived == request.IsArchived)
+        var notes = await context.Notes
+            .Where(n => n.OwnerId == request.OwnerId && n.IsArchived == request.IsArchived)
             .OrderByDescending(n => n.Pinned)
             .ThenBy(n => n.Order)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<List<NoteResponseModel>>(notes);
+        return mapper.Map<List<NoteResponseModel>>(notes);
     }
 }
