@@ -1,4 +1,5 @@
-﻿using eztalo.TaskService.Application.Queries.ProjectQueries;
+﻿using eztalo.TaskService.Api.Services;
+using eztalo.TaskService.Application.Queries.ProjectQueries;
 using eztalo.TaskService.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,19 +13,18 @@ namespace eztalo.TaskService.Api.Controllers;
 public class ProjectsController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IUserContextService _contextService;
 
-    public ProjectsController(IMediator mediator)
+    public ProjectsController(IMediator mediator, IUserContextService contextService)
     {
         _mediator = mediator;
+        _contextService = contextService;
     }
 
     [HttpGet(Name = "Get all projects")]
     public async Task<ActionResult<List<ProjectResponseModel>>> GetAll(bool isArchived = false)
     {
-        var userId = User.FindFirst("user_id")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-        var query = new GetAllProjectsQuery(userId, isArchived);
+        var query = new GetAllProjectsQuery(_contextService.UserId, isArchived);
         var result = await _mediator.Send(query);
 
         return Ok(result);

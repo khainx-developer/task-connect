@@ -37,7 +37,7 @@ export interface User {
   /** @format date-time */
   createdAt?: string;
   /** @format date-time */
-  updatedAt?: string;
+  updatedAt?: string | null;
 }
 
 export interface UserProduct {

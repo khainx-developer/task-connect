@@ -409,7 +409,7 @@ export interface NoteResponseModel {
   /** @format date-time */
   createdAt?: string;
   /** @format date-time */
-  updatedAt?: string;
+  updatedAt?: string | null;
 }
 
 /** @format int32 */
@@ -455,6 +455,8 @@ export interface ProjectResponseModel {
   userId?: string | null;
   /** @format date-time */
   createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string | null;
   tasks?: Task[] | null;
   isArchived?: boolean;
 }
@@ -514,13 +516,6 @@ export interface StructLayoutAttribute {
   value?: LayoutKind;
 }
 
-export interface TagResponseModel {
-  /** @format uuid */
-  id?: string;
-  name?: string | null;
-  tasks?: TaskResponseModel[] | null;
-}
-
 export interface Task {
   /** @format int32 */
   id?: number;
@@ -555,13 +550,13 @@ export interface TaskResponseModel {
   /** @format date-time */
   dueDate?: string | null;
   status?: string | null;
-  userId?: string | null;
+  ownerId?: string | null;
   isArchived?: boolean;
   /** @format date-time */
   createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string | null;
   project?: ProjectResponseModel;
-  workLogs?: WorkLogResponseModel[] | null;
-  tags?: TagResponseModel[] | null;
 }
 
 /** @format int32 */
@@ -778,6 +773,18 @@ export interface TypeInfo {
 export interface UpdateNoteOrderModel {
   order?: string[] | null;
   pinned?: boolean;
+}
+
+export interface WorkLogCreateUpdateModel {
+  /** @format uuid */
+  taskItemId?: string | null;
+  /** @format date-time */
+  fromTime?: string;
+  /** @format date-time */
+  toTime?: string | null;
+  title?: string | null;
+  /** @format uuid */
+  projectId?: string | null;
 }
 
 export interface WorkLogResponseModel {
@@ -1161,6 +1168,71 @@ export class Api<SecurityDataType extends unknown> {
         path: `/api/Tasks`,
         method: "GET",
         query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+  };
+  workLogs = {
+    /**
+     * No description
+     *
+     * @tags WorkLogs
+     * @name GetAllWorkLogs
+     * @request GET:/api/WorkLogs
+     * @secure
+     */
+    getAllWorkLogs: (
+      query?: {
+        /** @format date-time */
+        from?: string;
+        /** @format date-time */
+        to?: string;
+        /** @default false */
+        isArchived?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<WorkLogResponseModel[], any>({
+        path: `/api/WorkLogs`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags WorkLogs
+     * @name CreateWorkLog
+     * @request POST:/api/WorkLogs
+     * @secure
+     */
+    createWorkLog: (data: WorkLogCreateUpdateModel, params: RequestParams = {}) =>
+      this.http.request<WorkLogResponseModel[], any>({
+        path: `/api/WorkLogs`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags WorkLogs
+     * @name GetWorkLogById
+     * @request GET:/api/WorkLogs/{workLogId}
+     * @secure
+     */
+    getWorkLogById: (workLogId: string, params: RequestParams = {}) =>
+      this.http.request<WorkLogResponseModel, any>({
+        path: `/api/WorkLogs/${workLogId}`,
+        method: "GET",
         secure: true,
         format: "json",
         ...params,

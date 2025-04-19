@@ -21,7 +21,6 @@ public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskIte
         return await _context.TaskItems
             .Include(t => t.Project)
             .Include(t => t.WorkLogs)
-            .Include(t => t.Tags)
             .FirstOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
     }
 }

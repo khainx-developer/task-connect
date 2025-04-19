@@ -29,7 +29,7 @@ public class ChangeNoteColorCommandHandler : IRequestHandler<ChangeNoteColorComm
     public async Task<bool> Handle(ChangeNoteColorCommand request, CancellationToken cancellationToken)
     {
         var note = await _context.Notes.FindAsync([request.Id], cancellationToken);
-        if (note == null || note.UserId != request.UserId)
+        if (note == null || note.OwnerId != request.UserId)
         {
             return false;
         }

@@ -25,7 +25,7 @@ public class CreateNoteHandler : IRequestHandler<CreateNoteCommand, NoteResponse
         var note = new Note
         {
             Id = Guid.NewGuid(),
-            UserId = request.UserId,
+            OwnerId = request.UserId,
             Title = request.Title,
             Content = request.Content,
             CreatedAt = DateTime.UtcNow,

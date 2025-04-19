@@ -7,11 +7,11 @@ namespace eztalo.TaskService.Application.Commands.WorkLogCommands;
 
 public record CreateWorkLogCommand(
     string Title,
-    Guid? TaskId,
+    string UserId,
+    Guid? TaskItemId,
     Guid? ProjectId,
     DateTime FromDateTime,
-    DateTime? ToDateTime,
-    List<string> Tags
+    DateTime? ToDateTime
 ) : IRequest<Guid>;
 
 public class CreateWorkLogCommandHandler : IRequestHandler<CreateWorkLogCommand, Guid>
@@ -26,14 +26,14 @@ public class CreateWorkLogCommandHandler : IRequestHandler<CreateWorkLogCommand,
     public async Task<Guid> Handle(CreateWorkLogCommand request, CancellationToken cancellationToken)
     {
         // Find existing task if provided
-        TaskItem taskItem = null;
-        if (request.TaskId.HasValue)
+        TaskItem taskItem;
+        if (request.TaskItemId.HasValue)
         {
             taskItem = await _context.TaskItems
-                .FirstOrDefaultAsync(x => x.Id == request.TaskId.Value, cancellationToken);
+                .FirstOrDefaultAsync(x => x.Id == request.TaskItemId.Value, cancellationToken);
 
             if (taskItem == null)
-                throw new Exception($"Task with ID {request.TaskId} not found");
+                throw new Exception($"Task with ID {request.TaskItemId} not found");
         }
         else
         {
@@ -42,7 +42,7 @@ public class CreateWorkLogCommandHandler : IRequestHandler<CreateWorkLogCommand,
             {
                 Id = Guid.NewGuid(),
                 Title = request.Title,
-                Tags = request.Tags.Select(t=> new Tag { Name = t }).ToList(),
+                OwnerId = request.UserId,
                 CreatedAt = DateTime.UtcNow
             };
 

@@ -3,12 +3,20 @@ using eztalo.TaskService.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace eztalo.TaskService.Application.Commands;
+namespace eztalo.TaskService.Application.Commands.NoteCommands;
 
 public class UpdateNoteOrderCommand : IRequest<bool>
 {
-    public List<Guid> Order { get; set; } = new();
+    public UpdateNoteOrderCommand(string ownerId, List<Guid> order, bool pinned)
+    {
+        OwnerId = ownerId;
+        Order = order;
+        Pinned = pinned;
+    }
+
+    public List<Guid> Order { get; set; }
     public bool Pinned { get; set; }
+    public string OwnerId { get; set; }
 }
 
 public class UpdateNoteOrderHandler : IRequestHandler<UpdateNoteOrderCommand, bool>
@@ -32,7 +40,7 @@ public class UpdateNoteOrderHandler : IRequestHandler<UpdateNoteOrderCommand, bo
 
         // Retrieve notes with matching Pinned status and IDs in the Order list
         var notes = await _context.Notes
-            .Where(n => n.Pinned == request.Pinned && request.Order.Contains(n.Id))
+            .Where(n => n.OwnerId == request.OwnerId && n.Pinned == request.Pinned && request.Order.Contains(n.Id))
             .ToListAsync(cancellationToken);
 
         // Validate that all provided IDs exist in the retrieved notes

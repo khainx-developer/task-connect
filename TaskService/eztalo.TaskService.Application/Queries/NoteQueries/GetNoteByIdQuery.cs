@@ -32,7 +32,7 @@ public class GetNoteByIdQueryHandler : IRequestHandler<GetNoteByIdQuery, NoteRes
     public async Task<NoteResponseModel?> Handle(GetNoteByIdQuery request, CancellationToken cancellationToken)
     {
         var note = await _context.Notes
-            .FirstOrDefaultAsync(n => n.Id == request.Id && n.UserId == request.UserId && !n.IsArchived, cancellationToken);
+            .FirstOrDefaultAsync(n => n.Id == request.Id && n.OwnerId == request.UserId && !n.IsArchived, cancellationToken);
 
         if (note == null) return null;
 

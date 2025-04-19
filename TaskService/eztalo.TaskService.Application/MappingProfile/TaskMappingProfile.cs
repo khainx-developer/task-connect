@@ -4,11 +4,10 @@ using eztalo.TaskService.Domain.Models;
 
 namespace eztalo.TaskService.Application.MappingProfile;
 
-public class NoteMappingProfile : Profile
+public class TaskMappingProfile : Profile
 {
-    public NoteMappingProfile()
+    public TaskMappingProfile()
     {
-        CreateMap<NoteCreateUpdateModel, Note>();
-        CreateMap<Note, NoteResponseModel>();
+        CreateMap<Task, TaskResponseModel>();
     }
 }

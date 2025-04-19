@@ -12,7 +12,7 @@ using eztalo.UserService.Infrastructure.Persistence;
 namespace eztalo.UserService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250407050140_InitDatabase")]
+    [Migration("20250419090620_InitDatabase")]
     partial class InitDatabase
     {
         /// <inheritdoc />
@@ -75,7 +75,7 @@ namespace eztalo.UserService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");

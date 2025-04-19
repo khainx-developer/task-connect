@@ -28,7 +28,7 @@ public class GetAllWorkLogsQueryHandler : IRequestHandler<GetAllWorkLogsQuery, L
     public async Task<List<WorkLogResponseModel>> Handle(GetAllWorkLogsQuery request, CancellationToken cancellationToken)
     {
         var projects = await _context.WorkLogs
-            .Where(workLog => workLog.TaskItem.UserId == request.UserId && workLog.TaskItem.IsArchived == request.IsArchived &&
+            .Where(workLog => workLog.TaskItem.OwnerId == request.UserId && workLog.TaskItem.IsArchived == request.IsArchived &&
                         workLog.IsArchived == request.IsArchived &&
                         workLog.FromTime >= request.From && workLog.ToTime <= request.To)
             .Include(workLog=> workLog.TaskItem.Project)

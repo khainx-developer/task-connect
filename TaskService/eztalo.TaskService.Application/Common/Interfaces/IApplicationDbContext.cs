@@ -7,7 +7,6 @@ namespace eztalo.TaskService.Application.Common.Interfaces
     {
         DbSet<TaskItem> TaskItems { get; }
         DbSet<Note> Notes { get; }
-        DbSet<Tag> Tags { get; }
         DbSet<Project> Projects { get; }
         DbSet<WorkLog> WorkLogs { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);

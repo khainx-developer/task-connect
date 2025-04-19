@@ -12,7 +12,6 @@ namespace eztalo.TaskService.Infrastructure.Persistence
 
         public DbSet<TaskItem> TaskItems { get; set; }
         public DbSet<Note> Notes { get; set; }
-        public DbSet<Tag> Tags { get; }
         public DbSet<Project> Projects { get; }
         public DbSet<WorkLog> WorkLogs { get; }
 
@@ -21,7 +20,7 @@ namespace eztalo.TaskService.Infrastructure.Persistence
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Note>()
-                .HasIndex(n => n.UserId) // Adds an index on UserId
+                .HasIndex(n => n.OwnerId) // Adds an index on UserId
                 .HasDatabaseName("IX_Notes_UserId"); // Optional: gives the index a custom name
         }
     }

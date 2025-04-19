@@ -24,16 +24,7 @@ public class TasksController : ControllerBase
     [HttpGet(Name = "Get all tasks")]
     public async Task<ActionResult<List<TaskResponseModel>>> GetAll(DateTime from, DateTime to, bool isArchived = false)
     {
-        if (string.IsNullOrEmpty(_contextService.UserId))
-            return Unauthorized();
-
-        var query = new GetAllTasksQuery
-        {
-            UserId = _contextService.UserId,
-            IsArchived = isArchived,
-            From = from,
-            To = to
-        };
+        var query = new GetAllTasksQuery(_contextService.UserId, isArchived, from, to);
         var result = await _mediator.Send(query);
 
         return Ok(result);

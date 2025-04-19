@@ -27,7 +27,7 @@ public class DeleteNoteCommandHandler : IRequestHandler<DeleteNoteCommand, bool>
     public async Task<bool> Handle(DeleteNoteCommand request, CancellationToken cancellationToken)
     {
         var note = await _context.Notes.FindAsync([request.Id], cancellationToken);
-        if (note == null || note.UserId != request.UserId)
+        if (note == null || note.OwnerId != request.UserId)
         {
             return false;
         }

@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eztalo.TaskService.Application.Queries.TaskQueries;
 
-public class GetAllTasksQuery : IRequest<List<TaskResponseModel>>
+public class GetAllTasksQuery(string userId, bool isArchived = false, DateTime from = default, DateTime to = default)
+    : IRequest<List<TaskResponseModel>>
 {
-    public string UserId { get; set; }
-    public bool IsArchived { get; set; }
-    public DateTime From { get; set; }
-    public DateTime To { get; set; }
+    public string UserId { get; set; } = userId;
+    public bool IsArchived { get; set; } = isArchived;
+    public DateTime From { get; set; } = from;
+    public DateTime To { get; set; } = to;
 }
 
 public class GetAllTasksQueryHandler : IRequestHandler<GetAllTasksQuery, List<TaskResponseModel>>
@@ -28,10 +29,9 @@ public class GetAllTasksQueryHandler : IRequestHandler<GetAllTasksQuery, List<Ta
     public async Task<List<TaskResponseModel>> Handle(GetAllTasksQuery request, CancellationToken cancellationToken)
     {
         var projects = await _context.TaskItems
-            .Where(n => n.UserId == request.UserId && n.IsArchived == request.IsArchived &&
+            .Where(n => n.OwnerId == request.UserId && n.IsArchived == request.IsArchived &&
                         n.WorkLogs.Any(wl => wl.FromTime >= request.From && wl.ToTime <= request.To))
             .Include(t => t.Project)
-            .Include(t => t.Tags)
             .ToListAsync(cancellationToken);
 
         return _mapper.Map<List<TaskResponseModel>>(projects);

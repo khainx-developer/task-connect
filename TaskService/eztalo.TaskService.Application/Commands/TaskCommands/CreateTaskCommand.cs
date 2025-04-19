@@ -56,24 +56,6 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Guid>
             DueDate = request.DueDate
         };
 
-        if (request.Tags is not null && request.Tags.Any())
-        {
-            var tags = await _context.Tags
-                .Where(t => request.Tags.Contains(t.Name))
-                .ToListAsync(cancellationToken);
-
-            var newTagNames = request.Tags.Except(tags.Select(t => t.Name));
-
-            foreach (var tagName in newTagNames)
-            {
-                var newTag = new Tag { Id = Guid.NewGuid(), Name = tagName };
-                _context.Tags.Add(newTag);
-                tags.Add(newTag);
-            }
-
-            task.Tags = tags;
-        }
-
         _context.TaskItems.Add(task);
         await _context.SaveChangesAsync(cancellationToken);
 

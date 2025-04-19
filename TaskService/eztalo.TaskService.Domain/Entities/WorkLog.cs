@@ -8,6 +8,5 @@ public class WorkLog
     public DateTime? ToTime { get; set; }
     public int? PercentCompleteAfter { get; set; }
     public bool IsArchived { get; set; }
-
     public TaskItem TaskItem { get; set; }
 }

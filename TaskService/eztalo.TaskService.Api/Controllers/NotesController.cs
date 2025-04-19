@@ -1,4 +1,6 @@
-﻿using eztalo.TaskService.Application.Commands;
+﻿using eztalo.TaskService.Api.Services;
+using eztalo.TaskService.Application.Commands;
+using eztalo.TaskService.Application.Commands.NoteCommands;
 using eztalo.TaskService.Application.Queries;
 using eztalo.TaskService.Domain.Models;
 using MediatR;
@@ -13,19 +15,18 @@ namespace eztalo.TaskService.Api.Controllers;
 public class NotesController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IUserContextService _contextService;
 
-    public NotesController(IMediator mediator)
+    public NotesController(IMediator mediator, IUserContextService contextService)
     {
         _mediator = mediator;
+        _contextService = contextService;
     }
 
     [HttpPost(Name = "Create Note")]
     public async Task<ActionResult<NoteResponseModel>> Create([FromBody] NoteCreateUpdateModel updateModel)
     {
-        var userId = User.FindFirst("user_id")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-        var command = new CreateNoteCommand(userId, updateModel.Title, updateModel.Content);
+        var command = new CreateNoteCommand(_contextService.UserId, updateModel.Title, updateModel.Content);
         var result = await _mediator.Send(command);
 
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
@@ -34,22 +35,16 @@ public class NotesController : ControllerBase
     [HttpGet(Name = "Get all notes")]
     public async Task<ActionResult<List<NoteResponseModel>>> GetAll(bool isArchived = false)
     {
-        var userId = User.FindFirst("user_id")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-        var query = new GetAllNotesQuery(userId, isArchived);
+        var query = new GetAllNotesQuery(_contextService.UserId, isArchived);
         var result = await _mediator.Send(query);
 
         return Ok(result);
     }
 
-    [HttpGet("{id}", Name = "Get note by ID")]
+    [HttpGet("{id}", Name = "Get note by Id")]
     public async Task<ActionResult<NoteResponseModel>> GetById(Guid id)
     {
-        var userId = User.FindFirst("user_id")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-        var query = new GetNoteByIdQuery(id, userId);
+        var query = new GetNoteByIdQuery(id, _contextService.UserId);
         var result = await _mediator.Send(query);
 
         if (result == null)
@@ -60,13 +55,10 @@ public class NotesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("{id}", Name = "Delete note by ID")]
+    [HttpDelete("{id}", Name = "Delete note by Id")]
     public async Task<ActionResult<bool>> Delete(Guid id)
     {
-        var userId = User.FindFirst("user_id")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-        var command = new DeleteNoteCommand(id, userId);
+        var command = new DeleteNoteCommand(id, _contextService.UserId);
         await _mediator.Send(command);
 
         return NoContent();
@@ -75,10 +67,7 @@ public class NotesController : ControllerBase
     [HttpPatch("{id}/pin", Name = "Pin or unpin note")]
     public async Task<ActionResult<NoteResponseModel>> Pin(Guid id, [FromBody] bool pin)
     {
-        var userId = User.FindFirst("user_id")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-        var command = new PinNoteCommand(id, userId, pin);
+        var command = new PinNoteCommand(id, _contextService.UserId, pin);
         await _mediator.Send(command);
 
         return await GetById(id);
@@ -87,10 +76,7 @@ public class NotesController : ControllerBase
     [HttpPatch("{id}/color", Name = "Update note color")]
     public async Task<ActionResult<NoteResponseModel>> ChangeColor(Guid id, [FromBody] string color)
     {
-        var userId = User.FindFirst("user_id")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-        var command = new ChangeNoteColorCommand(id, userId, color);
+        var command = new ChangeNoteColorCommand(id, _contextService.UserId, color);
         await _mediator.Send(command);
 
         return await GetById(id);
@@ -100,10 +86,7 @@ public class NotesController : ControllerBase
     public async Task<ActionResult<NoteResponseModel>> ChangeColor(Guid id,
         [FromBody] NoteCreateUpdateModel updateModel)
     {
-        var userId = User.FindFirst("user_id")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-        var command = new UpdateNoteCommand(id, userId, updateModel.Title, updateModel.Content);
+        var command = new UpdateNoteCommand(id, _contextService.UserId, updateModel.Title, updateModel.Content);
         await _mediator.Send(command);
 
         return await GetById(id);
@@ -113,13 +96,11 @@ public class NotesController : ControllerBase
     public async Task<IActionResult> UpdateNoteOrder(
         [FromBody] UpdateNoteOrderModel updateModel)
     {
-        var userId = User.FindFirst("user_id")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-        var command = new UpdateNoteOrderCommand()
-        {
-            Order = updateModel.Order, Pinned = updateModel.Pinned
-        };
+        var command = new UpdateNoteOrderCommand(
+            _contextService.UserId,
+            updateModel.Order,
+            updateModel.Pinned
+        );
         await _mediator.Send(command);
         return Ok();
     }
