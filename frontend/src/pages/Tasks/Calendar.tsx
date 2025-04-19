@@ -47,13 +47,6 @@ const TaskCalendar: React.FC = () => {
   const calendarRef = useRef<FullCalendar>(null);
   const { isOpen, openModal, closeModal } = useModal();
 
-  const calendarsEvents = {
-    Danger: "danger",
-    Success: "success",
-    Primary: "primary",
-    Warning: "warning",
-  };
-
   // Fetch projects on mount
   useEffect(() => {
     const fetchProjects = async () => {

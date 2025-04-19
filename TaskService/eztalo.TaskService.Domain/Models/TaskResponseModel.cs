@@ -1,6 +1,4 @@
-﻿using eztalo.TaskService.Domain.Entities;
-
-namespace eztalo.TaskService.Domain.Models
+﻿namespace eztalo.TaskService.Domain.Models
 {
     public class TaskResponseModel
     {
@@ -15,7 +13,6 @@ namespace eztalo.TaskService.Domain.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public ProjectResponseModel Project { get; set; }
-        public ICollection<WorkLogResponseModel> WorkLogs { get; set; } = new List<WorkLogResponseModel>();
         public ICollection<TagResponseModel> Tags { get; set; } = new List<TagResponseModel>();
     }
 }

@@ -34,7 +34,7 @@ public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, L
     {
         var projects = await _context.Projects
             .Where(n => n.UserId == request.UserId && n.IsArchived == request.IsArchived)
-            .OrderByDescending(n => n.Name)
+            .OrderByDescending(n => n.Title)
             .ToListAsync(cancellationToken);
 
         return _mapper.Map<List<ProjectResponseModel>>(projects);

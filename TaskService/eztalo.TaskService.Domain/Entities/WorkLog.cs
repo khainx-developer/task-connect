@@ -5,9 +5,9 @@ public class WorkLog
     public Guid Id { get; set; }
     public Guid TaskId { get; set; }
     public DateTime FromTime { get; set; }
-    public DateTime ToTime { get; set; }
+    public DateTime? ToTime { get; set; }
     public int? PercentCompleteAfter { get; set; }
-    public string Note { get; set; }
+    public bool IsArchived { get; set; }
 
-    public Task Task { get; set; } = null!;
+    public TaskItem TaskItem { get; set; }
 }

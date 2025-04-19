@@ -1,5 +1,6 @@
 ﻿using eztalo.TaskService.Api.Services;
 using eztalo.TaskService.Application.Queries.TaskQueries;
+using eztalo.TaskService.Application.Queries.WorkLogQueries;
 using eztalo.TaskService.Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -10,24 +11,23 @@ namespace eztalo.TaskService.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class TasksController : ControllerBase
+public class WorkLogsController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IUserContextService _contextService;
 
-    public TasksController(IMediator mediator, IUserContextService contextService)
+    public WorkLogsController(IMediator mediator, IUserContextService contextService)
     {
         _mediator = mediator;
         _contextService = contextService;
     }
 
-    [HttpGet(Name = "Get all tasks")]
-    public async Task<ActionResult<List<TaskResponseModel>>> GetAll(DateTime from, DateTime to, bool isArchived = false)
+    [HttpGet(Name = "Get all WorkLogs")]
+    public async Task<ActionResult<List<WorkLogResponseModel>>> GetAll(DateTime from, DateTime to, bool isArchived = false)
     {
         if (string.IsNullOrEmpty(_contextService.UserId))
             return Unauthorized();
-
-        var query = new GetAllTasksQuery
+        var query = new GetAllWorkLogsQuery
         {
             UserId = _contextService.UserId,
             IsArchived = isArchived,

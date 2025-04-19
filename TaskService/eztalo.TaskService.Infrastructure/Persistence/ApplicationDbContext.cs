@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using eztalo.TaskService.Application.Common.Interfaces;
 using eztalo.TaskService.Domain.Entities;
-using Task = eztalo.TaskService.Domain.Entities.Task;
 
 namespace eztalo.TaskService.Infrastructure.Persistence
 {
@@ -11,7 +10,7 @@ namespace eztalo.TaskService.Infrastructure.Persistence
         {
         }
 
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<TaskItem> TaskItems { get; set; }
         public DbSet<Note> Notes { get; set; }
         public DbSet<Tag> Tags { get; }
         public DbSet<Project> Projects { get; }

@@ -8,7 +8,7 @@ namespace eztalo.TaskService.Application.Queries.TaskQueries;
 
 public class GetAllTasksQuery : IRequest<List<TaskResponseModel>>
 {
-    public string UserId { get; }
+    public string UserId { get; set; }
     public bool IsArchived { get; set; }
     public DateTime From { get; set; }
     public DateTime To { get; set; }
@@ -27,11 +27,10 @@ public class GetAllTasksQueryHandler : IRequestHandler<GetAllTasksQuery, List<Ta
 
     public async Task<List<TaskResponseModel>> Handle(GetAllTasksQuery request, CancellationToken cancellationToken)
     {
-        var projects = await _context.Tasks
+        var projects = await _context.TaskItems
             .Where(n => n.UserId == request.UserId && n.IsArchived == request.IsArchived &&
                         n.WorkLogs.Any(wl => wl.FromTime >= request.From && wl.ToTime <= request.To))
             .Include(t => t.Project)
-            .Include(t => t.WorkLogs)
             .Include(t => t.Tags)
             .ToListAsync(cancellationToken);
 

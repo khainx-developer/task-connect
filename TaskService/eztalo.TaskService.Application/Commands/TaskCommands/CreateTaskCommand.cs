@@ -2,7 +2,6 @@
 using eztalo.TaskService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Task = eztalo.TaskService.Domain.Entities.Task;
 
 namespace eztalo.TaskService.Application.Commands.TaskCommands;
 
@@ -33,7 +32,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Guid>
             var newProject = new Project
             {
                 Id = Guid.NewGuid(),
-                Name = request.NewProjectName
+                Title = request.NewProjectName
             };
 
             _context.Projects.Add(newProject);
@@ -48,7 +47,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Guid>
             }
         }
 
-        var task = new Task
+        var task = new TaskItem
         {
             Id = Guid.NewGuid(),
             Title = request.Title,
@@ -75,7 +74,7 @@ public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Guid>
             task.Tags = tags;
         }
 
-        _context.Tasks.Add(task);
+        _context.TaskItems.Add(task);
         await _context.SaveChangesAsync(cancellationToken);
 
         return task.Id;

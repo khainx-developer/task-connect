@@ -2,13 +2,12 @@
 using eztalo.TaskService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Task = eztalo.TaskService.Domain.Entities.Task;
 
 namespace eztalo.TaskService.Application.Queries.TaskQueries;
 
-public record GetTaskByIdQuery(Guid Id) : IRequest<Task>;
+public record GetTaskByIdQuery(Guid Id) : IRequest<TaskItem>;
 
-public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, Task>
+public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, TaskItem>
 {
     private readonly IApplicationDbContext _context;
 
@@ -17,9 +16,9 @@ public class GetTaskByIdQueryHandler : IRequestHandler<GetTaskByIdQuery, Task>
         _context = context;
     }
 
-    public async Task<Task> Handle(GetTaskByIdQuery request, CancellationToken cancellationToken)
+    public async Task<TaskItem> Handle(GetTaskByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Tasks
+        return await _context.TaskItems
             .Include(t => t.Project)
             .Include(t => t.WorkLogs)
             .Include(t => t.Tags)
