@@ -20,7 +20,7 @@ public class StartTaskCommandHandler : IRequestHandler<StartTaskCommand, Guid>
         var workLog = new WorkLog
         {
             Id = Guid.NewGuid(),
-            TaskId = request.TaskId,
+            TaskItemId = request.TaskId,
             FromTime = DateTime.UtcNow
         };
 

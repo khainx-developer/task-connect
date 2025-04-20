@@ -77,12 +77,11 @@ namespace eztalo.TaskService.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    TaskId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: false),
                     FromTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ToTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     PercentCompleteAfter = table.Column<int>(type: "integer", nullable: true),
-                    IsArchived = table.Column<bool>(type: "boolean", nullable: false),
-                    TaskItemId = table.Column<Guid>(type: "uuid", nullable: true)
+                    IsArchived = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,7 +90,8 @@ namespace eztalo.TaskService.Infrastructure.Migrations
                         name: "FK_WorkLogs_TaskItems_TaskItemId",
                         column: x => x.TaskItemId,
                         principalTable: "TaskItems",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -100,9 +100,19 @@ namespace eztalo.TaskService.Infrastructure.Migrations
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Projects_UserId",
+                table: "Projects",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TaskItems_ProjectId",
                 table: "TaskItems",
                 column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskItems_UserId",
+                table: "TaskItems",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkLogs_TaskItemId",

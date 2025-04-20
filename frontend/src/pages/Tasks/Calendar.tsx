@@ -66,7 +66,7 @@ const TaskCalendar: React.FC = () => {
       const calendarEvents: CalendarEvent[] = fetchedWorkLogs.map(
         (workLog) => ({
           id: workLog.id ?? "",
-          title: `${workLog.task?.title ?? "Untitled"}: ${new Date(
+          title: `${workLog.taskItem?.title ?? "Untitled"}: ${new Date(
             workLog.fromTime ?? ""
           ).toLocaleTimeString([], {
             hour: "2-digit",
@@ -79,9 +79,9 @@ const TaskCalendar: React.FC = () => {
           end: workLog.toTime,
           allDay: false,
           extendedProps: {
-            taskId: workLog.taskId ?? "",
+            taskId: workLog.taskItemId ?? "",
             workLogId: workLog.id ?? "",
-            taskTitle: workLog.task?.title ?? "Untitled",
+            taskTitle: workLog.taskItem?.title ?? "Untitled",
           },
         })
       );
@@ -163,7 +163,7 @@ const TaskCalendar: React.FC = () => {
       .getWorkLogById(workLogId)
       .then((response) => {
         const workLog = response.data;
-        const task = workLog.task;
+        const task = workLog.taskItem;
 
         if (task && workLog) {
           setSelectedTask(task);
@@ -177,7 +177,7 @@ const TaskCalendar: React.FC = () => {
             new Date(workLog.toTime ?? "").toISOString().slice(0, 16)
           );
           setEventProject(task.projectId || "");
-          setEventDescription(workLog.note || "");
+          setEventDescription(workLog.taskItem?.title || "");
           openModal();
         }
       })
@@ -276,7 +276,10 @@ const TaskCalendar: React.FC = () => {
     setProjectSuggestions([]);
   };
 
-  const renderEventContent = (eventInfo: any) => {
+  const renderEventContent = (eventInfo: {
+    timeText: string;
+    event: { title: string };
+  }) => {
     const colorClass = `fc-bg-primary`;
     return (
       <div

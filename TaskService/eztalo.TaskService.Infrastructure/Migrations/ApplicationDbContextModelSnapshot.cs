@@ -90,6 +90,9 @@ namespace eztalo.TaskService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OwnerId")
+                        .HasDatabaseName("IX_Projects_UserId");
+
                     b.ToTable("Projects");
                 });
 
@@ -125,6 +128,9 @@ namespace eztalo.TaskService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("OwnerId")
+                        .HasDatabaseName("IX_TaskItems_UserId");
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("TaskItems");
@@ -145,10 +151,7 @@ namespace eztalo.TaskService.Infrastructure.Migrations
                     b.Property<int?>("PercentCompleteAfter")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("TaskId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("TaskItemId")
+                    b.Property<Guid>("TaskItemId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ToTime")
@@ -174,7 +177,9 @@ namespace eztalo.TaskService.Infrastructure.Migrations
                 {
                     b.HasOne("eztalo.TaskService.Domain.Entities.TaskItem", "TaskItem")
                         .WithMany("WorkLogs")
-                        .HasForeignKey("TaskItemId");
+                        .HasForeignKey("TaskItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("TaskItem");
                 });

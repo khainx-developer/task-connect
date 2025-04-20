@@ -13,22 +13,24 @@ public class GetAllWorkLogsQuery(
     DateTime to = default)
     : IRequest<List<WorkLogResponseModel>>
 {
-    public string OwnerId { get; set;} = ownerId;
+    public string OwnerId { get; set; } = ownerId;
     public bool IsArchived { get; set; } = isArchived;
-    public DateTime From { get; set; } = from;
-    public DateTime To { get; set; } = to;
+    public DateTime From { get; set; } = from.ToUniversalTime();
+    public DateTime To { get; set; } = to.ToUniversalTime();
 }
 
 public class GetAllWorkLogsQueryHandler(IApplicationDbContext context, IMapper mapper)
     : IRequestHandler<GetAllWorkLogsQuery, List<WorkLogResponseModel>>
 {
-    public async Task<List<WorkLogResponseModel>> Handle(GetAllWorkLogsQuery request, CancellationToken cancellationToken)
+    public async Task<List<WorkLogResponseModel>> Handle(GetAllWorkLogsQuery request,
+        CancellationToken cancellationToken)
     {
         var projects = await context.WorkLogs
-            .Where(workLog => workLog.TaskItem.OwnerId == request.OwnerId && workLog.TaskItem.IsArchived == request.IsArchived &&
-                        workLog.IsArchived == request.IsArchived &&
-                        workLog.FromTime >= request.From && workLog.ToTime <= request.To)
-            .Include(workLog=> workLog.TaskItem.Project)
+            .Where(workLog => workLog.TaskItem.OwnerId == request.OwnerId &&
+                              workLog.TaskItem.IsArchived == request.IsArchived &&
+                              workLog.FromTime >= request.From &&
+                              workLog.ToTime <= request.To)
+            .Include(workLog => workLog.TaskItem.Project)
             .ToListAsync(cancellationToken);
 
         return mapper.Map<List<WorkLogResponseModel>>(projects);

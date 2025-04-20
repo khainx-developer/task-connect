@@ -803,15 +803,14 @@ export interface WorkLogResponseModel {
   /** @format uuid */
   id?: string;
   /** @format uuid */
-  taskId?: string;
+  taskItemId?: string;
   /** @format date-time */
   fromTime?: string;
   /** @format date-time */
   toTime?: string;
   /** @format int32 */
   percentCompleteAfter?: number | null;
-  note?: string | null;
-  task?: TaskResponseModel;
+  taskItem?: TaskResponseModel;
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
@@ -1289,7 +1288,7 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     createWorkLog: (data: WorkLogCreateUpdateModel, params: RequestParams = {}) =>
-      this.http.request<WorkLogResponseModel[], any>({
+      this.http.request<WorkLogResponseModel, any>({
         path: `/api/WorkLogs`,
         method: "POST",
         body: data,

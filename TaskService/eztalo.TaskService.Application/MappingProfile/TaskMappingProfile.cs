@@ -8,6 +8,6 @@ public class TaskMappingProfile : Profile
 {
     public TaskMappingProfile()
     {
-        CreateMap<Task, TaskResponseModel>();
+        CreateMap<TaskItem, TaskResponseModel>();
     }
 }

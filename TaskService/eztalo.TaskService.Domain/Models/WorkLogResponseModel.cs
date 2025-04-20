@@ -3,12 +3,10 @@
     public class WorkLogResponseModel
     {
         public Guid Id { get; set; }
-        public Guid TaskId { get; set; }
+        public Guid TaskItemId { get; set; }
         public DateTime FromTime { get; set; }
         public DateTime ToTime { get; set; }
         public int? PercentCompleteAfter { get; set; }
-        public string Note { get; set; }
-
-        public TaskResponseModel Task { get; set; } = null!;
+        public TaskResponseModel TaskItem { get; set; } = null!;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace eztalo.TaskService.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace eztalo.TaskService.Domain.Entities;
 
 public class TaskItem
 {
@@ -11,6 +13,6 @@ public class TaskItem
     public bool IsArchived { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
-    public Project Project { get; set; }
+    [ForeignKey(nameof(ProjectId))] public Project Project { get; set; }
     public ICollection<WorkLog> WorkLogs { get; set; } = new List<WorkLog>();
 }

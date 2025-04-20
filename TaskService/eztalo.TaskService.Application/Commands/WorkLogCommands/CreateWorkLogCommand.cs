@@ -5,14 +5,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace eztalo.TaskService.Application.Commands.WorkLogCommands;
 
-public record CreateWorkLogCommand(
-    string Title,
-    string OwnerId,
-    Guid? TaskItemId,
-    Guid? ProjectId,
-    DateTime FromDateTime,
-    DateTime? ToDateTime
-) : IRequest<Guid>;
+public class CreateWorkLogCommand(
+    string title,
+    string ownerId,
+    Guid? taskItemId,
+    Guid? projectId,
+    DateTime fromDateTime,
+    DateTime? toDateTime
+) : IRequest<Guid>
+{
+    public string Title { get; } = title;
+    public string OwnerId { get; } = ownerId;
+    public Guid? TaskItemId { get; } = taskItemId;
+    public Guid? ProjectId { get; } = projectId;
+    public DateTime? ToDateTime { get; } = toDateTime?.ToUniversalTime();
+    public DateTime FromDateTime { get; init; } = fromDateTime.ToUniversalTime();
+}
 
 public class CreateWorkLogCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateWorkLogCommand, Guid>
 {
@@ -58,7 +66,7 @@ public class CreateWorkLogCommandHandler(IApplicationDbContext context) : IReque
         var workLog = new WorkLog
         {
             Id = Guid.NewGuid(),
-            TaskId = taskItem.Id,
+            TaskItemId = taskItem.Id,
             FromTime = request.FromDateTime,
             ToTime = request.ToDateTime,
         };

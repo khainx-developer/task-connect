@@ -37,7 +37,7 @@ public class WorkLogsController : ControllerBase
     }
 
     [HttpPost(Name = "Create work log")]
-    public async Task<ActionResult<List<WorkLogResponseModel>>> Create(WorkLogCreateUpdateModel model)
+    public async Task<ActionResult<WorkLogResponseModel>> Create(WorkLogCreateUpdateModel model)
     {
         var command = new CreateWorkLogCommand(
             model.Title,
@@ -48,7 +48,7 @@ public class WorkLogsController : ControllerBase
             model.ToTime);
         var result = await _mediator.Send(command);
 
-        return Ok(result);
+        return await Get(result);
     }
 
     [HttpGet("{workLogId}", Name = "Get work log by Id")]
