@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GithubActions", "GithubActi
 		.github\workflows\build-task-service.yml = .github\workflows\build-task-service.yml
 		.github\workflows\build-user-service.yml = .github\workflows\build-user-service.yml
 		.github\workflows\build-fe.yml = .github\workflows\build-fe.yml
+		.github\workflows\build-local-fe.yml = .github\workflows\build-local-fe.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dockerfiles", "dockerfiles", "{DF5363C8-55F7-4BA0-B696-0FEEBC6A4B02}"
