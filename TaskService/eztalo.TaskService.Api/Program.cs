@@ -116,7 +116,7 @@ void AddSwagger(WebApplicationBuilder webApplication)
 
 void UseSwagger(WebApplication webApplication)
 {
-    if (webApplication.Environment.IsDevelopment() || webApplication.Environment.IsStaging())
+    if (!webApplication.Environment.IsProduction())
     {
         webApplication.UseSwagger();
         webApplication.UseSwaggerUI(options =>

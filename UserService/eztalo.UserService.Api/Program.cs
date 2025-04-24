@@ -137,7 +137,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Enable Swagger UI
-if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+if (!app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI(options =>

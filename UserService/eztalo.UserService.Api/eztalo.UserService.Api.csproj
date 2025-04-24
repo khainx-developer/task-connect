@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.Development.json">
+    <Content Update="appsettings.Localelopment.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
     <Content Update="appsettings.Production.json">
