@@ -47,5 +47,4 @@ jobs:
 
       - name: Push Docker images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/eztalo-fe:${{ env.TAG }}
           docker push ${{ secrets.DOCKER_USERNAME }}/eztalo-fe:latest
