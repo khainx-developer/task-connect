@@ -7,6 +7,7 @@ public interface IApplicationDbContext
 {
     DbSet<TaskItem> TaskItems { get; set; }
     DbSet<Note> Notes { get; set; }
+    DbSet<ChecklistItem> ChecklistItems { get; set; }
     DbSet<Project> Projects { get; set; }
     DbSet<WorkLog> WorkLogs { get; set; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

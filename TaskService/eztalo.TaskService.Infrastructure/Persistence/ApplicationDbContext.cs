@@ -12,6 +12,7 @@ namespace eztalo.TaskService.Infrastructure.Persistence
 
         public DbSet<TaskItem> TaskItems { get; set; }
         public DbSet<Note> Notes { get; set; }
+        public DbSet<ChecklistItem> ChecklistItems { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<WorkLog> WorkLogs { get; set; }
 

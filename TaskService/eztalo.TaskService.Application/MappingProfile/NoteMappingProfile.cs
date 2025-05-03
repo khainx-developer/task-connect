@@ -10,5 +10,7 @@ public class NoteMappingProfile : Profile
     {
         CreateMap<NoteCreateUpdateModel, Note>();
         CreateMap<Note, NoteResponseModel>();
+        
+        CreateMap<ChecklistItem, ChecklistItemModel>();
     }
 }

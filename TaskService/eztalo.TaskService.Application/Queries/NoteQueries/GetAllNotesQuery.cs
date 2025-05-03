@@ -19,6 +19,7 @@ public class GetAllNotesQueryHandler(IApplicationDbContext context, IMapper mapp
     public async Task<List<NoteResponseModel>> Handle(GetAllNotesQuery request, CancellationToken cancellationToken)
     {
         var notes = await context.Notes
+            .Include(i => i.ChecklistItems)
             .Where(n => n.OwnerId == request.OwnerId && n.IsArchived == request.IsArchived)
             .OrderByDescending(n => n.Pinned)
             .ThenBy(n => n.Order)

@@ -18,7 +18,9 @@ public class GetNoteByIdQueryHandler(IApplicationDbContext context, IMapper mapp
     public async Task<NoteResponseModel> Handle(GetNoteByIdQuery request, CancellationToken cancellationToken)
     {
         var note = await context.Notes
-            .FirstOrDefaultAsync(n => n.Id == request.Id && n.OwnerId == request.OwnerId && !n.IsArchived, cancellationToken);
+            .Include(i => i.ChecklistItems)
+            .FirstOrDefaultAsync(n => n.Id == request.Id && n.OwnerId == request.OwnerId && !n.IsArchived,
+                cancellationToken);
 
         if (note == null) return null;
 

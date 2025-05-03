@@ -9,26 +9,45 @@
  * ---------------------------------------------------------------
  */
 
-export interface NoteCreateUpdateModel {
+export interface ChecklistItemModel {
   /** @format uuid */
-  id?: string;
+  id?: string | null;
+  text?: string | null;
+  isCompleted?: boolean;
+  /** @format int32 */
+  order?: number;
+}
+
+export interface NoteCreateUpdateModel {
   title?: string | null;
   content?: string | null;
+  type?: NoteType;
+  checklistItems?: ChecklistItemModel[] | null;
 }
 
 export interface NoteResponseModel {
   /** @format uuid */
   id?: string;
+  ownerId?: string | null;
   title?: string | null;
   content?: string | null;
-  color?: string | null;
+  type?: NoteType;
   pinned?: boolean;
-  /** @format int32 */
-  order?: number;
+  color?: string | null;
   /** @format date-time */
   createdAt?: string;
   /** @format date-time */
   updatedAt?: string | null;
+  isArchived?: boolean;
+  /** @format int32 */
+  order?: number;
+  checklistItems?: ChecklistItemModel[] | null;
+}
+
+/** @format int32 */
+export enum NoteType {
+  Text = 0,
+  Checklist = 1,
 }
 
 export interface ProjectCreateModel {
@@ -420,6 +439,40 @@ export class Api<SecurityDataType extends unknown> {
         secure: true,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name UpdateInsertChecklistItem
+     * @request POST:/api/Notes/{noteId}/checklist
+     * @secure
+     */
+    updateInsertChecklistItem: (noteId: string, data: ChecklistItemModel, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/Notes/${noteId}/checklist`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name DeleteChecklistItem
+     * @request DELETE:/api/Notes/{noteId}/checklist/{itemId}
+     * @secure
+     */
+    deleteChecklistItem: (noteId: string, itemId: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/Notes/${noteId}/checklist/${itemId}`,
+        method: "DELETE",
+        secure: true,
         ...params,
       }),
   };

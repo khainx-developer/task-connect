@@ -1,8 +1,11 @@
-﻿namespace eztalo.TaskService.Domain.Models;
+﻿using eztalo.TaskService.Domain.Entities;
+
+namespace eztalo.TaskService.Domain.Models;
 
 public class NoteCreateUpdateModel
 {
-    public Guid Id { get; set; }
     public string Title { get; set; }
     public string Content { get; set; }
+    public NoteType Type { get; set; } = NoteType.Text;
+    public List<ChecklistItemModel> ChecklistItems { get; set; } = new List<ChecklistItemModel>();
 }

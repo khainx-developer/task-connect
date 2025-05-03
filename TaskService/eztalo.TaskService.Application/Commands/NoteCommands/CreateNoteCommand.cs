@@ -6,8 +6,13 @@ using MediatR;
 
 namespace eztalo.TaskService.Application.Commands.NoteCommands;
 
-public record CreateNoteCommand(string OwnerId, string Title, string Content)
-    : IRequest<NoteResponseModel>;
+public record CreateNoteCommand(
+    string OwnerId,
+    string Title,
+    string Content,
+    NoteType Type,
+    List<ChecklistItemModel> ChecklistItems
+) : IRequest<NoteResponseModel>;
 
 public class CreateNoteHandler : IRequestHandler<CreateNoteCommand, NoteResponseModel>
 {
@@ -27,10 +32,30 @@ public class CreateNoteHandler : IRequestHandler<CreateNoteCommand, NoteResponse
             Id = Guid.NewGuid(),
             OwnerId = request.OwnerId,
             Title = request.Title,
-            Content = request.Content,
+            Content = request.Type == NoteType.Text
+                ? request.Content
+                : string.Empty, // Content used only for Text notes
+            Type = request.Type,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
+
+        // Add checklist items for Checklist notes
+        if (request.Type == NoteType.Checklist && request.ChecklistItems != null)
+        {
+            foreach (var item in request.ChecklistItems)
+            {
+                note.ChecklistItems.Add(new ChecklistItem
+                {
+                    Id = Guid.NewGuid(),
+                    NoteId = note.Id,
+                    Text = item.Text,
+                    IsCompleted = item.IsCompleted,
+                    Order = item.Order,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+        }
 
         _context.Notes.Add(note);
         await _context.SaveChangesAsync(cancellationToken);
