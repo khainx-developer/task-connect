@@ -1,8 +1,4 @@
-import { getAuth } from "firebase/auth";
-import {
-  Api as IdentityApi,
-  HttpClient as UserClient,
-} from "./userApiClient";
+import { Api as IdentityApi, HttpClient as UserClient } from "./userApiClient";
 import {
   Api as TaskManagerApi,
   HttpClient as TaskClient,
@@ -14,13 +10,8 @@ import { toast } from "react-toastify";
 const applyAxiosInterceptors = (instance: AxiosInstance) => {
   instance.interceptors.request.use(
     async (config) => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        const token = await user.getIdToken();
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+      const token = localStorage.getItem("access_token");
+      config.headers.Authorization = `Bearer ${token}`;
 
       return config;
     },

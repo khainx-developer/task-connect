@@ -2,7 +2,7 @@
 using eztalo.UserService.Application.Common.Interfaces;
 using eztalo.UserService.Domain.Entities;
 
-public record CreateUserCommand(string FirebaseUid, string Email, string Name) : IRequest<User>;
+public record CreateUserCommand(string Uid, string Email, string Name) : IRequest<User>;
 
 public class CreateUserHandler : IRequestHandler<CreateUserCommand, User>
 {
@@ -17,7 +17,7 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, User>
     {
         var user = new User
         {
-            Id = request.FirebaseUid,
+            Id = request.Uid,
             Email = request.Email,
             DisplayName = request.Name,
             CreatedAt = DateTime.UtcNow

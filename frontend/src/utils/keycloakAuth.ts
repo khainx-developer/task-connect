@@ -1,16 +1,18 @@
 import { userStore } from "../store/userStore";
 import { baseIdentityApi } from "../api";
 
-const KEYCLOAK_AUTH_URL = import.meta.env.VITE_KEYCLOAK_AUTH_URL;
+
+const KEYCLOAK_AUTH_URL = `${import.meta.env.VITE_KEYCLOAK_AUTH_URL}/protocol/openid-connect`;
 const CLIENT_ID = import.meta.env.VITE_KEYCLOAK_CLIENT_ID;
 const REDIRECT_URI = import.meta.env.VITE_KEYCLOAK_REDIRECT_URI;
-const KEYCLOAK_TOKEN_URL = import.meta.env.VITE_KEYCLOAK_TOKEN_URL;
-const KEYCLOAK_USERINFO_URL = import.meta.env.VITE_KEYCLOAK_USERINFO_URL;
+const KEYCLOAK_TOKEN_URL = `${import.meta.env.VITE_KEYCLOAK_AUTH_URL}/protocol/openid-connect/token`;
+const KEYCLOAK_USERINFO_URL = `${import.meta.env.VITE_KEYCLOAK_AUTH_URL}/protocol/openid-connect/userinfo`;
 
 // Generate a random string for PKCE
 const generateRandomString = (length: number) => {
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let text = '';
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let text = "";
   for (let i = 0; i < length; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
@@ -26,26 +28,26 @@ const generateCodeVerifier = () => {
 const generateCodeChallenge = async (verifier: string) => {
   const encoder = new TextEncoder();
   const data = encoder.encode(verifier);
-  const digest = await window.crypto.subtle.digest('SHA-256', data);
+  const digest = await window.crypto.subtle.digest("SHA-256", data);
   return btoa(String.fromCharCode(...new Uint8Array(digest)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 };
 
 export const initiateKeycloakLogin = async () => {
   // Generate PKCE values
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
-  
+
   // Store code verifier for later use
-  localStorage.setItem('code_verifier', codeVerifier);
+  localStorage.setItem("code_verifier", codeVerifier);
 
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
     response_type: "code",
     redirect_uri: REDIRECT_URI,
-    scope:"openid email profile",
+    scope: "openid email profile",
     code_challenge: codeChallenge,
     code_challenge_method: "S256",
   });
@@ -53,10 +55,13 @@ export const initiateKeycloakLogin = async () => {
   window.location.href = `${KEYCLOAK_AUTH_URL}?${params.toString()}`;
 };
 
-export const handleKeycloakCallback = async (code: string, navigate?: (path: string) => void) => {
+export const handleKeycloakCallback = async (
+  code: string,
+  navigate?: (path: string) => void
+) => {
   try {
     // Get the stored code verifier
-    const codeVerifier = localStorage.getItem('code_verifier');
+    const codeVerifier = localStorage.getItem("code_verifier");
     if (!codeVerifier) {
       throw new Error("No code verifier found");
     }
@@ -94,14 +99,14 @@ export const handleKeycloakCallback = async (code: string, navigate?: (path: str
     }
 
     const userData = await userInfoResponse.json();
-    
+
     // Store the tokens in localStorage
     localStorage.setItem("access_token", tokenData.access_token);
     localStorage.setItem("refresh_token", tokenData.refresh_token);
-    
+
     // Clean up the code verifier
-    localStorage.removeItem('code_verifier');
-    
+    localStorage.removeItem("code_verifier");
+
     // Call your user API to verify/create user
     const apiResponse = await baseIdentityApi.auth.authVerifyUserCreate({});
     userStore.getState().setUser({
@@ -127,4 +132,4 @@ export const signOut = () => {
   localStorage.removeItem("refresh_token");
   localStorage.removeItem("code_verifier");
   window.location.href = "/signin";
-}; 
+};

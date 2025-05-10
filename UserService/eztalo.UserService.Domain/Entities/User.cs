@@ -4,7 +4,7 @@ namespace eztalo.UserService.Domain.Entities
 {
     public class User
     {
-        [Key] public string Id { get; set; } // Firebase UID
+        [Key] public string Id { get; set; } // UID
 
         [Required] public string Email { get; set; }
 

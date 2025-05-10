@@ -1,14 +1,10 @@
 using System.Text.Json;
 using eztalo.TaskService.Api.Services;
 using eztalo.TaskService.Application.Common.Interfaces;
-using eztalo.TaskService.Application.Queries;
 using eztalo.TaskService.Application.Queries.TaskQueries;
 using eztalo.TaskService.Infrastructure.Persistence;
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Prometheus;
@@ -52,6 +48,13 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.MigrateAsync(); // Auto-applies migrations
+
+    foreach (var note in dbContext.Notes.ToList())
+    {
+        note.OwnerId = "1220ebbf-714e-4e25-b9c0-959a25609032";
+    }
+
+    await dbContext.SaveChangesAsync();
 }
 
 UseSwagger(app);
@@ -83,7 +86,7 @@ void AddSwagger(WebApplicationBuilder webApplication)
         {
             Title = "Task Manager Service API",
             Version = "v1",
-            Description = "API for user authentication using Firebase and JWT",
+            Description = "API for user authentication",
         });
 
         // Add authentication support in Swagger UI
@@ -167,24 +170,19 @@ void AddCors(WebApplicationBuilder webApplication, string originName)
 void AddAuthentication(Dictionary<string, Dictionary<string, string>> secretsDictionary,
     WebApplicationBuilder webApplicationBuilder)
 {
-    var credentialsPath = secretsDictionary?["FirebaseCredentials"]["FirebaseCredentialsPath"];
-    var firebaseProjectId = secretsDictionary?["FirebaseCredentials"]["FirebaseProjectId"];
-    FirebaseApp.Create(new AppOptions
-    {
-        Credential = GoogleCredential.FromFile(credentialsPath)
-    });
+    var issuer = secretsDictionary?["AuthSettings"]["Issuer"];
 
     webApplicationBuilder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
-            options.Authority = $"https://securetoken.google.com/{firebaseProjectId}";
+            options.Authority = issuer;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
-                ValidIssuer = $"https://securetoken.google.com/{firebaseProjectId}",
+                ValidIssuer = issuer,
                 ValidateAudience = true,
-                ValidAudience = firebaseProjectId,
+                ValidAudience = "account",
                 ValidateLifetime = true
             };
         });

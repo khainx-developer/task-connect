@@ -19,7 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Task Service", "Task Servic
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Secrets", "Secrets", "{6B6A77F2-B82B-4983-9F5D-6D24FFE9204B}"
 	ProjectSection(SolutionItems) = preProject
-		secrets\ez-apps-admin-sdk.json = secrets\ez-apps-admin-sdk.json
 		secrets\task-service-secrets.json = secrets\task-service-secrets.json
 		secrets\user-service-secrets.json = secrets\user-service-secrets.json
 	EndProjectSection
@@ -29,7 +28,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GithubActions", "GithubActi
 		.github\workflows\build-task-service.yml = .github\workflows\build-task-service.yml
 		.github\workflows\build-user-service.yml = .github\workflows\build-user-service.yml
 		.github\workflows\build-fe.yml = .github\workflows\build-fe.yml
-		.github\workflows\build-local-fe.yml = .github\workflows\build-local-fe.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dockerfiles", "dockerfiles", "{DF5363C8-55F7-4BA0-B696-0FEEBC6A4B02}"

@@ -1,8 +1,6 @@
 using System.Text.Json;
 using eztalo.UserService.Application.Common.Interfaces;
 using eztalo.UserService.Infrastructure.Persistence;
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,33 +11,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 var secretsFilePath = Environment.GetEnvironmentVariable("SECRETS_FILE_PATH");
 var connectionString = "";
-var credentialsPath = "";
-var firebaseProjectId = "";
+var issuer = "";
 if (!string.IsNullOrEmpty(secretsFilePath) && File.Exists(secretsFilePath))
 {
     var json = await File.ReadAllTextAsync(secretsFilePath);
     var secrets = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
     connectionString = secrets?["ConnectionStrings"]["DefaultConnection"];
-    credentialsPath = secrets?["FirebaseCredentials"]["FirebaseCredentialsPath"];
-    firebaseProjectId = secrets?["FirebaseCredentials"]["FirebaseProjectId"];
+    issuer = secrets?["AuthSettings"]["Issuer"];
 }
-
-FirebaseApp.Create(new AppOptions
-{
-    Credential = GoogleCredential.FromFile(credentialsPath)
-});
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = $"https://securetoken.google.com/{firebaseProjectId}";
+        options.Authority = issuer;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = $"https://securetoken.google.com/{firebaseProjectId}",
+            ValidIssuer = issuer,
             ValidateAudience = true,
-            ValidAudience = firebaseProjectId,
+            ValidAudience = "account",
             ValidateLifetime = true
         };
     });
@@ -95,7 +86,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "User Service API",
         Version = "v1",
-        Description = "API for user authentication using Firebase and JWT",
+        Description = "API for user authentication",
     });
 
     // Add authentication support in Swagger UI

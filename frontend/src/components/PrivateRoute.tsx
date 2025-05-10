@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { userStore } from "../store/userStore";
 
 const PrivateRoute = () => {
-  const { user, loading } = useAuth();
+  const user  = userStore();
 
-  if (loading) return <div>Loading...</div>; // Prevents incorrect redirects
+  if (user.id === "") return <div>Loading...</div>; // Prevents incorrect redirects
 
-  return user ? <Outlet /> : <Navigate to="/signin" replace />;
+  return user.id !== "" ? <Outlet /> : <Navigate to="/signin" replace />;
 };
 
 export default PrivateRoute;

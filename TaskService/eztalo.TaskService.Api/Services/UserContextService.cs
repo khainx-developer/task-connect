@@ -14,5 +14,5 @@ public class UserContextService : IUserContextService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string UserId => _httpContextAccessor.HttpContext?.User.FindFirst("user_id")?.Value;
+    public string UserId => _httpContextAccessor.HttpContext?.User.FindFirst("sub")?.Value;
 }
