@@ -48,13 +48,6 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.MigrateAsync(); // Auto-applies migrations
-
-    foreach (var note in dbContext.Notes.ToList())
-    {
-        note.OwnerId = "1220ebbf-714e-4e25-b9c0-959a25609032";
-    }
-
-    await dbContext.SaveChangesAsync();
 }
 
 UseSwagger(app);

@@ -2,7 +2,7 @@ import { userStore } from "../store/userStore";
 import { baseIdentityApi } from "../api";
 
 
-const KEYCLOAK_AUTH_URL = `${import.meta.env.VITE_KEYCLOAK_AUTH_URL}/protocol/openid-connect`;
+const KEYCLOAK_AUTH_URL = `${import.meta.env.VITE_KEYCLOAK_AUTH_URL}/protocol/openid-connect/auth`;
 const CLIENT_ID = import.meta.env.VITE_KEYCLOAK_CLIENT_ID;
 const REDIRECT_URI = import.meta.env.VITE_KEYCLOAK_REDIRECT_URI;
 const KEYCLOAK_TOKEN_URL = `${import.meta.env.VITE_KEYCLOAK_AUTH_URL}/protocol/openid-connect/token`;
