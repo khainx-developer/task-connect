@@ -19,6 +19,7 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Dashboard from "./pages/Dashboard/Index";
 import Notes from "./pages/Notes/Index";
 import PrivateRoute from "./components/PrivateRoute";
+import KeycloakCallback from "./pages/AuthPages/KeycloakCallback";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
           {/* Public Page */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/auth/callback" element={<KeycloakCallback />} />
 
           {/* Dashboard Layout */}
           <Route element={<PrivateRoute />}>

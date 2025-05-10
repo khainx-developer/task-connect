@@ -12,7 +12,7 @@ interface UserState {
 // Load user from localStorage (if exists)
 const storedUser = localStorage.getItem("user");
 
-export const useUserStore = create<UserState>((set) => ({
+export const userStore = create<UserState>((set) => ({
   ...JSON.parse(storedUser || "{}"),
   setUser: (user) => {
     localStorage.setItem("user", JSON.stringify(user));

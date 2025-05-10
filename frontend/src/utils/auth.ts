@@ -2,7 +2,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../lib/firebase";
 import { baseIdentityApi } from "../api";
-import { useUserStore } from "../store/userStore";
+import { userStore } from "../store/userStore";
 
 const loginWithGoogle = async (
   navigate: (path: string) => void
@@ -12,7 +12,7 @@ const loginWithGoogle = async (
     const user = result.user;
     if (user) {
       const userData = await baseIdentityApi.auth.authVerifyUserCreate({});
-      useUserStore.getState().setUser({
+      userStore.getState().setUser({
         id: userData.data.id ?? "",
         email: user.email!,
         name: user.displayName || "",
@@ -47,7 +47,7 @@ const loginWithEmail = async (
 const signOut = async (navigate: (path: string) => void): Promise<void> => {
   try {
     await auth.signOut();
-    useUserStore.getState().clearUser();
+    userStore.getState().clearUser();
     navigate("/"); // Redirect after login
   } catch (error) {
     console.error("Google Sign-in Error:", error);
