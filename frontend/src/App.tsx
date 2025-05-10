@@ -18,6 +18,7 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Dashboard from "./pages/Dashboard/Index";
 import Notes from "./pages/Notes/Index";
+import Mindmap from "./pages/Mindmap";
 import PrivateRoute from "./components/PrivateRoute";
 import KeycloakCallback from "./pages/AuthPages/KeycloakCallback";
 
@@ -42,6 +43,7 @@ export default function App() {
               <Route path="/archived-notes" element={<Notes isArchived={true} />} />
               
               <Route path="/tasks" element={<TaskCalendar />} />
+              <Route path="/mindmap" element={<Mindmap />} />
               
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />
