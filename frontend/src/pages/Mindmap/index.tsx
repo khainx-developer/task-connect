@@ -282,14 +282,14 @@ const Mindmap: React.FC = () => {
   );
 
   const onNodeDoubleClick = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node: Node) => {
       setEditingNodeId(node.id);
     },
     []
   );
 
   const onNodeClick = useCallback(
-    (event: React.MouseEvent, node: Node) => {
+    (_event: React.MouseEvent, node: Node) => {
       setSelectedNode(node);
     },
     []
