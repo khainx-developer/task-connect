@@ -23,6 +23,7 @@ const NoteCard = ({
   onEdit,
   setNote,
   isLoading,
+  dragHandleProps,
 }: {
   index: number;
   note: Note;
@@ -34,6 +35,7 @@ const NoteCard = ({
   onEdit: (id: string) => void;
   setNote: (updatedNote: Note) => void;
   isLoading?: boolean;
+  dragHandleProps?: any;
 }) => {
   const [showColorMenu, setShowColorMenu] = useState(false);
   const [newItemText, setNewItemText] = useState("");
@@ -241,7 +243,7 @@ const NoteCard = ({
 
   return (
     <div
-      className={`rounded-lg border border-gray-200 p-4 ${note.color || "bg-white"} flex flex-col relative mb-4 break-inside-avoid ${
+      className={`rounded-lg border border-gray-200 p-4 max-w-full ${note.color || "bg-white"} flex flex-col relative mb-4 break-inside-avoid ${
         (isLoading || isItemLoading) ? "opacity-50 pointer-events-none" : ""
       }`}
     >
@@ -250,7 +252,11 @@ const NoteCard = ({
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-500"></div>
         </div>
       )}
-      <h3 className="font-semibold text-lg mb-2 cursor-move break-words">{note.title}</h3>
+      {dragHandleProps ? (
+        <h3 className="font-semibold text-lg mb-2 cursor-move break-words" {...dragHandleProps}>{note.title}</h3>
+      ) : (
+        <h3 className="font-semibold text-lg mb-2 cursor-move break-words">{note.title}</h3>
+      )}
       {note.type === NoteType.Checklist ? (
         <div className="flex-grow">
           <DragDropContext onDragEnd={onChecklistDragEnd}>
@@ -287,6 +293,7 @@ const NoteCard = ({
                                 />
                                 <button
                                   onClick={() => item.id && handleSaveEdit(item.id)}
+                                  type="button"
                                   className="ml-2 text-green-500 hover:text-green-700"
                                   disabled={isItemLoading}
                                 >
@@ -294,6 +301,7 @@ const NoteCard = ({
                                 </button>
                                 <button
                                   onClick={handleCancelEdit}
+                                  type="button"
                                   className="ml-2 text-red-500 hover:text-red-700"
                                   disabled={isItemLoading}
                                 >
@@ -331,6 +339,7 @@ const NoteCard = ({
                                 </span>
                                 <button
                                   onClick={() => item.id && handleDeleteChecklistItem(item.id)}
+                                  type="button"
                                   className="ml-2 text-red-500 hover:text-red-700"
                                   disabled={isItemLoading}
                                 >
@@ -358,6 +367,7 @@ const NoteCard = ({
             />
             <button
               onClick={handleAddChecklistItem}
+              type="button"
               className="ml-2 text-blue-500 hover:text-blue-700"
               disabled={isItemLoading}
             >
@@ -375,6 +385,7 @@ const NoteCard = ({
           <div className="relative">
             <button
               onClick={() => setShowColorMenu((prev) => !prev)}
+              type="button"
               className="text-gray-600 hover:text-gray-800"
               disabled={isLoading || isItemLoading}
             >
@@ -385,6 +396,7 @@ const NoteCard = ({
                 {colors.map((color) => (
                   <button
                     key={color}
+                    type="button"
                     className={`w-5 h-5 rounded-full ${color} border-2 border-white hover:ring-2`}
                     onClick={() => handleColorChange(color)}
                     disabled={isLoading || isItemLoading}
@@ -395,6 +407,7 @@ const NoteCard = ({
           </div>
           <button
             onClick={() => note.id && onEdit(note.id)}
+            type="button"
             className="text-blue-500 hover:text-blue-700"
             disabled={isLoading || isItemLoading}
           >
@@ -402,6 +415,7 @@ const NoteCard = ({
           </button>
           <button
             onClick={handleDelete}
+            type="button"
             className="text-red-500 hover:text-red-700"
             disabled={isLoading || isItemLoading}
           >
@@ -410,6 +424,7 @@ const NoteCard = ({
         </div>
         <button
           onClick={handlePin}
+          type="button"
           className={`hover:text-blue-700 ${note.pinned ? "text-blue-500 font-bold" : "text-blue-200"}`}
           disabled={isLoading || isItemLoading}
         >

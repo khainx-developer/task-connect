@@ -24,6 +24,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
     content: "",
     type: NoteType.Text,
   });
+  const [colorLoadingId, setColorLoadingId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNotes = async () => {
@@ -191,7 +192,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   };
 
   const handleChangeNoteColor = async (id: string, color: string) => {
-    setIsLoading(true);
+    setColorLoadingId(id);
     try {
       await baseTaskManagerApi.notes.updateNoteColor(id, color);
       setNotes((prevNotes) =>
@@ -201,7 +202,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
       console.error("Failed to update note color:", error);
       toast.error("Failed to update note color");
     } finally {
-      setIsLoading(false);
+      setColorLoadingId(null);
     }
   };
 
@@ -259,7 +260,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   }
 
   return (
-    <div className="w-full overflow-x-hidden px-2 p-4">
+    <div className="w-full max-w-full overflow-x-hidden px-4 p-4">
       <div className="flex justify-end mb-4">
         <Button
           size="tiny"
@@ -308,7 +309,8 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
                               setNote={(updatedNote) =>
                                 note.id && handleSetNote(note.id, updatedNote)
                               }
-                              isLoading={isLoading}
+                              isLoading={isLoading || colorLoadingId === note.id}
+                              dragHandleProps={provided.dragHandleProps}
                             />
                           </div>
                         )}
@@ -359,7 +361,8 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
                             setNote={(updatedNote) =>
                               note.id && handleSetNote(note.id, updatedNote)
                             }
-                            isLoading={isLoading}
+                            isLoading={isLoading || colorLoadingId === note.id}
+                            dragHandleProps={provided.dragHandleProps}
                           />
                         </div>
                       )}
