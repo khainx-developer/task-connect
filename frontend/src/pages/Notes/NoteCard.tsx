@@ -22,6 +22,7 @@ const NoteCard = ({
   onColorChange,
   onEdit,
   setNote,
+  isLoading,
 }: {
   index: number;
   note: Note;
@@ -32,11 +33,13 @@ const NoteCard = ({
   onDragEnd: () => void;
   onEdit: (id: string) => void;
   setNote: (updatedNote: Note) => void;
+  isLoading?: boolean;
 }) => {
   const [showColorMenu, setShowColorMenu] = useState(false);
   const [newItemText, setNewItemText] = useState("");
   const [editItemId, setEditItemId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [isItemLoading, setIsItemLoading] = useState(false);
 
   const colors = [
     "bg-red-100",
@@ -100,6 +103,7 @@ const NoteCard = ({
   ) => {
     if (!note.id || !itemId) return;
 
+    setIsItemLoading(true);
     try {
       await baseTaskManagerApi.notes.updateInsertChecklistItem(note.id, {
         id: itemId,
@@ -109,11 +113,12 @@ const NoteCard = ({
         order:
           note.checklistItems?.find((item) => item.id === itemId)?.order || 0,
       });
-      toast.success("Checklist item updated");
       await refreshNote();
     } catch (error) {
       console.error("Failed to update checklist item:", error);
       toast.error("Failed to update checklist item");
+    } finally {
+      setIsItemLoading(false);
     }
   };
 
@@ -123,6 +128,7 @@ const NoteCard = ({
       return;
     }
 
+    setIsItemLoading(true);
     try {
       await baseTaskManagerApi.notes.updateInsertChecklistItem(note.id, {
         id: null,
@@ -130,12 +136,13 @@ const NoteCard = ({
         isCompleted: false,
         order: note.checklistItems?.length ?? 0,
       });
-      toast.success("Checklist item added");
       setNewItemText("");
       await refreshNote();
     } catch (error) {
       console.error("Failed to add checklist item:", error);
       toast.error("Failed to add checklist item");
+    } finally {
+      setIsItemLoading(false);
     }
   };
 
@@ -150,6 +157,7 @@ const NoteCard = ({
       return;
     }
 
+    setIsItemLoading(true);
     try {
       await baseTaskManagerApi.notes.updateInsertChecklistItem(note.id, {
         id: itemId,
@@ -160,26 +168,29 @@ const NoteCard = ({
         order:
           note.checklistItems?.find((item) => item.id === itemId)?.order || 0,
       });
-      toast.success("Checklist item updated");
       setEditItemId(null);
       setEditText("");
       await refreshNote();
     } catch (error) {
       console.error("Failed to update checklist item:", error);
       toast.error("Failed to update checklist item");
+    } finally {
+      setIsItemLoading(false);
     }
   };
 
   const handleDeleteChecklistItem = async (itemId: string | null) => {
     if (!note.id || !itemId) return;
 
+    setIsItemLoading(true);
     try {
       await baseTaskManagerApi.notes.deleteChecklistItem(note.id, itemId);
-      toast.success("Checklist item deleted");
       await refreshNote();
     } catch (error) {
       console.error("Failed to delete checklist item:", error);
       toast.error("Failed to delete checklist item");
+    } finally {
+      setIsItemLoading(false);
     }
   };
 
@@ -208,6 +219,7 @@ const NoteCard = ({
     setNote({ ...note, checklistItems: updatedItems });
 
     // Persist the new order to the backend
+    setIsItemLoading(true);
     try {
       for (let i = 0; i < updatedItems.length; i++) {
         await baseTaskManagerApi.notes.updateInsertChecklistItem(note.id, {
@@ -217,28 +229,37 @@ const NoteCard = ({
           order: i,
         });
       }
-      toast.success("Checklist items reordered");
       await refreshNote();
     } catch (error) {
       console.error("Failed to reorder checklist items:", error);
       toast.error("Failed to reorder checklist items");
       await refreshNote();
+    } finally {
+      setIsItemLoading(false);
     }
   };
 
   return (
     <div
-      className={`rounded-xl border border-gray-200 p-4 ${note.color || "bg-white"} mb-3 flex flex-col h-72`}
+      className={`rounded-lg border border-gray-200 p-4 ${note.color || "bg-white"} flex flex-col relative mb-4 break-inside-avoid ${
+        (isLoading || isItemLoading) ? "opacity-50 pointer-events-none" : ""
+      }`}
     >
-      <h3 className="font-semibold text-lg mb-2 cursor-move">{note.title}</h3>
+      {(isLoading || isItemLoading) && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-500"></div>
+        </div>
+      )}
+      <h3 className="font-semibold text-lg mb-2 cursor-move break-words">{note.title}</h3>
       {note.type === NoteType.Checklist ? (
-        <div className="flex-grow overflow-y-auto">
+        <div className="flex-grow">
           <DragDropContext onDragEnd={onChecklistDragEnd}>
             <Droppable droppableId={`checklist-${note.id}`}>
               {(provided) => (
                 <ul
                   {...provided.droppableProps}
                   ref={provided.innerRef}
+                  className="space-y-1"
                 >
                   {note.checklistItems
                     ?.sort((a, b) => a.order - b.order)
@@ -262,16 +283,19 @@ const NoteCard = ({
                                   onChange={(e) => setEditText(e.target.value)}
                                   className="flex-grow p-1 border rounded"
                                   autoFocus
+                                  disabled={isItemLoading}
                                 />
                                 <button
                                   onClick={() => item.id && handleSaveEdit(item.id)}
                                   className="ml-2 text-green-500 hover:text-green-700"
+                                  disabled={isItemLoading}
                                 >
                                   Save
                                 </button>
                                 <button
                                   onClick={handleCancelEdit}
                                   className="ml-2 text-red-500 hover:text-red-700"
+                                  disabled={isItemLoading}
                                 >
                                   Cancel
                                 </button>
@@ -292,7 +316,7 @@ const NoteCard = ({
                                     handleToggleChecklistItem(item.id, item.isCompleted)
                                   }
                                   className="mr-2"
-                                  disabled={!item.id}
+                                  disabled={!item.id || isItemLoading}
                                 />
                                 <span
                                   className={
@@ -308,6 +332,7 @@ const NoteCard = ({
                                 <button
                                   onClick={() => item.id && handleDeleteChecklistItem(item.id)}
                                   className="ml-2 text-red-500 hover:text-red-700"
+                                  disabled={isItemLoading}
                                 >
                                   <FontAwesomeIcon icon={faTimes} className="h-4 w-4" />
                                 </button>
@@ -329,26 +354,29 @@ const NoteCard = ({
               onChange={(e) => setNewItemText(e.target.value)}
               placeholder="Add item..."
               className="flex-grow p-1 border rounded"
+              disabled={isItemLoading}
             />
             <button
               onClick={handleAddChecklistItem}
               className="ml-2 text-blue-500 hover:text-blue-700"
+              disabled={isItemLoading}
             >
               <FontAwesomeIcon icon={faPlus} className="h-5 w-5" />
             </button>
           </div>
         </div>
       ) : (
-        <p className="text-gray-700 whitespace-pre-line flex-grow overflow-y-auto">
+        <p className="text-gray-700 whitespace-pre-line break-words">
           {note.content}
         </p>
       )}
-      <div className="flex justify-between items-center mt-4">
+      <div className="flex justify-between items-center mt-2">
         <div className="flex gap-2 items-center">
           <div className="relative">
             <button
               onClick={() => setShowColorMenu((prev) => !prev)}
               className="text-gray-600 hover:text-gray-800"
+              disabled={isLoading || isItemLoading}
             >
               <FontAwesomeIcon icon={faPalette} className="h-5 w-5" />
             </button>
@@ -359,6 +387,7 @@ const NoteCard = ({
                     key={color}
                     className={`w-5 h-5 rounded-full ${color} border-2 border-white hover:ring-2`}
                     onClick={() => handleColorChange(color)}
+                    disabled={isLoading || isItemLoading}
                   />
                 ))}
               </div>
@@ -367,12 +396,14 @@ const NoteCard = ({
           <button
             onClick={() => note.id && onEdit(note.id)}
             className="text-blue-500 hover:text-blue-700"
+            disabled={isLoading || isItemLoading}
           >
             <FontAwesomeIcon icon={faEdit} className="h-5 w-5" />
           </button>
           <button
             onClick={handleDelete}
             className="text-red-500 hover:text-red-700"
+            disabled={isLoading || isItemLoading}
           >
             <FontAwesomeIcon icon={faTrash} className="h-5 w-5" />
           </button>
@@ -380,6 +411,7 @@ const NoteCard = ({
         <button
           onClick={handlePin}
           className={`hover:text-blue-700 ${note.pinned ? "text-blue-500 font-bold" : "text-blue-200"}`}
+          disabled={isLoading || isItemLoading}
         >
           <FontAwesomeIcon icon={faThumbtack} className="h-5 w-5" />
         </button>

@@ -16,6 +16,8 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [modalMode, setModalMode] = useState<"add" | "edit">("add");
   const [editNote, setEditNote] = useState<Note | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [noteForm, setNoteForm] = useState<Note>({
     id: "",
     title: "",
@@ -25,27 +27,35 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
 
   useEffect(() => {
     const fetchNotes = async () => {
-      const response = await baseTaskManagerApi.notes.getAllNotes({
-        isArchived,
-      });
-      const notesData: Note[] = response.data.map(
-        (note: NoteResponseModel) => ({
-          id: note.id,
-          pinned: note.pinned,
-          title: note.title ?? "",
-          color: note.color ?? "",
-          content: note.content ?? "",
-          type: note.type ?? NoteType.Text,
-          checklistItems:
-            note.checklistItems?.map((item) => ({
-              id: item.id,
-              text: item.text ?? "",
-              isCompleted: item.isCompleted ?? false,
-              order: item.order ?? 0,
-            })) ?? [],
-        })
-      );
-      setNotes(notesData);
+      setIsLoading(true);
+      try {
+        const response = await baseTaskManagerApi.notes.getAllNotes({
+          isArchived,
+        });
+        const notesData: Note[] = response.data.map(
+          (note: NoteResponseModel) => ({
+            id: note.id,
+            pinned: note.pinned,
+            title: note.title ?? "",
+            color: note.color ?? "",
+            content: note.content ?? "",
+            type: note.type ?? NoteType.Text,
+            checklistItems:
+              note.checklistItems?.map((item) => ({
+                id: item.id,
+                text: item.text ?? "",
+                isCompleted: item.isCompleted ?? false,
+                order: item.order ?? 0,
+              })) ?? [],
+          })
+        );
+        setNotes(notesData);
+      } catch (error) {
+        console.error("Failed to fetch notes:", error);
+        toast.error("Failed to fetch notes");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchNotes();
@@ -60,6 +70,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   };
 
   const handleOpenEditModal = async (id: string) => {
+    setIsLoading(true);
     try {
       const response = await baseTaskManagerApi.notes.getNoteById(id);
       const noteToEdit: Note = {
@@ -89,12 +100,15 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
     } catch (error) {
       console.error("Failed to fetch note:", error);
       toast.error("Failed to fetch note");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleSaveNote = async () => {
     if (!noteForm.title.trim() && !noteForm.content.trim()) return;
 
+    setIsSaving(true);
     const noteData = {
       title: noteForm.title,
       content: noteForm.type === NoteType.Text ? noteForm.content : "",
@@ -114,7 +128,6 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
           color: "",
         };
         setNotes([...notes, newNote]);
-        toast.success("Successfully created note");
       } catch (error) {
         console.error("Failed to create note:", error);
         toast.error("Failed to create note");
@@ -129,7 +142,6 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
               note.id === editNote.id ? { ...note, ...noteData } : note
             )
           );
-          toast.success("Note updated successfully");
         } catch (error) {
           console.error("Failed to update note:", error);
           toast.error("Failed to update note");
@@ -141,6 +153,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
     setNoteForm({ id: "", title: "", content: "", type: NoteType.Text });
     setEditNote(null);
     closeModal();
+    setIsSaving(false);
   };
 
   const handleCloseModal = () => {
@@ -150,25 +163,46 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   };
 
   const handleDeleteNote = async (id: string) => {
-    await baseTaskManagerApi.notes.deleteNoteById(id);
-    toast.success("Successfully deleted note");
-    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+    setIsLoading(true);
+    try {
+      await baseTaskManagerApi.notes.deleteNoteById(id);
+      setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+    } catch (error) {
+      console.error("Failed to delete note:", error);
+      toast.error("Failed to delete note");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handlePinNote = async (id: string, pinned: boolean) => {
-    await baseTaskManagerApi.notes.pinOrUnpinNote(id, pinned);
-    toast.success(pinned ? "Pinned note" : "Unpinned note");
-    setNotes((prevNotes) =>
-      prevNotes.map((note) => (note.id === id ? { ...note, pinned } : note))
-    );
+    setIsLoading(true);
+    try {
+      await baseTaskManagerApi.notes.pinOrUnpinNote(id, pinned);
+      setNotes((prevNotes) =>
+        prevNotes.map((note) => (note.id === id ? { ...note, pinned } : note))
+      );
+    } catch (error) {
+      console.error("Failed to pin/unpin note:", error);
+      toast.error("Failed to pin/unpin note");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChangeNoteColor = async (id: string, color: string) => {
-    await baseTaskManagerApi.notes.updateNoteColor(id, color);
-    toast.success("Note color updated");
-    setNotes((prevNotes) =>
-      prevNotes.map((note) => (note.id === id ? { ...note, color } : note))
-    );
+    setIsLoading(true);
+    try {
+      await baseTaskManagerApi.notes.updateNoteColor(id, color);
+      setNotes((prevNotes) =>
+        prevNotes.map((note) => (note.id === id ? { ...note, color } : note))
+      );
+    } catch (error) {
+      console.error("Failed to update note color:", error);
+      toast.error("Failed to update note color");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSetNote = (id: string, updatedNote: Note) => {
@@ -200,27 +234,38 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
     setNotes([...otherNotes, ...reorderedNotes]);
 
     // Persist the new order to the backend
+    setIsLoading(true);
     try {
       const noteOrder = reorderedNotes.map((note) => note.id!);
       await baseTaskManagerApi.notes.updateNoteOrder({
         order: noteOrder,
         pinned: isPinned,
       });
-      toast.success("Note order updated");
     } catch (error) {
       console.error("Failed to update note order:", error);
       toast.error("Failed to update note order");
       setNotes(notes); // Revert on failure
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-4">
+    <div className="w-full overflow-x-hidden px-2 p-4">
       <div className="flex justify-end mb-4">
         <Button
           size="tiny"
           startIcon={<PlusIcon />}
           onClick={handleOpenAddModal}
+          disabled={isLoading}
         >
           Add Note
         </Button>
@@ -233,7 +278,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
             <Droppable droppableId="pinned">
               {(provided) => (
                 <div
-                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 auto-rows-fr"
+                  className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 mb-8"
                   {...provided.droppableProps}
                   ref={provided.innerRef}
                 >
@@ -263,6 +308,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
                               setNote={(updatedNote) =>
                                 note.id && handleSetNote(note.id, updatedNote)
                               }
+                              isLoading={isLoading}
                             />
                           </div>
                         )}
@@ -283,7 +329,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
           <Droppable droppableId="unpinned">
             {(provided) => (
               <div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr"
+                className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4"
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
@@ -313,6 +359,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
                             setNote={(updatedNote) =>
                               note.id && handleSetNote(note.id, updatedNote)
                             }
+                            isLoading={isLoading}
                           />
                         </div>
                       )}
@@ -349,6 +396,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
                 }
                 placeholder="Enter note title"
                 className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                disabled={isSaving}
               />
             </div>
             <div className="mt-4">
@@ -364,6 +412,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
                   })
                 }
                 className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                disabled={isSaving}
               >
                 <option value={NoteType.Text}>Text</option>
                 <option value={NoteType.Checklist}>Checklist</option>
@@ -380,17 +429,25 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
                     setNoteForm({ ...noteForm, content: value })
                   }
                   placeholder="Write your note..."
-                  rows={4}
+                  rows={10}
+                  disabled={isSaving}
                 />
               </div>
             )}
           </div>
           <div className="flex items-center gap-3 mt-6 modal-footer sm:justify-end">
-            <Button size="tiny" variant="outline" onClick={handleCloseModal}>
+            <Button size="tiny" variant="outline" onClick={handleCloseModal} disabled={isSaving}>
               Cancel
             </Button>
-            <Button size="tiny" onClick={handleSaveNote}>
-              {modalMode === "add" ? "Save" : "Update"}
+            <Button size="tiny" onClick={handleSaveNote} disabled={isSaving}>
+              {isSaving ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  {modalMode === "add" ? "Saving..." : "Updating..."}
+                </div>
+              ) : (
+                modalMode === "add" ? "Save" : "Update"
+              )}
             </Button>
           </div>
         </div>
