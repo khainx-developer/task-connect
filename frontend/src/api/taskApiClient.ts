@@ -18,6 +18,47 @@ export interface ChecklistItemModel {
   order?: number;
 }
 
+export interface MindmapCreateUpdateModel {
+  title?: string | null;
+  nodes?: MindmapNodeModel[] | null;
+  edges?: MindmapEdgeModel[] | null;
+}
+
+export interface MindmapEdgeModel {
+  id?: string | null;
+  source?: string | null;
+  target?: string | null;
+  type?: string | null;
+  style?: any;
+}
+
+export interface MindmapNodeModel {
+  id?: string | null;
+  type?: string | null;
+  label?: string | null;
+  /** @format double */
+  positionX?: number;
+  /** @format double */
+  positionY?: number;
+  style?: any;
+}
+
+export interface MindmapResponseModel {
+  /** @format uuid */
+  id?: string;
+  ownerId?: string | null;
+  title?: string | null;
+  nodes?: MindmapNodeModel[] | null;
+  edges?: MindmapEdgeModel[] | null;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string | null;
+  isArchived?: boolean;
+  /** @format int32 */
+  order?: number;
+}
+
 export interface NoteCreateUpdateModel {
   title?: string | null;
   content?: string | null;
@@ -46,8 +87,8 @@ export interface NoteResponseModel {
 
 /** @format int32 */
 export enum NoteType {
-  Text = 0,
-  Checklist = 1,
+  Value0 = 0,
+  Value1 = 1,
 }
 
 export interface ProjectCreateModel {
@@ -263,7 +304,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title Task Manager Service API
  * @version v1
  *
- * API for user authentication using Firebase and JWT
+ * API for user authentication
  */
 export class Api<SecurityDataType extends unknown> {
   http: HttpClient<SecurityDataType>;
@@ -286,6 +327,103 @@ export class Api<SecurityDataType extends unknown> {
         path: `/`,
         method: "GET",
         secure: true,
+        ...params,
+      }),
+  };
+  mindmaps = {
+    /**
+     * No description
+     *
+     * @tags Mindmaps
+     * @name CreateMindmap
+     * @request POST:/api/Mindmaps
+     * @secure
+     */
+    createMindmap: (data: MindmapCreateUpdateModel, params: RequestParams = {}) =>
+      this.http.request<MindmapResponseModel, any>({
+        path: `/api/Mindmaps`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Mindmaps
+     * @name GetAllMindmaps
+     * @request GET:/api/Mindmaps
+     * @secure
+     */
+    getAllMindmaps: (
+      query?: {
+        /** @default false */
+        isArchived?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<MindmapResponseModel[], any>({
+        path: `/api/Mindmaps`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Mindmaps
+     * @name GetMindmapById
+     * @request GET:/api/Mindmaps/{id}
+     * @secure
+     */
+    getMindmapById: (id: string, params: RequestParams = {}) =>
+      this.http.request<MindmapResponseModel, any>({
+        path: `/api/Mindmaps/${id}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Mindmaps
+     * @name UpdateMindmap
+     * @request PUT:/api/Mindmaps/{id}
+     * @secure
+     */
+    updateMindmap: (id: string, data: MindmapCreateUpdateModel, params: RequestParams = {}) =>
+      this.http.request<MindmapResponseModel, any>({
+        path: `/api/Mindmaps/${id}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Mindmaps
+     * @name DeleteMindmapById
+     * @request DELETE:/api/Mindmaps/{id}
+     * @secure
+     */
+    deleteMindmapById: (id: string, params: RequestParams = {}) =>
+      this.http.request<boolean, any>({
+        path: `/api/Mindmaps/${id}`,
+        method: "DELETE",
+        secure: true,
+        format: "json",
         ...params,
       }),
   };

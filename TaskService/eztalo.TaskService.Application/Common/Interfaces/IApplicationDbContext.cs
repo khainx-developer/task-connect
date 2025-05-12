@@ -10,5 +10,6 @@ public interface IApplicationDbContext
     DbSet<ChecklistItem> ChecklistItems { get; set; }
     DbSet<Project> Projects { get; set; }
     DbSet<WorkLog> WorkLogs { get; set; }
+    DbSet<Mindmap> Mindmaps { get; set; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
