@@ -87,8 +87,8 @@ export interface NoteResponseModel {
 
 /** @format int32 */
 export enum NoteType {
-  Value0 = 0,
-  Value1 = 1,
+  Text = 0,
+  Checklist = 1,
 }
 
 export interface ProjectCreateModel {

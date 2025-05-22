@@ -14,6 +14,7 @@ import { baseTaskManagerApi } from "../../api";
 import { toast } from "react-toastify";
 import { NoteType } from "../../api/taskApiClient";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
+import { CheckLineIcon, CloseLineIcon } from "../../icons";
 
 const NoteCard = ({
   note,
@@ -296,16 +297,18 @@ const NoteCard = ({
                                   type="button"
                                   className="ml-2 text-green-500 hover:text-green-700"
                                   disabled={isItemLoading}
+                                  aria-label="Save"
                                 >
-                                  Save
+                                  <CheckLineIcon className="h-5 w-5" />
                                 </button>
                                 <button
                                   onClick={handleCancelEdit}
                                   type="button"
                                   className="ml-2 text-red-500 hover:text-red-700"
                                   disabled={isItemLoading}
+                                  aria-label="Cancel"
                                 >
-                                  Cancel
+                                  <CloseLineIcon className="h-5 w-5" />
                                 </button>
                               </div>
                             ) : (

@@ -406,20 +406,28 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
               <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                 Note Type
               </label>
-              <select
-                value={noteForm.type}
-                onChange={(e) =>
-                  setNoteForm({
-                    ...noteForm,
-                    type: Number(e.target.value) as NoteType,
-                  })
-                }
-                className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                disabled={isSaving}
-              >
-                <option value={NoteType.Text}>Text</option>
-                <option value={NoteType.Checklist}>Checklist</option>
-              </select>
+              {/* Only show the note type select when adding a note */}
+              {modalMode === "add" ? (
+                <select
+                  value={noteForm.type}
+                  onChange={(e) =>
+                    setNoteForm({
+                      ...noteForm,
+                      type: Number(e.target.value) as NoteType,
+                    })
+                  }
+                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  disabled={isSaving}
+                >
+                  <option value={NoteType.Text}>Text</option>
+                  <option value={NoteType.Checklist}>Checklist</option>
+                </select>
+              ) : (
+                // When editing, just show the type as plain text (not editable)
+                <div className="h-11 flex items-center px-4 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white/90 text-sm">
+                  {noteForm.type === NoteType.Text ? "Text" : "Checklist"}
+                </div>
+              )}
             </div>
             {noteForm.type === NoteType.Text && (
               <div className="mt-4">
