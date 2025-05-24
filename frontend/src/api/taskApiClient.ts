@@ -514,10 +514,18 @@ export class Api<SecurityDataType extends unknown> {
      * @request DELETE:/api/Notes/{id}
      * @secure
      */
-    deleteNoteById: (id: string, params: RequestParams = {}) =>
+    deleteNoteById: (
+      id: string,
+      query?: {
+        /** @default false */
+        isHardDelete?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
       this.http.request<boolean, any>({
         path: `/api/Notes/${id}`,
         method: "DELETE",
+        query: query,
         secure: true,
         format: "json",
         ...params,
@@ -611,6 +619,24 @@ export class Api<SecurityDataType extends unknown> {
         path: `/api/Notes/${noteId}/checklist/${itemId}`,
         method: "DELETE",
         secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name RecoverNote
+     * @request PATCH:/api/Notes/{id}/recover
+     * @secure
+     */
+    recoverNote: (id: string, params: RequestParams = {}) =>
+      this.http.request<boolean, any>({
+        path: `/api/Notes/${id}/recover`,
+        method: "PATCH",
+        body: null,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
   };

@@ -7,6 +7,7 @@ import {
   faPlus,
   faTimes,
   faGripVertical,
+  faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { Note } from "./note";
 import { useState } from "react";
@@ -25,6 +26,8 @@ const NoteCard = ({
   setNote,
   isLoading,
   dragHandleProps,
+  isArchived,
+  onRecover,
 }: {
   index: number;
   note: Note;
@@ -37,6 +40,8 @@ const NoteCard = ({
   setNote: (updatedNote: Note) => void;
   isLoading?: boolean;
   dragHandleProps?: any;
+  isArchived?: boolean;
+  onRecover?: (id: string) => void;
 }) => {
   const [showColorMenu, setShowColorMenu] = useState(false);
   const [newItemText, setNewItemText] = useState("");
@@ -290,13 +295,13 @@ const NoteCard = ({
                                   onChange={(e) => setEditText(e.target.value)}
                                   className="flex-grow p-1 border rounded"
                                   autoFocus
-                                  disabled={isItemLoading}
+                                  disabled={isItemLoading || isArchived}
                                 />
                                 <button
                                   onClick={() => item.id && handleSaveEdit(item.id)}
                                   type="button"
                                   className="ml-2 text-green-500 hover:text-green-700"
-                                  disabled={isItemLoading}
+                                  disabled={isItemLoading || isArchived}
                                   aria-label="Save"
                                 >
                                   <CheckLineIcon className="h-5 w-5" />
@@ -305,7 +310,7 @@ const NoteCard = ({
                                   onClick={handleCancelEdit}
                                   type="button"
                                   className="ml-2 text-red-500 hover:text-red-700"
-                                  disabled={isItemLoading}
+                                  disabled={isItemLoading || isArchived}
                                   aria-label="Cancel"
                                 >
                                   <CloseLineIcon className="h-5 w-5" />
@@ -327,27 +332,29 @@ const NoteCard = ({
                                     handleToggleChecklistItem(item.id, item.isCompleted)
                                   }
                                   className="mr-2"
-                                  disabled={!item.id || isItemLoading}
+                                  disabled={!item.id || isItemLoading || isArchived}
                                 />
                                 <span
                                   className={
                                     item.isCompleted ? "line-through text-gray-500" : ""
                                   }
                                   onClick={() =>
-                                    item.id && handleEditChecklistItem(item.id, item.text)
+                                    !isArchived && item.id && handleEditChecklistItem(item.id, item.text)
                                   }
-                                  style={{ cursor: "pointer" }}
+                                  style={{ cursor: isArchived ? "default" : "pointer" }}
                                 >
                                   {item.text}
                                 </span>
-                                <button
-                                  onClick={() => item.id && handleDeleteChecklistItem(item.id)}
-                                  type="button"
-                                  className="ml-2 text-red-500 hover:text-red-700"
-                                  disabled={isItemLoading}
-                                >
-                                  <FontAwesomeIcon icon={faTimes} className="h-4 w-4" />
-                                </button>
+                                {!isArchived && (
+                                  <button
+                                    onClick={() => item.id && handleDeleteChecklistItem(item.id)}
+                                    type="button"
+                                    className="ml-2 text-red-500 hover:text-red-700"
+                                    disabled={isItemLoading}
+                                  >
+                                    <FontAwesomeIcon icon={faTimes} className="h-4 w-4" />
+                                  </button>
+                                )}
                               </div>
                             )}
                           </li>
@@ -359,24 +366,26 @@ const NoteCard = ({
               )}
             </Droppable>
           </DragDropContext>
-          <div className="mt-2 flex items-center">
-            <input
-              type="text"
-              value={newItemText}
-              onChange={(e) => setNewItemText(e.target.value)}
-              placeholder="Add item..."
-              className="flex-grow p-1 border rounded"
-              disabled={isItemLoading}
-            />
-            <button
-              onClick={handleAddChecklistItem}
-              type="button"
-              className="ml-2 text-blue-500 hover:text-blue-700"
-              disabled={isItemLoading}
-            >
-              <FontAwesomeIcon icon={faPlus} className="h-5 w-5" />
-            </button>
-          </div>
+          {!isArchived && (
+            <div className="mt-2 flex items-center">
+              <input
+                type="text"
+                value={newItemText}
+                onChange={(e) => setNewItemText(e.target.value)}
+                placeholder="Add item..."
+                className="flex-grow p-1 border rounded"
+                disabled={isItemLoading}
+              />
+              <button
+                onClick={handleAddChecklistItem}
+                type="button"
+                className="ml-2 text-blue-500 hover:text-blue-700"
+                disabled={isItemLoading}
+              >
+                <FontAwesomeIcon icon={faPlus} className="h-5 w-5" />
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <p className="text-gray-700 whitespace-pre-line break-words">
@@ -385,54 +394,81 @@ const NoteCard = ({
       )}
       <div className="flex justify-between items-center mt-2">
         <div className="flex gap-2 items-center">
-          <div className="relative">
+          {!isArchived && (
+            <>
+              <div className="relative">
+                <button
+                  onClick={() => setShowColorMenu((prev) => !prev)}
+                  type="button"
+                  className="text-gray-600 hover:text-gray-800"
+                  disabled={isLoading || isItemLoading}
+                >
+                  <FontAwesomeIcon icon={faPalette} className="h-5 w-5" />
+                </button>
+                {showColorMenu && (
+                  <div className="absolute z-10 mt-2 flex gap-1 bg-white p-2 rounded shadow-md">
+                    <button
+                      type="button"
+                      className="w-5 h-5 rounded-full bg-white border-2 border-gray-300 hover:ring-2 flex items-center justify-center"
+                      onClick={() => handleColorChange("")}
+                      disabled={isLoading || isItemLoading}
+                      title="Clear color"
+                    >
+                      <FontAwesomeIcon icon={faTimes} className="h-3 w-3 text-gray-500" />
+                    </button>
+                    {colors.map((color) => (
+                      <button
+                        key={color}
+                        type="button"
+                        className={`w-5 h-5 rounded-full ${color} border-2 border-white hover:ring-2`}
+                        onClick={() => handleColorChange(color)}
+                        disabled={isLoading || isItemLoading}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={() => note.id && onEdit(note.id)}
+                type="button"
+                className="text-blue-500 hover:text-blue-700"
+                disabled={isLoading || isItemLoading}
+              >
+                <FontAwesomeIcon icon={faEdit} className="h-5 w-5" />
+              </button>
+            </>
+          )}
+          <div className="flex gap-2">
+            {isArchived && onRecover && (
+              <button
+                onClick={() => note.id && onRecover(note.id)}
+                type="button"
+                className="text-green-500 hover:text-green-700"
+                disabled={isLoading || isItemLoading}
+              >
+                <FontAwesomeIcon icon={faUndo} className="h-5 w-5" />
+              </button>
+            )}
             <button
-              onClick={() => setShowColorMenu((prev) => !prev)}
+              onClick={handleDelete}
               type="button"
-              className="text-gray-600 hover:text-gray-800"
+              className="text-red-500 hover:text-red-700"
               disabled={isLoading || isItemLoading}
             >
-              <FontAwesomeIcon icon={faPalette} className="h-5 w-5" />
+              <FontAwesomeIcon icon={faTrash} className="h-5 w-5" />
             </button>
-            {showColorMenu && (
-              <div className="absolute z-10 mt-2 flex gap-1 bg-white p-2 rounded shadow-md">
-                {colors.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    className={`w-5 h-5 rounded-full ${color} border-2 border-white hover:ring-2`}
-                    onClick={() => handleColorChange(color)}
-                    disabled={isLoading || isItemLoading}
-                  />
-                ))}
-              </div>
-            )}
           </div>
-          <button
-            onClick={() => note.id && onEdit(note.id)}
-            type="button"
-            className="text-blue-500 hover:text-blue-700"
-            disabled={isLoading || isItemLoading}
-          >
-            <FontAwesomeIcon icon={faEdit} className="h-5 w-5" />
-          </button>
-          <button
-            onClick={handleDelete}
-            type="button"
-            className="text-red-500 hover:text-red-700"
-            disabled={isLoading || isItemLoading}
-          >
-            <FontAwesomeIcon icon={faTrash} className="h-5 w-5" />
-          </button>
         </div>
-        <button
-          onClick={handlePin}
-          type="button"
-          className={`hover:text-blue-700 ${note.pinned ? "text-blue-500 font-bold" : "text-blue-200"}`}
-          disabled={isLoading || isItemLoading}
-        >
-          <FontAwesomeIcon icon={faThumbtack} className="h-5 w-5" />
-        </button>
+        {!isArchived && (
+          <button
+            onClick={handlePin}
+            type="button"
+            className={`hover:text-blue-700 ${note.pinned ? "text-blue-500 font-bold" : "text-blue-200"}`}
+            disabled={isLoading || isItemLoading}
+          >
+            <FontAwesomeIcon icon={faThumbtack} className="h-5 w-5" />
+          </button>
+        )}
       </div>
     </div>
   );

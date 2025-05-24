@@ -64,12 +64,25 @@ public class NotesController : ControllerBase
     }
 
     [HttpDelete("{id}", Name = "Delete note by Id")]
-    public async Task<ActionResult<bool>> Delete(Guid id)
+    public async Task<ActionResult<bool>> Delete(Guid id, bool isHardDelete = false)
     {
-        var command = new DeleteNoteCommand(id, _contextService.UserId);
+        var command = new DeleteNoteCommand(id, isHardDelete, _contextService.UserId);
         await _mediator.Send(command);
-
         return NoContent();
+    }
+
+    [HttpPatch("{id}/recover", Name = "Recover archived note")]
+    public async Task<ActionResult<NoteResponseModel>> Recover(Guid id)
+    {
+        var command = new RecoverNoteCommand(id, _contextService.UserId);
+        var result = await _mediator.Send(command);
+
+        if (!result)
+        {
+            return NotFound();
+        }
+
+        return await GetById(id);
     }
 
     [HttpPatch("{id}/pin", Name = "Pin or unpin note")]
@@ -143,7 +156,7 @@ public class NotesController : ControllerBase
 
         return Ok();
     }
-    
+
     [HttpDelete("{noteId}/checklist/{itemId}", Name = "Delete checklist item")]
     public async Task<IActionResult> DeleteChecklistItem(
         Guid noteId,

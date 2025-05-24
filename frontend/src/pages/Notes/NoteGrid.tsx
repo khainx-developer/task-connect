@@ -166,11 +166,25 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   const handleDeleteNote = async (id: string) => {
     setIsLoading(true);
     try {
-      await baseTaskManagerApi.notes.deleteNoteById(id);
+      await baseTaskManagerApi.notes.deleteNoteById(id, { isHardDelete: isArchived });
       setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
     } catch (error) {
       console.error("Failed to delete note:", error);
       toast.error("Failed to delete note");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRecoverNote = async (id: string) => {
+    setIsLoading(true);
+    try {
+      await baseTaskManagerApi.notes.recoverNote(id);
+      setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+      toast.success("Note recovered successfully");
+    } catch (error) {
+      console.error("Failed to recover note:", error);
+      toast.error("Failed to recover note");
     } finally {
       setIsLoading(false);
     }
@@ -261,16 +275,18 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
 
   return (
     <div className="w-full max-w-full overflow-x-hidden px-4 p-4">
-      <div className="flex justify-end mb-4">
-        <Button
-          size="tiny"
-          startIcon={<PlusIcon />}
-          onClick={handleOpenAddModal}
-          disabled={isLoading}
-        >
-          Add Note
-        </Button>
-      </div>
+      {!isArchived && (
+        <div className="flex justify-end mb-4">
+          <Button
+            size="tiny"
+            startIcon={<PlusIcon />}
+            onClick={handleOpenAddModal}
+            disabled={isLoading}
+          >
+            Add Note
+          </Button>
+        </div>
+      )}
 
       <DragDropContext onDragEnd={onDragEnd}>
         {notes.filter((note: Note) => note.pinned).length > 0 && (
@@ -311,6 +327,8 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
                               }
                               isLoading={isLoading || colorLoadingId === note.id}
                               dragHandleProps={provided.dragHandleProps}
+                              isArchived={isArchived}
+                              onRecover={handleRecoverNote}
                             />
                           </div>
                         )}
@@ -363,6 +381,8 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
                             }
                             isLoading={isLoading || colorLoadingId === note.id}
                             dragHandleProps={provided.dragHandleProps}
+                            isArchived={isArchived}
+                            onRecover={handleRecoverNote}
                           />
                         </div>
                       )}
