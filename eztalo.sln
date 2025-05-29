@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.UserService.Domain",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.Api.Core", "backend\eztalo.Api.Core\eztalo.Api.Core.csproj", "{B4D8AB75-8837-4895-8C3B-1211F50BCF6E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eztalo.Infrastructure.Core", "backend\eztalo.Infrastructure.Core\eztalo.Infrastructure.Core.csproj", "{286AAB32-C77F-400B-8943-CDD9F283C276}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,10 @@ Global
 		{B4D8AB75-8837-4895-8C3B-1211F50BCF6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4D8AB75-8837-4895-8C3B-1211F50BCF6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4D8AB75-8837-4895-8C3B-1211F50BCF6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{286AAB32-C77F-400B-8943-CDD9F283C276}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{286AAB32-C77F-400B-8943-CDD9F283C276}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{286AAB32-C77F-400B-8943-CDD9F283C276}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{286AAB32-C77F-400B-8943-CDD9F283C276}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6B6A77F2-B82B-4983-9F5D-6D24FFE9204B} = {1F5BCC07-B841-40AB-92CF-D84858783E34}

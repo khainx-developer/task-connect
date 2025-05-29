@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\eztalo.Api.Core\eztalo.Api.Core.csproj" />
+    <ProjectReference Include="..\eztalo.Infrastructure.Core\eztalo.Infrastructure.Core.csproj" />
     <ProjectReference Include="..\eztalo.TaskService.Application\eztalo.TaskService.Application.csproj" />
     <ProjectReference Include="..\eztalo.TaskService.Infrastructure\eztalo.TaskService.Infrastructure.csproj" />
   </ItemGroup>

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using eztalo.Api.Core.Middlewares;
+using eztalo.Infrastructure.Core;
 using eztalo.UserService.Application.Common.Interfaces;
 using eztalo.UserService.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,17 +14,28 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var secretsFilePath = Environment.GetEnvironmentVariable("SECRETS_FILE_PATH");
-var connectionString = "";
-var issuer = "";
-if (!string.IsNullOrEmpty(secretsFilePath) && File.Exists(secretsFilePath))
+// var secretsFilePath = Environment.GetEnvironmentVariable("SECRETS_FILE_PATH");
+// var connectionString = "";
+// var issuer = "";
+// if (!string.IsNullOrEmpty(secretsFilePath) && File.Exists(secretsFilePath))
+// {
+//     var json = await File.ReadAllTextAsync(secretsFilePath);
+//     var secrets = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
+//     connectionString = secrets?["ConnectionStrings"]["DefaultConnection"];
+//     issuer = secrets?["AuthSettings"]["Issuer"];
+// }
+
+var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+Dictionary<string, Dictionary<string, string>> secrets = null;
+if (!string.IsNullOrEmpty(env))
 {
-    var json = await File.ReadAllTextAsync(secretsFilePath);
-    var secrets = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
-    connectionString = secrets?["ConnectionStrings"]["DefaultConnection"];
-    issuer = secrets?["AuthSettings"]["Issuer"];
+    var vaultClientFactory = new VaultClientFactory();
+    var vaultSecretProvider = new VaultSecretProvider(vaultClientFactory);
+    var json = await vaultSecretProvider.GetSecretAsync(env, "user-service", "app-settings");
+    secrets = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
 }
 
+var issuer = secrets?["AuthSettings"]["Issuer"];
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -75,6 +87,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization();
 
+var connectionString = secrets?["ConnectionStrings"]["DefaultConnection"];
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());

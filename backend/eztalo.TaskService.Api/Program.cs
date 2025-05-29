@@ -1,5 +1,6 @@
 using System.Text.Json;
 using eztalo.Api.Core.Middlewares;
+using eztalo.Infrastructure.Core;
 using eztalo.TaskService.Api.Services;
 using eztalo.TaskService.Application.Common.Interfaces;
 using eztalo.TaskService.Application.Queries.TaskQueries;
@@ -15,11 +16,13 @@ using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var secretsFilePath = Environment.GetEnvironmentVariable("SECRETS_FILE_PATH");
+var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 Dictionary<string, Dictionary<string, string>> secrets = null;
-if (!string.IsNullOrEmpty(secretsFilePath) && File.Exists(secretsFilePath))
+if (!string.IsNullOrEmpty(env))
 {
-    var json = await File.ReadAllTextAsync(secretsFilePath);
+    var vaultClientFactory = new VaultClientFactory();
+    var vaultSecretProvider = new VaultSecretProvider(vaultClientFactory);
+    var json = await vaultSecretProvider.GetSecretAsync(env, "task-service", "app-settings");
     secrets = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
 }
 
