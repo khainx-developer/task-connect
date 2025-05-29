@@ -54,6 +54,11 @@ public class VaultSecretProvider : IVaultSecretProvider, IDisposable
 
             return value;
         }
+        catch (VaultSharp.Core.VaultApiException e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
         finally
         {
             _lock.Release();
