@@ -1,4 +1,5 @@
 using System.Text.Json;
+using eztalo.Api.Core.Middlewares;
 using eztalo.UserService.Application.Common.Interfaces;
 using eztalo.UserService.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -6,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Prometheus;
+using Serilog;
+using Serilog.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -118,6 +121,13 @@ builder.Services.AddSwaggerGen(options =>
 
 // Add health checks
 builder.Services.AddHealthChecks();
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext()
+        .WriteTo.Console();
+});
 
 var app = builder.Build();
 
@@ -143,6 +153,15 @@ else
     app.UseHsts();
 }
 
+app.Use(async (context, next) =>
+{
+    using (LogContext.PushProperty("RequestId", context.TraceIdentifier))
+    {
+        await next.Invoke();
+    }
+});
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseSerilogRequestLogging();
 app.UseCors(myAllowSpecificOrigins);
 app.UseRouting();
 app.UseAuthentication();
@@ -158,4 +177,16 @@ app.MapMetrics();
 // Expose native ASP.NET Core /health endpoint (optional)
 app.MapHealthChecks("/health");
 
-await app.RunAsync();
+try
+{
+    Log.Information("Starting up...");
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application start-up failed");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

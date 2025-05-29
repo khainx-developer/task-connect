@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace eztalo.UserService.Api.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("")]
 public class HomeController : ControllerBase

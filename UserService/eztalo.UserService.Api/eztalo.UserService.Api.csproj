@@ -16,16 +16,23 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
+    <PackageReference Include="prometheus-net.AspNetCore.HealthChecks" Version="8.2.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.Grafana.Loki" Version="8.3.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\eztalo.Api.Core\eztalo.Api.Core.csproj" />
     <ProjectReference Include="..\eztalo.UserService.Application\eztalo.UserService.Application.csproj" />
     <ProjectReference Include="..\eztalo.UserService.Infrastructure\eztalo.UserService.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="appsettings.Localelopment.json">
+    <Content Update="appsettings.Development.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
     <Content Update="appsettings.Production.json">
