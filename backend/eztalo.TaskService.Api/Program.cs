@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Prometheus;
 using Serilog;
 using Serilog.Context;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,7 +70,19 @@ app.Use(async (context, next) =>
     }
 });
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseSerilogRequestLogging();
+app.UseSerilogRequestLogging(opts =>
+{
+    opts.GetLevel = (httpContext, elapsed, ex) =>
+    {
+        // Suppress /metrics logging
+        if (httpContext.Request.Path.StartsWithSegments("/metrics"))
+        {
+            return LogEventLevel.Verbose; // Or return null to skip logging
+        }
+
+        return LogEventLevel.Information;
+    };
+});
 app.UseCors(myAllowSpecificOrigins);
 app.UseRouting();
 app.UseAuthentication();
