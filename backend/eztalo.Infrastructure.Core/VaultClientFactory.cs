@@ -11,9 +11,7 @@ public class VaultClientFactory : IVaultClientFactory
     public VaultClientFactory()
     {
         _vaultUri = Environment.GetEnvironmentVariable("VAULT_URI")!;
-        Console.WriteLine($"_vaultUri: {_vaultUri}.");
         _vaultToken = Environment.GetEnvironmentVariable("VAULT_TOKEN")!;
-        Console.WriteLine($"_vaultToken: {_vaultToken}.");
     }
 
     public IVaultClient CreateClient()
