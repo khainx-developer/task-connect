@@ -21,6 +21,7 @@ public class VaultSecretProvider : IVaultSecretProvider, IDisposable
         var fullPath = $"eztalo-secret/{environment}/{path}";
         var cacheKey = $"{environment}/{path}:{key}";
 
+        Console.WriteLine($"fullPath: {fullPath}.");
         if (_cache.TryGetValue(cacheKey, out var cached) &&
             DateTime.UtcNow - cached.lastFetched < _refreshInterval)
         {
@@ -56,7 +57,7 @@ public class VaultSecretProvider : IVaultSecretProvider, IDisposable
         }
         catch (VaultSharp.Core.VaultApiException e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine(e);
             throw;
         }
         finally
