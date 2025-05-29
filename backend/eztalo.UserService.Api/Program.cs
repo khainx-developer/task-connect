@@ -139,8 +139,7 @@ builder.Host.UseSerilog((context, services, configuration) =>
 {
     configuration
         .ReadFrom.Configuration(context.Configuration)
-        .Enrich.FromLogContext()
-        .WriteTo.Console();
+        .Enrich.FromLogContext();
 });
 
 var app = builder.Build();
