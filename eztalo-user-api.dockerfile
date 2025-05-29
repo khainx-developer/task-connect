@@ -10,6 +10,7 @@ WORKDIR /src
 COPY ["UserService/eztalo.UserService.Api/eztalo.UserService.Api.csproj", "eztalo.UserService.Api/"]
 RUN dotnet restore "eztalo.UserService.Api/eztalo.UserService.Api.csproj"
 COPY ./UserService .
+COPY ./eztalo.Api.Core .
 WORKDIR "/src/eztalo.UserService.Api"
 RUN dotnet build "eztalo.UserService.Api.csproj" -c Release -o /app/build
 
