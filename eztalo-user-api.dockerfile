@@ -7,10 +7,9 @@ ENV ASPNETCORE_URLS=http://+:80
 # Use the SDK image to build the app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["UserService/eztalo.UserService.Api/eztalo.UserService.Api.csproj", "eztalo.UserService.Api/"]
+COPY ["backend/eztalo.UserService.Api/eztalo.UserService.Api.csproj", "eztalo.UserService.Api/"]
 RUN dotnet restore "eztalo.UserService.Api/eztalo.UserService.Api.csproj"
-COPY ./UserService .
-COPY ./eztalo.Api.Core .
+COPY ./backend .
 WORKDIR "/src/eztalo.UserService.Api"
 RUN dotnet build "eztalo.UserService.Api.csproj" -c Release -o /app/build
 
