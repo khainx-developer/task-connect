@@ -78,18 +78,36 @@ The local development environment uses Docker Compose to set up the following se
    - Each database has its own user and password
    - Exposed on port 15432 for local development
    - Includes initialization scripts for database and user creation
+   - Access:
+     - Host: localhost:15432
+     - Default Admin: postgres/postgres@123
+     - Service-specific databases:
+       - Users DB: users/users_user
+       - Tasks DB: tasks/tasks_user
+       - Notes DB: notes/notes_user
+       - Notifications DB: notifications/notifications_user
+       - Payments DB: payments/payments_user
+       - Bookings DB: bookings/bookings_user
 
 2. **Keycloak Authentication**
    - Integrated with PostgreSQL for user management
    - Configured for local development with simplified security
    - Exposed on port 18080
    - Includes realm configuration for development
+   - Access:
+     - Admin Console: http://localhost:18080/admin
+     - Default Admin: admin/uyDsEdd@1a&s
+     - Realm: task-connect
 
 3. **Vault Secrets Management**
    - Stores database credentials securely
    - Manages service-to-service authentication
    - Exposed on port 18200
    - Includes automatic initialization and unsealing
+   - Access:
+     - UI: http://localhost:18200/ui
+     - API: http://localhost:18200/v1
+     - Root Token: Available in vault/keys.json after initialization
    - Stores database credentials in a structured format:
      ```
      secret/data/databases/
