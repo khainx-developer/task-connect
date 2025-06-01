@@ -1,0 +1,162 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{1F5BCC07-B841-40AB-92CF-D84858783E34}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+		.gitignore = .gitignore
+		docker-compose-databases.yml = docker-compose-databases.yml
+		start-databases.sh = start-databases.sh
+		.docker-env = .docker-env
+		init-databases.sh = init-databases.sh
+		task-connect-realm.json = task-connect-realm.json
+		.docker-env-sample = .docker-env-sample
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.Api.Core", "TaskConnect.Api.Core\TaskConnect.Api.Core.csproj", "{ACD8EB7D-20C7-4BE5-90ED-32F1C81FEFE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.Infrastructure.Core", "TaskConnect.Infrastructure.Core\TaskConnect.Infrastructure.Core.csproj", "{48C60C0C-8696-4AE0-8A56-75A77950113A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.TaskService.Api", "TaskConnect.TaskService.Api\TaskConnect.TaskService.Api.csproj", "{EEA2513F-9E8A-41FC-BD97-CF6B39BFFA21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.TaskService.Application", "TaskConnect.TaskService.Application\TaskConnect.TaskService.Application.csproj", "{2ABE1BF3-0031-4A66-8442-0F0828B0980A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.TaskService.Domain", "TaskConnect.TaskService.Domain\TaskConnect.TaskService.Domain.csproj", "{50D2754E-51C4-4576-9BC7-86D05F6E6113}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.TaskService.Infrastructure", "TaskConnect.TaskService.Infrastructure\TaskConnect.TaskService.Infrastructure.csproj", "{DF153E46-AD26-4677-AF2C-74C076AD7397}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.UserService.Api", "TaskConnect.UserService.Api\TaskConnect.UserService.Api.csproj", "{512BFCDD-2E7F-4C4C-A297-EDD2F01C75B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.UserService.Application", "TaskConnect.UserService.Application\TaskConnect.UserService.Application.csproj", "{D1769787-26C7-4EE8-88E8-EAA81C9CA369}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.UserService.Domain", "TaskConnect.UserService.Domain\TaskConnect.UserService.Domain.csproj", "{DAF622AF-20A2-4CF2-AAFA-B47690194535}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.UserService.Infrastructure", "TaskConnect.UserService.Infrastructure\TaskConnect.UserService.Infrastructure.csproj", "{C6F94405-CA43-45FF-B4E3-A29081272E95}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. API Gateway Service", "1. API Gateway Service", "{99FE4087-4E70-45C3-8E24-0CAD0210CAF6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Authentication & Authorization Service", "2. Authentication & Authorization Service", "{1E3D34C0-57B9-4355-B5DA-9EBA44F08F86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Task Management Service", "3. Task Management Service", "{144AE603-5503-4286-A0A3-72DBEE0CFFB8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Service Marketplace Service", "4. Service Marketplace Service", "{52B979C9-3FB3-4A23-AE72-5398EC1AD134}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5. Booking & Scheduling Service", "5. Booking & Scheduling Service", "{F48A7530-00C1-4656-B830-FCB7EB9AD111}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "6. Notes & Documentation Service", "6. Notes & Documentation Service", "{669ADF7B-74B0-4DE4-8CAD-148DA133891E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "7. Notification Service", "7. Notification Service", "{F77C2406-3C3E-47A9-BFC6-C215F1DA0E20}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "8. Payment Service", "8. Payment Service", "{299B24B0-3B15-4B1E-98F9-9E5AE6DA4992}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "9. Analytics & Reporting Service", "9. Analytics & Reporting Service", "{F47EAF76-64A4-47EC-8521-C45B792A9EA3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core API Services", "Core API Services", "{2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Background Processing Services", "Background Processing Services", "{E1EBC1D1-570B-40A2-AB58-DC26756CF493}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10. Notification Processor Service", "10. Notification Processor Service", "{B2885CB4-4418-42E8-85B2-167570041E03}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "11. Task Scheduler Service", "11. Task Scheduler Service", "{28CC78BF-CD29-466D-90A0-145A62B86F74}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "12. File Processing Service", "12. File Processing Service", "{FDD5613D-3BB7-45DC-8B85-14AADB17FE22}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "13. Search Indexing Service", "13. Search Indexing Service", "{EB74DA66-B729-4F21-B68C-A7AA3B187665}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "14. Audit & Logging Service", "14. Audit & Logging Service", "{F6A75089-3FF3-4DB3-BA0E-ACE6A6DD3D7D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility Services", "Utility Services", "{56C35E5C-EFFF-4928-AFBF-30885A0C37E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Health Check Service", "Health Check Service", "{C10A3418-EBDD-46D7-90BF-C73718730573}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration Service", "Configuration Service", "{700A798B-102E-4A24-A9EF-32FDFA720521}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{B8591FAA-E139-4C49-A7E6-F778E3E1D818}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vault", "vault", "{828EE7AC-CF42-45EA-9C48-CD1FF0CA813B}"
+	ProjectSection(SolutionItems) = preProject
+		vault\keys.json = vault\keys.json
+		vault\vault-config.hcl = vault\vault-config.hcl
+		vault\vault-setup.sh = vault\vault-setup.sh
+		vault\unseal.sh = vault\unseal.sh
+		vault\create-token.sh = vault\create-token.sh
+		vault\token.txt = vault\token.txt
+		vault\store-db-credentials.sh = vault\store-db-credentials.sh
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ACD8EB7D-20C7-4BE5-90ED-32F1C81FEFE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACD8EB7D-20C7-4BE5-90ED-32F1C81FEFE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACD8EB7D-20C7-4BE5-90ED-32F1C81FEFE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACD8EB7D-20C7-4BE5-90ED-32F1C81FEFE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48C60C0C-8696-4AE0-8A56-75A77950113A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48C60C0C-8696-4AE0-8A56-75A77950113A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48C60C0C-8696-4AE0-8A56-75A77950113A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48C60C0C-8696-4AE0-8A56-75A77950113A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEA2513F-9E8A-41FC-BD97-CF6B39BFFA21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEA2513F-9E8A-41FC-BD97-CF6B39BFFA21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEA2513F-9E8A-41FC-BD97-CF6B39BFFA21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEA2513F-9E8A-41FC-BD97-CF6B39BFFA21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ABE1BF3-0031-4A66-8442-0F0828B0980A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ABE1BF3-0031-4A66-8442-0F0828B0980A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ABE1BF3-0031-4A66-8442-0F0828B0980A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ABE1BF3-0031-4A66-8442-0F0828B0980A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50D2754E-51C4-4576-9BC7-86D05F6E6113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50D2754E-51C4-4576-9BC7-86D05F6E6113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50D2754E-51C4-4576-9BC7-86D05F6E6113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50D2754E-51C4-4576-9BC7-86D05F6E6113}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF153E46-AD26-4677-AF2C-74C076AD7397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF153E46-AD26-4677-AF2C-74C076AD7397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF153E46-AD26-4677-AF2C-74C076AD7397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF153E46-AD26-4677-AF2C-74C076AD7397}.Release|Any CPU.Build.0 = Release|Any CPU
+		{512BFCDD-2E7F-4C4C-A297-EDD2F01C75B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{512BFCDD-2E7F-4C4C-A297-EDD2F01C75B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{512BFCDD-2E7F-4C4C-A297-EDD2F01C75B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{512BFCDD-2E7F-4C4C-A297-EDD2F01C75B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1769787-26C7-4EE8-88E8-EAA81C9CA369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1769787-26C7-4EE8-88E8-EAA81C9CA369}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1769787-26C7-4EE8-88E8-EAA81C9CA369}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1769787-26C7-4EE8-88E8-EAA81C9CA369}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAF622AF-20A2-4CF2-AAFA-B47690194535}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAF622AF-20A2-4CF2-AAFA-B47690194535}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAF622AF-20A2-4CF2-AAFA-B47690194535}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAF622AF-20A2-4CF2-AAFA-B47690194535}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6F94405-CA43-45FF-B4E3-A29081272E95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6F94405-CA43-45FF-B4E3-A29081272E95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6F94405-CA43-45FF-B4E3-A29081272E95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6F94405-CA43-45FF-B4E3-A29081272E95}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{99FE4087-4E70-45C3-8E24-0CAD0210CAF6} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
+		{1E3D34C0-57B9-4355-B5DA-9EBA44F08F86} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
+		{144AE603-5503-4286-A0A3-72DBEE0CFFB8} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
+		{52B979C9-3FB3-4A23-AE72-5398EC1AD134} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
+		{F48A7530-00C1-4656-B830-FCB7EB9AD111} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
+		{669ADF7B-74B0-4DE4-8CAD-148DA133891E} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
+		{F77C2406-3C3E-47A9-BFC6-C215F1DA0E20} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
+		{299B24B0-3B15-4B1E-98F9-9E5AE6DA4992} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
+		{F47EAF76-64A4-47EC-8521-C45B792A9EA3} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
+		{B2885CB4-4418-42E8-85B2-167570041E03} = {E1EBC1D1-570B-40A2-AB58-DC26756CF493}
+		{28CC78BF-CD29-466D-90A0-145A62B86F74} = {E1EBC1D1-570B-40A2-AB58-DC26756CF493}
+		{FDD5613D-3BB7-45DC-8B85-14AADB17FE22} = {E1EBC1D1-570B-40A2-AB58-DC26756CF493}
+		{EB74DA66-B729-4F21-B68C-A7AA3B187665} = {E1EBC1D1-570B-40A2-AB58-DC26756CF493}
+		{F6A75089-3FF3-4DB3-BA0E-ACE6A6DD3D7D} = {E1EBC1D1-570B-40A2-AB58-DC26756CF493}
+		{C10A3418-EBDD-46D7-90BF-C73718730573} = {56C35E5C-EFFF-4928-AFBF-30885A0C37E2}
+		{700A798B-102E-4A24-A9EF-32FDFA720521} = {56C35E5C-EFFF-4928-AFBF-30885A0C37E2}
+		{512BFCDD-2E7F-4C4C-A297-EDD2F01C75B3} = {1E3D34C0-57B9-4355-B5DA-9EBA44F08F86}
+		{D1769787-26C7-4EE8-88E8-EAA81C9CA369} = {1E3D34C0-57B9-4355-B5DA-9EBA44F08F86}
+		{DAF622AF-20A2-4CF2-AAFA-B47690194535} = {1E3D34C0-57B9-4355-B5DA-9EBA44F08F86}
+		{C6F94405-CA43-45FF-B4E3-A29081272E95} = {1E3D34C0-57B9-4355-B5DA-9EBA44F08F86}
+		{EEA2513F-9E8A-41FC-BD97-CF6B39BFFA21} = {144AE603-5503-4286-A0A3-72DBEE0CFFB8}
+		{2ABE1BF3-0031-4A66-8442-0F0828B0980A} = {144AE603-5503-4286-A0A3-72DBEE0CFFB8}
+		{50D2754E-51C4-4576-9BC7-86D05F6E6113} = {144AE603-5503-4286-A0A3-72DBEE0CFFB8}
+		{DF153E46-AD26-4677-AF2C-74C076AD7397} = {144AE603-5503-4286-A0A3-72DBEE0CFFB8}
+		{ACD8EB7D-20C7-4BE5-90ED-32F1C81FEFE3} = {B8591FAA-E139-4C49-A7E6-F778E3E1D818}
+		{48C60C0C-8696-4AE0-8A56-75A77950113A} = {B8591FAA-E139-4C49-A7E6-F778E3E1D818}
+		{828EE7AC-CF42-45EA-9C48-CD1FF0CA813B} = {1F5BCC07-B841-40AB-92CF-D84858783E34}
+	EndGlobalSection
+EndGlobal

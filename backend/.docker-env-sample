@@ -1,0 +1,24 @@
+# Main database configuration
+POSTGRES_DB=postgres
+POSTGRES_USER=postgres
+DB_PASSWORD=postgres@123
+
+# Individual database passwords
+KEYCLOAK_DB_PASSWORD=postgres@123
+USERS_DB_PASSWORD=postgres@123
+TASKS_DB_PASSWORD=postgres@123
+NOTES_DB_PASSWORD=postgres@123
+NOTIFICATIONS_DB_PASSWORD=postgres@123
+PAYMENTS_DB_PASSWORD=postgres@123
+BOOKINGS_DB_PASSWORD=postgres@123
+
+# Keycloak
+AUTH_ADMIN=admin
+AUTH_ADMIN_PASS=uyDsEdd@1a&s
+
+# Google OAuth Configuration
+GOOGLE_CLIENT_ID=secret
+GOOGLE_CLIENT_SECRET=secret
+
+# Frontend Client Configuration
+FRONTEND_CLIENT_SECRET=wv9b+kJSpfagpnW4KQRcwZG8UKXs/LOgR/8hjSCO0Hs=

@@ -1,0 +1,133 @@
+version: '3.8'
+
+networks:
+  task-connect-network:
+    name: task-connect-network
+    driver: bridge
+
+services:
+  task-connect-postgres:
+    image: postgres:15.4
+    container_name: task-connect-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      # Individual database passwords
+      KEYCLOAK_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      USERS_DB_PASSWORD: ${USERS_DB_PASSWORD}
+      TASKS_DB_PASSWORD: ${TASKS_DB_PASSWORD}
+      NOTES_DB_PASSWORD: ${NOTES_DB_PASSWORD}
+      NOTIFICATIONS_DB_PASSWORD: ${NOTIFICATIONS_DB_PASSWORD}
+      PAYMENTS_DB_PASSWORD: ${PAYMENTS_DB_PASSWORD}
+      BOOKINGS_DB_PASSWORD: ${BOOKINGS_DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
+    networks:
+      - task-connect-network
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+    ports:
+      - "15432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      
+  task-connect-auth:
+    image: keycloak/keycloak:26.2
+    container_name: task-connect-auth
+    depends_on:
+      - task-connect-postgres
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://task-connect-postgres:5432/keycloak
+      - KC_DB_USERNAME=keycloak_user
+      - KC_DB_PASSWORD=${KEYCLOAK_DB_PASSWORD}
+      - KC_HOSTNAME=http://localhost:18080
+      - KC_HTTP_ENABLED=true
+      - KC_PROXY=passthrough
+      - KEYCLOAK_ADMIN=${AUTH_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${AUTH_ADMIN_PASS}
+      - JAVA_OPTS="-Dkeycloak.loginIframeEnabled=false -Dkeycloak.frontendUrl=http://localhost:18080"
+      # Environment variables for realm import
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - FRONTEND_CLIENT_SECRET=${FRONTEND_CLIENT_SECRET}
+    command: start-dev --import-realm
+    volumes:
+      - auth_data:/opt/keycloak/data
+      - ./task-connect-realm.json:/opt/keycloak/data/import/task-connect-realm.json
+    ports:
+      - "18080:8080"
+    networks:
+      - task-connect-network
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  task-connect-vault:
+    image: vault:1.13.3
+    container_name: task-connect-vault
+    environment:
+      VAULT_ADDR: http://0.0.0.0:8200
+      VAULT_API_ADDR: http://localhost:8200
+      # Database passwords for Vault storage
+      USERS_DB_PASSWORD: ${USERS_DB_PASSWORD}
+      TASKS_DB_PASSWORD: ${TASKS_DB_PASSWORD}
+      NOTES_DB_PASSWORD: ${NOTES_DB_PASSWORD}
+      NOTIFICATIONS_DB_PASSWORD: ${NOTIFICATIONS_DB_PASSWORD}
+      PAYMENTS_DB_PASSWORD: ${PAYMENTS_DB_PASSWORD}
+      BOOKINGS_DB_PASSWORD: ${BOOKINGS_DB_PASSWORD}
+    volumes:
+      - ./vault/vault-config.hcl:/vault/config/vault.hcl:ro
+      - ./vault/vault-setup.sh:/vault/scripts/vault-setup.sh:ro
+      - ./vault/unseal.sh:/vault/scripts/unseal.sh:ro
+      - ./vault/create-token.sh:/vault/scripts/create-token.sh:ro
+      - ./vault/store-db-credentials.sh:/vault/scripts/store-db-credentials.sh:ro
+      - ./vault/keys.json:/vault/config/keys.json
+      - ./vault/token.txt:/vault/config/token.txt
+      - vault_data:/vault/data
+      - vault_logs:/vault/logs
+    entrypoint: >
+      sh -c "
+        vault server -config=/vault/config/vault.hcl &
+        VAULT_PID=$$!
+        sleep 10
+        chmod +x /vault/scripts/*.sh
+        /vault/scripts/vault-setup.sh
+        wait $$VAULT_PID
+      "
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - task-connect-network
+    ports:
+      - "18200:8200"
+      - "18201:8201"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "vault status || exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+  vault_data:
+  vault_logs:
+  auth_data:
