@@ -14,5 +14,5 @@ public class UserContextService : IUserContextService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string UserId => _httpContextAccessor.HttpContext?.User.Claims.SingleOrDefault(c => c.Type == "sid")?.Value;
+    public string UserId => _httpContextAccessor.HttpContext?.User.Claims.SingleOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
 }

@@ -14,7 +14,9 @@
         "GET",
         "POST",
         "PUT",
-        "DELETE"
+        "DELETE",
+        "PATCH",
+        "OPTIONS"
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
@@ -35,7 +37,9 @@
         "GET",
         "POST",
         "PUT",
-        "DELETE"
+        "DELETE",
+        "PATCH",
+        "OPTIONS"
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
@@ -56,7 +60,9 @@
         "GET",
         "POST",
         "PUT",
-        "DELETE"
+        "DELETE",
+        "PATCH",
+        "OPTIONS"
       ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",

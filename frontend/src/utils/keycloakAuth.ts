@@ -47,7 +47,7 @@ export const initiateKeycloakLogin = async () => {
     client_id: CLIENT_ID,
     response_type: "code",
     redirect_uri: REDIRECT_URI,
-    scope: "openid email profile",
+    scope: "openid email profile roles",
     code_challenge: codeChallenge,
     code_challenge_method: "S256",
   });
