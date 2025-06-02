@@ -1,4 +1,4 @@
-name: Build and Push Docker Image of User Service
+name: Build and Push Docker Image of Task Service
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.branch }}
 
@@ -33,9 +33,11 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          docker build -f eztalo-user-api.dockerfile \
-            -t ${{ secrets.DOCKER_USERNAME }}/eztalo-user-service:latest .
+          docker build -f backend/TaskConnect.TaskService.Api/.dockerfile \
+            -t ${{ secrets.DOCKER_USERNAME }}/task-connect-task-api:latest \
+            -t ${{ secrets.DOCKER_USERNAME }}/task-connect-task-api:${{ env.TAG }} .
 
       - name: Push Docker images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/eztalo-user-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/task-connect-task-api:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/task-connect-task-api:${{ env.TAG }}
