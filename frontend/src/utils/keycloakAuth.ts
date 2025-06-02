@@ -1,5 +1,5 @@
 import { userStore } from "../store/userStore";
-import { baseIdentityApi } from "../api";
+import { baseUserApi } from "../api";
 
 
 const KEYCLOAK_AUTH_URL = `${import.meta.env.VITE_KEYCLOAK_AUTH_URL}/protocol/openid-connect/auth`;
@@ -108,7 +108,7 @@ export const handleKeycloakCallback = async (
     localStorage.removeItem("code_verifier");
 
     // Call your user API to verify/create user
-    const apiResponse = await baseIdentityApi.auth.authVerifyUserCreate({});
+    const apiResponse = await baseUserApi.auth.authVerifyUserCreate({});
     userStore.getState().setUser({
       id: apiResponse.data.id ?? "",
       email: userData.email,

@@ -1,5 +1,5 @@
 {
-  "name": "eztalo",
+  "name": "task-connect",
   "private": true,
   "version": "2.0.2",
   "type": "module",
@@ -8,8 +8,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-user-api-client": "swagger-typescript-api --single-http-client --module-name-first-tag --axios -p http://localhost:5246/swagger/v1/swagger.json -o ./src/api -n userApiClient.ts",
-    "generate-task-api-client": "swagger-typescript-api --single-http-client --module-name-first-tag --axios -p http://localhost:5245/swagger/v1/swagger.json -o ./src/api -n taskApiClient.ts"
+    "generate-user-api-client": "swagger-typescript-api --single-http-client --module-name-first-tag --axios -p http://localhost:5251/swagger/v1/swagger.json -o ./src/api -n userApiClient.ts",
+    "generate-note-api-client": "swagger-typescript-api --single-http-client --module-name-first-tag --axios -p http://localhost:5252/swagger/v1/swagger.json -o ./src/api -n noteApiClient.ts",
+    "generate-task-api-client": "swagger-typescript-api --single-http-client --module-name-first-tag --axios -p http://localhost:5253/swagger/v1/swagger.json -o ./src/api -n taskApiClient.ts"
   },
   "dependencies": {
     "@emotion/styled": "^11.14.0",

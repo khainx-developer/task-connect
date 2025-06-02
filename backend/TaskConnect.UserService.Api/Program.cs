@@ -24,6 +24,7 @@ builder.Services
     .AddJwtBearer(options =>
     {
         options.Authority = issuer;
+        options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,

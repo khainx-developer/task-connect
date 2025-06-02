@@ -5,11 +5,11 @@ import Input from "../../components/form/input/InputField";
 import TextArea from "../../components/form/input/TextArea";
 import { useEffect, useState } from "react";
 import { useModal } from "../../hooks/useModal";
-import { baseTaskManagerApi } from "../../api";
+import { baseNoteApi } from "../../api";
 import NoteCard from "./NoteCard";
 import { Note } from "./note";
 import { toast } from "react-toastify";
-import { NoteResponseModel, NoteType } from "../../api/taskApiClient";
+import { NoteResponseModel, NoteType } from "../../api/noteApiClient";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 
 const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
@@ -30,7 +30,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
     const fetchNotes = async () => {
       setIsLoading(true);
       try {
-        const response = await baseTaskManagerApi.notes.getAllNotes({
+        const response = await baseNoteApi.notes.getAllNotes({
           isArchived,
         });
         const notesData: Note[] = response.data.map(
@@ -73,7 +73,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   const handleOpenEditModal = async (id: string) => {
     setIsLoading(true);
     try {
-      const response = await baseTaskManagerApi.notes.getNoteById(id);
+      const response = await baseNoteApi.notes.getNoteById(id);
       const noteToEdit: Note = {
         id: response.data.id,
         title: response.data.title ?? "",
@@ -118,7 +118,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
 
     if (modalMode === "add") {
       try {
-        const saveNote = await baseTaskManagerApi.notes.createNote(noteData);
+        const saveNote = await baseNoteApi.notes.createNote(noteData);
         const newNote: Note = {
           id: saveNote.data.id ?? "",
           title: noteForm.title,
@@ -137,7 +137,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
     } else {
       if (editNote?.id) {
         try {
-          await baseTaskManagerApi.notes.updateNote(editNote.id, noteData);
+          await baseNoteApi.notes.updateNote(editNote.id, noteData);
           setNotes((prevNotes) =>
             prevNotes.map((note) =>
               note.id === editNote.id ? { ...note, ...noteData } : note
@@ -166,7 +166,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   const handleDeleteNote = async (id: string) => {
     setIsLoading(true);
     try {
-      await baseTaskManagerApi.notes.deleteNoteById(id, { isHardDelete: isArchived });
+      await baseNoteApi.notes.deleteNoteById(id, { isHardDelete: isArchived });
       setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
     } catch (error) {
       console.error("Failed to delete note:", error);
@@ -179,7 +179,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   const handleRecoverNote = async (id: string) => {
     setIsLoading(true);
     try {
-      await baseTaskManagerApi.notes.recoverNote(id);
+      await baseNoteApi.notes.recoverArchivedNote(id);
       setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
       toast.success("Note recovered successfully");
     } catch (error) {
@@ -193,7 +193,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   const handlePinNote = async (id: string, pinned: boolean) => {
     setIsLoading(true);
     try {
-      await baseTaskManagerApi.notes.pinOrUnpinNote(id, pinned);
+      await baseNoteApi.notes.pinOrUnpinNote(id, pinned);
       setNotes((prevNotes) =>
         prevNotes.map((note) => (note.id === id ? { ...note, pinned } : note))
       );
@@ -208,7 +208,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
   const handleChangeNoteColor = async (id: string, color: string) => {
     setColorLoadingId(id);
     try {
-      await baseTaskManagerApi.notes.updateNoteColor(id, color);
+      await baseNoteApi.notes.updateNoteColor(id, color);
       setNotes((prevNotes) =>
         prevNotes.map((note) => (note.id === id ? { ...note, color } : note))
       );
@@ -252,7 +252,7 @@ const NotesGrid = ({ isArchived }: { isArchived: boolean }) => {
     setIsLoading(true);
     try {
       const noteOrder = reorderedNotes.map((note) => note.id!);
-      await baseTaskManagerApi.notes.updateNoteOrder({
+      await baseNoteApi.notes.updateNoteOrder({
         order: noteOrder,
         pinned: isPinned,
       });

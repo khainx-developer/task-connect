@@ -16,12 +16,12 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 // Configure Serilog
-builder.Host.UseSerilog((context, services, configuration) => configuration
-    .ReadFrom.Configuration(context.Configuration)
-    .ReadFrom.Services(services)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File("logs/api-gateway-.txt", rollingInterval: RollingInterval.Day));
+builder.Host.UseSerilog((context, _, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .Enrich.FromLogContext();
+});
 
 // Add Ocelot
 builder.Services.AddOcelot(builder.Configuration);
@@ -41,6 +41,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.Authority = builder.Configuration["AuthSettings:Issuer"];
+        options.RequireHttpsMetadata = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,

@@ -1,8 +1,12 @@
-import { Api as IdentityApi, HttpClient as UserClient } from "./userApiClient";
+import { Api as UserApi, HttpClient as UserClient } from "./userApiClient";
 import {
-  Api as TaskManagerApi,
+  Api as TaskApi,
   HttpClient as TaskClient,
 } from "./taskApiClient";
+import {
+  Api as NoteApi,
+  HttpClient as NoteClient,
+} from "./noteApiClient";
 import qs from "qs";
 import { AxiosInstance, AxiosError } from "axios";
 import { toast } from "react-toastify";
@@ -78,7 +82,7 @@ const applyAxiosInterceptors = (instance: AxiosInstance) => {
         try {
           // Try to refresh the token
           const newToken = await refreshAccessToken();
-          
+
           // Retry the original request with the new token
           if (error.config) {
             error.config.headers.Authorization = `Bearer ${newToken}`;
@@ -107,18 +111,26 @@ const paramsSerializer = (params: unknown): string => {
 };
 
 const userClient = new UserClient({
-  baseURL: import.meta.env.VITE_USER_SERVICE_URL,
+  baseURL: `${import.meta.env.VITE_API_GATEWAY_URL}/user-api`,
   paramsSerializer,
 });
 
 applyAxiosInterceptors(userClient.instance);
 
-export const baseIdentityApi = new IdentityApi(userClient);
+export const baseUserApi = new UserApi(userClient);
 
-const taskManagerClient = new TaskClient({
-  baseURL: import.meta.env.VITE_TASK_SERVICE_URL,
+const noteClient = new NoteClient({
+  baseURL: `${import.meta.env.VITE_API_GATEWAY_URL}/note-api`,
   paramsSerializer,
 });
 
-applyAxiosInterceptors(taskManagerClient.instance);
-export const baseTaskManagerApi = new TaskManagerApi(taskManagerClient);
+applyAxiosInterceptors(noteClient.instance);
+export const baseNoteApi = new NoteApi(noteClient);
+
+const taskClient = new TaskClient({
+  baseURL: `${import.meta.env.VITE_API_GATEWAY_URL}/task-api`,
+  paramsSerializer,
+});
+
+applyAxiosInterceptors(taskClient.instance);
+export const baseTaskApi = new TaskApi(taskClient);

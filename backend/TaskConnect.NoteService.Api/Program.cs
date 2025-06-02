@@ -19,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var vaultClientFactory = new VaultClientFactory();
 var vaultSecretProvider = new VaultSecretProvider(vaultClientFactory);
-var databaseConfig = await vaultSecretProvider.GetJsonSecretAsync<DatabaseConfig>("databases/notes");
+var databaseConfig = await vaultSecretProvider.GetJsonSecretAsync<DatabaseConfig>("data/databases/notes");
 
 AddAuthentication(builder);
 
@@ -211,6 +211,7 @@ void AddAuthentication(WebApplicationBuilder webApplicationBuilder)
         .AddJwtBearer(options =>
         {
             options.Authority = issuer;
+            options.RequireHttpsMetadata = false;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,

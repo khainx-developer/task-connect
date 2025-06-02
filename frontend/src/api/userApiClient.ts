@@ -201,7 +201,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @title User Service API
  * @version v1
  *
- * API for user authentication using Firebase and JWT
+ * API for user authentication
  */
 export class Api<SecurityDataType extends unknown> {
   http: HttpClient<SecurityDataType>;

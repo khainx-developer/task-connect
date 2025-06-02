@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Modal } from "../../components/ui/modal";
-import { baseTaskManagerApi } from "../../api";
+import { baseTaskApi } from "../../api";
 import {
   ProjectResponseModel,
   TaskResponseModel,
@@ -68,7 +68,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
       return;
     }
     try {
-      const response = await baseTaskManagerApi.tasks.getAllTasks({
+      const response = await baseTaskApi.tasks.getAllTasks({
         searchText: query,
       });
       setTaskSuggestions(response.data || []);
@@ -85,7 +85,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
       return;
     }
     try {
-      const response = await baseTaskManagerApi.projects.getAllProjects({
+      const response = await baseTaskApi.projects.getAllProjects({
         searchText: query,
       });
       setProjectSuggestions(response.data || []);
@@ -115,7 +115,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
 
       // Create new project if specified
       if (eventNewProject && !eventProject) {
-        const projectResponse = await baseTaskManagerApi.projects.createProject({
+        const projectResponse = await baseTaskApi.projects.createProject({
           title: eventNewProject,
         });
         projectId = projectResponse.data.id ?? "";
@@ -123,7 +123,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
 
       // Create new task if no task selected or new title provided
       if (!taskId || (eventTitle && eventTitle !== selectedTask?.title)) {
-        const taskResponse = await baseTaskManagerApi.tasks.createTask({
+        const taskResponse = await baseTaskApi.tasks.createTask({
           title: eventTitle || "Untitled Task",
           projectId: projectId || undefined,
         });

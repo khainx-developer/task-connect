@@ -1,7 +1,7 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -9,7 +9,7 @@
           "Port": 5251
         }
       ],
-      "UpstreamPathTemplate": "/api/users/{everything}",
+      "UpstreamPathTemplate": "/user-api/{everything}",
       "UpstreamHttpMethod": [
         "GET",
         "POST",
@@ -22,7 +22,7 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/notes/{everything}",
+      "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -30,7 +30,7 @@
           "Port": 5252
         }
       ],
-      "UpstreamPathTemplate": "/api/users/{everything}",
+      "UpstreamPathTemplate": "/note-api/{everything}",
       "UpstreamHttpMethod": [
         "GET",
         "POST",
@@ -43,7 +43,7 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/tasks/{everything}",
+      "DownstreamPathTemplate": "/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -51,7 +51,7 @@
           "Port": 5253
         }
       ],
-      "UpstreamPathTemplate": "/api/tasks/{everything}",
+      "UpstreamPathTemplate": "/task-api/{everything}",
       "UpstreamHttpMethod": [
         "GET",
         "POST",

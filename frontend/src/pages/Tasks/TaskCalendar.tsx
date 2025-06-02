@@ -6,7 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { EventInput, DateSelectArg, EventClickArg } from "@fullcalendar/core";
 import { useModal } from "../../hooks/useModal";
 import PageMeta from "../../components/common/PageMeta";
-import { baseTaskManagerApi } from "../../api";
+import { baseTaskApi } from "../../api";
 import {
   TaskResponseModel,
   WorkLogResponseModel,
@@ -53,7 +53,7 @@ const TaskCalendar: React.FC = () => {
 
       try {
         console.log("Fetching work logs for range:", start, end);
-        const response = await baseTaskManagerApi.workLogs.getAllWorkLogs({
+        const response = await baseTaskApi.workLogs.getAllWorkLogs({
           from: start.toISOString(),
           to: end.toISOString(),
           isArchived: false,
@@ -149,7 +149,7 @@ const TaskCalendar: React.FC = () => {
     const workLogId = clickInfo.event.extendedProps.workLogId;
 
     // Fetch the work log by ID to get full details
-    baseTaskManagerApi.workLogs
+    baseTaskApi.workLogs
       .getWorkLogById(workLogId)
       .then((response) => {
         const workLog = response.data;
@@ -176,9 +176,9 @@ const TaskCalendar: React.FC = () => {
     if (selectedWorkLog) {
       // Note: API doesn't have updateWorkLog, so we'll create a new one
       // You may need to add an updateWorkLog endpoint or handle differently
-      await baseTaskManagerApi.workLogs.createWorkLog(data);
+      await baseTaskApi.workLogs.createWorkLog(data);
     } else {
-      await baseTaskManagerApi.workLogs.createWorkLog(data);
+      await baseTaskApi.workLogs.createWorkLog(data);
     }
     setSelectedTask(task);
   };

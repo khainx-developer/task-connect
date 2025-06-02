@@ -11,9 +11,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Note } from "./note";
 import { useState } from "react";
-import { baseTaskManagerApi } from "../../api";
+import { baseNoteApi } from "../../api";
 import { toast } from "react-toastify";
-import { NoteType } from "../../api/taskApiClient";
+import { NoteType } from "../../api/noteApiClient";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { CheckLineIcon, CloseLineIcon } from "../../icons";
 
@@ -82,7 +82,7 @@ const NoteCard = ({
     if (!note.id) return;
 
     try {
-      const response = await baseTaskManagerApi.notes.getNoteById(note.id);
+      const response = await baseNoteApi.notes.getNoteById(note.id);
       const updatedNote: Note = {
         id: response.data.id,
         title: response.data.title ?? "",
@@ -113,7 +113,7 @@ const NoteCard = ({
 
     setIsItemLoading(true);
     try {
-      await baseTaskManagerApi.notes.updateInsertChecklistItem(note.id, {
+      await baseNoteApi.notes.updateInsertChecklistItem(note.id, {
         id: itemId,
         text:
           note.checklistItems?.find((item) => item.id === itemId)?.text || "",
@@ -138,7 +138,7 @@ const NoteCard = ({
 
     setIsItemLoading(true);
     try {
-      await baseTaskManagerApi.notes.updateInsertChecklistItem(note.id, {
+      await baseNoteApi.notes.updateInsertChecklistItem(note.id, {
         id: null,
         text: newItemText,
         isCompleted: false,
@@ -167,7 +167,7 @@ const NoteCard = ({
 
     setIsItemLoading(true);
     try {
-      await baseTaskManagerApi.notes.updateInsertChecklistItem(note.id, {
+      await baseNoteApi.notes.updateInsertChecklistItem(note.id, {
         id: itemId,
         text: editText,
         isCompleted:
@@ -192,7 +192,7 @@ const NoteCard = ({
 
     setIsItemLoading(true);
     try {
-      await baseTaskManagerApi.notes.deleteChecklistItem(note.id, itemId);
+      await baseNoteApi.notes.deleteChecklistItem(note.id, itemId);
       await refreshNote();
     } catch (error) {
       console.error("Failed to delete checklist item:", error);
@@ -230,7 +230,7 @@ const NoteCard = ({
     setIsItemLoading(true);
     try {
       for (let i = 0; i < updatedItems.length; i++) {
-        await baseTaskManagerApi.notes.updateInsertChecklistItem(note.id, {
+        await baseNoteApi.notes.updateInsertChecklistItem(note.id, {
           id: updatedItems[i].id,
           text: updatedItems[i].text,
           isCompleted: updatedItems[i].isCompleted,

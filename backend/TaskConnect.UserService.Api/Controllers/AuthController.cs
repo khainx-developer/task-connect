@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
     [HttpPost("verify-user")]
     public async Task<ActionResult<User>> VerifyUser()
     {
-        var authUid = User.Claims.SingleOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+        var authUid = User.Claims.SingleOrDefault(c => c.Type == "sid")?.Value;
         var email = User.Claims.SingleOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
         var name = User.Claims.SingleOrDefault(c => c.Type == "name")?.Value ?? "New User";
         if (string.IsNullOrEmpty(authUid) || string.IsNullOrEmpty(email))

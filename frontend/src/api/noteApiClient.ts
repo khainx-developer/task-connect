@@ -9,38 +9,31 @@
  * ---------------------------------------------------------------
  */
 
-export interface MindmapCreateUpdateModel {
+export interface ChecklistItemModel {
+  /** @format uuid */
+  id?: string | null;
+  text?: string | null;
+  isCompleted?: boolean;
+  /** @format int32 */
+  order?: number;
+}
+
+export interface NoteCreateUpdateModel {
   title?: string | null;
-  nodes?: MindmapNodeModel[] | null;
-  edges?: MindmapEdgeModel[] | null;
+  content?: string | null;
+  type?: NoteType;
+  checklistItems?: ChecklistItemModel[] | null;
 }
 
-export interface MindmapEdgeModel {
-  id?: string | null;
-  source?: string | null;
-  target?: string | null;
-  type?: string | null;
-  style?: any;
-}
-
-export interface MindmapNodeModel {
-  id?: string | null;
-  type?: string | null;
-  label?: string | null;
-  /** @format double */
-  positionX?: number;
-  /** @format double */
-  positionY?: number;
-  style?: any;
-}
-
-export interface MindmapResponseModel {
+export interface NoteResponseModel {
   /** @format uuid */
   id?: string;
   ownerId?: string | null;
   title?: string | null;
-  nodes?: MindmapNodeModel[] | null;
-  edges?: MindmapEdgeModel[] | null;
+  content?: string | null;
+  type?: NoteType;
+  pinned?: boolean;
+  color?: string | null;
   /** @format date-time */
   createdAt?: string;
   /** @format date-time */
@@ -48,76 +41,18 @@ export interface MindmapResponseModel {
   isArchived?: boolean;
   /** @format int32 */
   order?: number;
+  checklistItems?: ChecklistItemModel[] | null;
 }
 
-export interface ProjectCreateModel {
-  title?: string | null;
-  description?: string | null;
+/** @format int32 */
+export enum NoteType {
+  Text = 0,
+  Checklist = 1,
 }
 
-export interface ProjectResponseModel {
-  /** @format uuid */
-  id?: string;
-  title?: string | null;
-  description?: string | null;
-  ownerId?: string | null;
-  /** @format date-time */
-  createdAt?: string;
-  /** @format date-time */
-  updatedAt?: string | null;
-  isArchived?: boolean;
-}
-
-export interface TaskCreateModel {
-  title?: string | null;
-  description?: string | null;
-  /** @format uuid */
-  projectId?: string | null;
-}
-
-export interface TaskResponseModel {
-  /** @format uuid */
-  id?: string;
-  /** @format uuid */
-  projectId?: string | null;
-  title?: string | null;
-  description?: string | null;
-  /** @format date-time */
-  dueDate?: string | null;
-  status?: string | null;
-  ownerId?: string | null;
-  isArchived?: boolean;
-  /** @format date-time */
-  createdAt?: string;
-  /** @format date-time */
-  updatedAt?: string | null;
-  project?: ProjectResponseModel;
-}
-
-export interface WorkLogCreateUpdateModel {
-  /** @format uuid */
-  taskItemId?: string | null;
-  /** @format date-time */
-  fromTime?: string;
-  /** @format date-time */
-  toTime?: string | null;
-  title?: string | null;
-  /** @format uuid */
-  projectId?: string | null;
-}
-
-export interface WorkLogResponseModel {
-  /** @format uuid */
-  id?: string;
-  /** @format uuid */
-  taskItemId?: string;
-  /** @format date-time */
-  fromTime?: string;
-  /** @format date-time */
-  toTime?: string;
-  /** @format int32 */
-  percentCompleteAfter?: number | null;
-  taskItem?: TaskResponseModel;
+export interface UpdateNoteOrderModel {
+  order?: string[] | null;
+  pinned?: boolean;
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
@@ -284,18 +219,18 @@ export class Api<SecurityDataType extends unknown> {
         ...params,
       }),
   };
-  mindmaps = {
+  notes = {
     /**
      * No description
      *
-     * @tags Mindmaps
-     * @name CreateMindmap
-     * @request POST:/api/Mindmaps
+     * @tags Notes
+     * @name CreateNote
+     * @request POST:/api/Notes
      * @secure
      */
-    createMindmap: (data: MindmapCreateUpdateModel, params: RequestParams = {}) =>
-      this.http.request<MindmapResponseModel, any>({
-        path: `/api/Mindmaps`,
+    createNote: (data: NoteCreateUpdateModel, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes`,
         method: "POST",
         body: data,
         secure: true,
@@ -307,20 +242,20 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
-     * @tags Mindmaps
-     * @name GetAllMindmaps
-     * @request GET:/api/Mindmaps
+     * @tags Notes
+     * @name GetAllNotes
+     * @request GET:/api/Notes
      * @secure
      */
-    getAllMindmaps: (
+    getAllNotes: (
       query?: {
         /** @default false */
         isArchived?: boolean;
       },
       params: RequestParams = {},
     ) =>
-      this.http.request<MindmapResponseModel[], any>({
-        path: `/api/Mindmaps`,
+      this.http.request<NoteResponseModel[], any>({
+        path: `/api/Notes`,
         method: "GET",
         query: query,
         secure: true,
@@ -331,14 +266,32 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
-     * @tags Mindmaps
-     * @name GetMindmapById
-     * @request GET:/api/Mindmaps/{id}
+     * @tags Notes
+     * @name UpdateNoteOrder
+     * @request PUT:/api/Notes
      * @secure
      */
-    getMindmapById: (id: string, params: RequestParams = {}) =>
-      this.http.request<MindmapResponseModel, any>({
-        path: `/api/Mindmaps/${id}`,
+    updateNoteOrder: (data: UpdateNoteOrderModel, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/Notes`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name GetNoteById
+     * @request GET:/api/Notes/{id}
+     * @secure
+     */
+    getNoteById: (id: string, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -348,14 +301,39 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
-     * @tags Mindmaps
-     * @name UpdateMindmap
-     * @request PUT:/api/Mindmaps/{id}
+     * @tags Notes
+     * @name DeleteNoteById
+     * @request DELETE:/api/Notes/{id}
      * @secure
      */
-    updateMindmap: (id: string, data: MindmapCreateUpdateModel, params: RequestParams = {}) =>
-      this.http.request<MindmapResponseModel, any>({
-        path: `/api/Mindmaps/${id}`,
+    deleteNoteById: (
+      id: string,
+      query?: {
+        /** @default false */
+        isHardDelete?: boolean;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<boolean, any>({
+        path: `/api/Notes/${id}`,
+        method: "DELETE",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name UpdateNote
+     * @request PUT:/api/Notes/{id}
+     * @secure
+     */
+    updateNote: (id: string, data: NoteCreateUpdateModel, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}`,
         method: "PUT",
         body: data,
         secure: true,
@@ -367,202 +345,89 @@ export class Api<SecurityDataType extends unknown> {
     /**
      * No description
      *
-     * @tags Mindmaps
-     * @name DeleteMindmapById
-     * @request DELETE:/api/Mindmaps/{id}
+     * @tags Notes
+     * @name RecoverArchivedNote
+     * @request PATCH:/api/Notes/{id}/recover
      * @secure
      */
-    deleteMindmapById: (id: string, params: RequestParams = {}) =>
-      this.http.request<boolean, any>({
-        path: `/api/Mindmaps/${id}`,
+    recoverArchivedNote: (id: string, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}/recover`,
+        method: "PATCH",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name PinOrUnpinNote
+     * @request PATCH:/api/Notes/{id}/pin
+     * @secure
+     */
+    pinOrUnpinNote: (id: string, data: boolean, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}/pin`,
+        method: "PATCH",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name UpdateNoteColor
+     * @request PATCH:/api/Notes/{id}/color
+     * @secure
+     */
+    updateNoteColor: (id: string, data: string, params: RequestParams = {}) =>
+      this.http.request<NoteResponseModel, any>({
+        path: `/api/Notes/${id}/color`,
+        method: "PATCH",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name UpdateInsertChecklistItem
+     * @request POST:/api/Notes/{noteId}/checklist
+     * @secure
+     */
+    updateInsertChecklistItem: (noteId: string, data: ChecklistItemModel, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/Notes/${noteId}/checklist`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
+     * @name DeleteChecklistItem
+     * @request DELETE:/api/Notes/{noteId}/checklist/{itemId}
+     * @secure
+     */
+    deleteChecklistItem: (noteId: string, itemId: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/Notes/${noteId}/checklist/${itemId}`,
         method: "DELETE",
         secure: true,
-        format: "json",
-        ...params,
-      }),
-  };
-  projects = {
-    /**
-     * No description
-     *
-     * @tags Projects
-     * @name GetAllProjects
-     * @request GET:/api/Projects
-     * @secure
-     */
-    getAllProjects: (
-      query?: {
-        searchText?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.http.request<ProjectResponseModel[], any>({
-        path: `/api/Projects`,
-        method: "GET",
-        query: query,
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Projects
-     * @name CreateProject
-     * @request POST:/api/Projects
-     * @secure
-     */
-    createProject: (data: ProjectCreateModel, params: RequestParams = {}) =>
-      this.http.request<ProjectResponseModel, any>({
-        path: `/api/Projects`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Projects
-     * @name GetProjectById
-     * @request GET:/api/Projects/{projectId}
-     * @secure
-     */
-    getProjectById: (projectId: string, params: RequestParams = {}) =>
-      this.http.request<ProjectResponseModel, any>({
-        path: `/api/Projects/${projectId}`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-  };
-  tasks = {
-    /**
-     * No description
-     *
-     * @tags Tasks
-     * @name GetAllTasks
-     * @request GET:/api/Tasks
-     * @secure
-     */
-    getAllTasks: (
-      query?: {
-        searchText?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.http.request<TaskResponseModel[], any>({
-        path: `/api/Tasks`,
-        method: "GET",
-        query: query,
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Tasks
-     * @name CreateTask
-     * @request POST:/api/Tasks
-     * @secure
-     */
-    createTask: (data: TaskCreateModel, params: RequestParams = {}) =>
-      this.http.request<TaskResponseModel, any>({
-        path: `/api/Tasks`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Tasks
-     * @name GetTaskById
-     * @request GET:/api/Tasks/{taskItemId}
-     * @secure
-     */
-    getTaskById: (taskItemId: string, params: RequestParams = {}) =>
-      this.http.request<TaskResponseModel, any>({
-        path: `/api/Tasks/${taskItemId}`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-  };
-  workLogs = {
-    /**
-     * No description
-     *
-     * @tags WorkLogs
-     * @name GetAllWorkLogs
-     * @request GET:/api/WorkLogs
-     * @secure
-     */
-    getAllWorkLogs: (
-      query?: {
-        /** @format date-time */
-        from?: string;
-        /** @format date-time */
-        to?: string;
-        /** @default false */
-        isArchived?: boolean;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.http.request<WorkLogResponseModel[], any>({
-        path: `/api/WorkLogs`,
-        method: "GET",
-        query: query,
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags WorkLogs
-     * @name CreateWorkLog
-     * @request POST:/api/WorkLogs
-     * @secure
-     */
-    createWorkLog: (data: WorkLogCreateUpdateModel, params: RequestParams = {}) =>
-      this.http.request<WorkLogResponseModel, any>({
-        path: `/api/WorkLogs`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags WorkLogs
-     * @name GetWorkLogById
-     * @request GET:/api/WorkLogs/{workLogId}
-     * @secure
-     */
-    getWorkLogById: (workLogId: string, params: RequestParams = {}) =>
-      this.http.request<WorkLogResponseModel, any>({
-        path: `/api/WorkLogs/${workLogId}`,
-        method: "GET",
-        secure: true,
-        format: "json",
         ...params,
       }),
   };
