@@ -1,64 +1,29 @@
-﻿using TaskConnect.TaskService.Domain.Entities;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿using MediatR;
 using TaskConnect.TaskService.Application.Common.Interfaces;
+using TaskConnect.TaskService.Domain.Entities;
 
-namespace TaskConnect.TaskService.Application.Commands.TaskCommands;
-
-public record CreateTaskCommand(
-    string Title,
-    Guid? ProjectId,
-    string NewProjectName, // if creating a new one
-    string Description,
-    DateTime? DueDate,
-    List<string> Tags
-) : IRequest<Guid>;
-
-public class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand, Guid>
+namespace TaskConnect.TaskService.Application.Commands.TaskCommands
 {
-    private readonly IApplicationDbContext _context;
+    public record CreateTaskCommand(string Title, string Description, Guid? ProjectId, string OwnerId) : IRequest<Guid>;
 
-    public CreateTaskCommandHandler(IApplicationDbContext context)
+    public class CreateTaskCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateTaskCommand, Guid>
     {
-        _context = context;
-    }
-
-    public async Task<Guid> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
-    {
-        Guid? projectId = request.ProjectId;
-
-        if (!string.IsNullOrWhiteSpace(request.NewProjectName))
+        public async Task<Guid> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
         {
-            var newProject = new Project
+            var task = new TaskItem
             {
                 Id = Guid.NewGuid(),
-                Title = request.NewProjectName
+                Title = request.Title,
+                ProjectId = request.ProjectId,
+                Description = request.Description,
+                OwnerId = request.OwnerId,
+                CreatedAt = DateTime.UtcNow
             };
 
-            _context.Projects.Add(newProject);
-            await _context.SaveChangesAsync(cancellationToken);
-            projectId = newProject.Id;
+            context.TaskItems.Add(task);
+            await context.SaveChangesAsync(cancellationToken);
+
+            return task.Id;
         }
-        else if (request.ProjectId.HasValue)
-        {
-            if (!await _context.Projects.AnyAsync(p => p.Id == request.ProjectId.Value, cancellationToken))
-            {
-                throw new Exception("Project not found");
-            }
-        }
-
-        var task = new TaskItem
-        {
-            Id = Guid.NewGuid(),
-            Title = request.Title,
-            ProjectId = projectId,
-            Description = request.Description,
-            DueDate = request.DueDate
-        };
-
-        _context.TaskItems.Add(task);
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return task.Id;
     }
 }

@@ -1,4 +1,3 @@
-using System.Text.Json;
 using TaskConnect.Api.Core.Middlewares;
 using TaskConnect.Infrastructure.Core;
 using TaskConnect.TaskService.Api.Services;
@@ -13,20 +12,15 @@ using Prometheus;
 using Serilog;
 using Serilog.Context;
 using Serilog.Events;
+using TaskConnect.Infrastructure.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-Dictionary<string, Dictionary<string, string>> secrets = null;
-if (!string.IsNullOrEmpty(env))
-{
-    var vaultClientFactory = new VaultClientFactory();
-    var vaultSecretProvider = new VaultSecretProvider(vaultClientFactory);
-    var json = await vaultSecretProvider.GetSecretAsync(env, "task-service", "app-settings");
-    secrets = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
-}
+var vaultClientFactory = new VaultClientFactory();
+var vaultSecretProvider = new VaultSecretProvider(vaultClientFactory);
+var databaseConfig = await vaultSecretProvider.GetJsonSecretAsync<DatabaseConfig>("databases/tasks");
 
-AddAuthentication(secrets, builder);
+AddAuthentication(builder);
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 AddCors(builder, myAllowSpecificOrigins);
@@ -34,7 +28,8 @@ AddCors(builder, myAllowSpecificOrigins);
 builder.Services.AddAuthorization();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-var connectionString = secrets?["ConnectionStrings"]["DefaultConnection"];
+var connectionString =
+    $"Host={databaseConfig.Host};Port={databaseConfig.Port};Database={databaseConfig.Database};Username={databaseConfig.Username};Password={databaseConfig.Password}";
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
@@ -206,10 +201,9 @@ void AddCors(WebApplicationBuilder webApplication, string originName)
     });
 }
 
-void AddAuthentication(Dictionary<string, Dictionary<string, string>> secretsDictionary,
-    WebApplicationBuilder webApplicationBuilder)
+void AddAuthentication(WebApplicationBuilder webApplicationBuilder)
 {
-    var issuer = secretsDictionary?["AuthSettings"]["Issuer"];
+    var issuer = builder.Configuration["AuthSettings:Issuer"];
 
     webApplicationBuilder.Services
         .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

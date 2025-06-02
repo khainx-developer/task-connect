@@ -6,3 +6,4 @@
 vault/token.txt
 vault/keys.json
 .docker-env
+**/launchSettings.json

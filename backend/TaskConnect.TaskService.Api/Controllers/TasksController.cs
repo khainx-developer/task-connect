@@ -1,10 +1,10 @@
-﻿using TaskConnect.TaskService.Application.Commands.NoteCommands;
-using TaskConnect.TaskService.Application.Queries.TaskQueries;
+﻿using TaskConnect.TaskService.Application.Queries.TaskQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskConnect.TaskService.Api.Services;
 using TaskConnect.TaskService.Domain.Models;
+using CreateTaskCommand = TaskConnect.TaskService.Application.Commands.TaskCommands.CreateTaskCommand;
 
 namespace TaskConnect.TaskService.Api.Controllers;
 

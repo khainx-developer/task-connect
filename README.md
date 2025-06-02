@@ -119,6 +119,16 @@ The local development environment uses Docker Compose to set up the following se
      └── bookings/
      ```
 
+### Database migration
+
+```
+dotnet ef migrations add InitDatabase --project ./TaskConnect.TaskService.Infrastructure --startup-project ./TaskConnect.TaskService.Api
+
+dotnet ef migrations add InitDatabase --project ./TaskConnect.UserService.Infrastructure --startup-project ./TaskConnect.UserService.Api
+
+dotnet ef migrations add InitDatabase --project ./TaskConnect.NoteService.Infrastructure --startup-project ./TaskConnect.NoteService.Api
+```
+
 ### **Local Development Workflow**
 1. Start the database infrastructure:
    ```bash

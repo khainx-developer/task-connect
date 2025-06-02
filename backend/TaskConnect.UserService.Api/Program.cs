@@ -1,4 +1,3 @@
-using System.Text.Json;
 using TaskConnect.Api.Core.Middlewares;
 using TaskConnect.Infrastructure.Core;
 using TaskConnect.UserService.Application.Common.Interfaces;
@@ -10,32 +9,16 @@ using Prometheus;
 using Serilog;
 using Serilog.Context;
 using Serilog.Events;
+using TaskConnect.Infrastructure.Core.Models;
 using TaskConnect.UserService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// var secretsFilePath = Environment.GetEnvironmentVariable("SECRETS_FILE_PATH");
-// var connectionString = "";
-// var issuer = "";
-// if (!string.IsNullOrEmpty(secretsFilePath) && File.Exists(secretsFilePath))
-// {
-//     var json = await File.ReadAllTextAsync(secretsFilePath);
-//     var secrets = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
-//     connectionString = secrets?["ConnectionStrings"]["DefaultConnection"];
-//     issuer = secrets?["AuthSettings"]["Issuer"];
-// }
+var vaultClientFactory = new VaultClientFactory();
+var vaultSecretProvider = new VaultSecretProvider(vaultClientFactory);
+var databaseConfig = await vaultSecretProvider.GetJsonSecretAsync<DatabaseConfig>("data/databases/users");
 
-var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-Dictionary<string, Dictionary<string, string>> secrets = null;
-if (!string.IsNullOrEmpty(env))
-{
-    var vaultClientFactory = new VaultClientFactory();
-    var vaultSecretProvider = new VaultSecretProvider(vaultClientFactory);
-    var json = await vaultSecretProvider.GetSecretAsync(env, "user-service", "app-settings");
-    secrets = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
-}
-
-var issuer = secrets?["AuthSettings"]["Issuer"];
+var issuer = builder.Configuration["AuthSettings:Issuer"];
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -87,7 +70,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthorization();
 
-var connectionString = secrets?["ConnectionStrings"]["DefaultConnection"];
+var connectionString =
+    $"Host={databaseConfig.Host};Port={databaseConfig.Port};Database={databaseConfig.Database};Username={databaseConfig.Username};Password={databaseConfig.Password}";
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 
 builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());

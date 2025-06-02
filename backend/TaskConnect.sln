@@ -50,9 +50,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "8. Payment Service", "8. Pa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "9. Analytics & Reporting Service", "9. Analytics & Reporting Service", "{F47EAF76-64A4-47EC-8521-C45B792A9EA3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core API Services", "Core API Services", "{2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. Core API Services", "1. Core API Services", "{2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Background Processing Services", "Background Processing Services", "{E1EBC1D1-570B-40A2-AB58-DC26756CF493}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. Background Processing Services", "2. Background Processing Services", "{E1EBC1D1-570B-40A2-AB58-DC26756CF493}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "10. Notification Processor Service", "10. Notification Processor Service", "{B2885CB4-4418-42E8-85B2-167570041E03}"
 EndProject
@@ -64,7 +64,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "13. Search Indexing Service
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "14. Audit & Logging Service", "14. Audit & Logging Service", "{F6A75089-3FF3-4DB3-BA0E-ACE6A6DD3D7D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility Services", "Utility Services", "{56C35E5C-EFFF-4928-AFBF-30885A0C37E2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Utility Services", "3. Utility Services", "{56C35E5C-EFFF-4928-AFBF-30885A0C37E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Health Check Service", "Health Check Service", "{C10A3418-EBDD-46D7-90BF-C73718730573}"
 EndProject
@@ -82,6 +82,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vault", "vault", "{828EE7AC
 		vault\token.txt = vault\token.txt
 		vault\store-db-credentials.sh = vault\store-db-credentials.sh
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.ApiGateway", "TaskConnect.ApiGateway\TaskConnect.ApiGateway.csproj", "{89FCE9F5-C94E-4472-8F71-CC0A8AA33608}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.NoteService.Api", "TaskConnect.NoteService.Api\TaskConnect.NoteService.Api.csproj", "{5EC3CFC4-4EF1-47E7-9E60-5D4FC6B2290E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.NoteService.Application", "TaskConnect.NoteService.Application\TaskConnect.NoteService.Application.csproj", "{808690E0-EEB3-483B-BF3F-4459288058FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.NoteService.Infrastructure", "TaskConnect.NoteService.Infrastructure\TaskConnect.NoteService.Infrastructure.csproj", "{7EBB2A39-C5AD-4128-A8C7-30718D82350A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.NoteService.Domain", "TaskConnect.NoteService.Domain\TaskConnect.NoteService.Domain.csproj", "{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +139,26 @@ Global
 		{C6F94405-CA43-45FF-B4E3-A29081272E95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6F94405-CA43-45FF-B4E3-A29081272E95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6F94405-CA43-45FF-B4E3-A29081272E95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89FCE9F5-C94E-4472-8F71-CC0A8AA33608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89FCE9F5-C94E-4472-8F71-CC0A8AA33608}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89FCE9F5-C94E-4472-8F71-CC0A8AA33608}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89FCE9F5-C94E-4472-8F71-CC0A8AA33608}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EC3CFC4-4EF1-47E7-9E60-5D4FC6B2290E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EC3CFC4-4EF1-47E7-9E60-5D4FC6B2290E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EC3CFC4-4EF1-47E7-9E60-5D4FC6B2290E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EC3CFC4-4EF1-47E7-9E60-5D4FC6B2290E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{808690E0-EEB3-483B-BF3F-4459288058FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{808690E0-EEB3-483B-BF3F-4459288058FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{808690E0-EEB3-483B-BF3F-4459288058FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{808690E0-EEB3-483B-BF3F-4459288058FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EBB2A39-C5AD-4128-A8C7-30718D82350A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EBB2A39-C5AD-4128-A8C7-30718D82350A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EBB2A39-C5AD-4128-A8C7-30718D82350A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EBB2A39-C5AD-4128-A8C7-30718D82350A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99FE4087-4E70-45C3-8E24-0CAD0210CAF6} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
@@ -158,5 +188,10 @@ Global
 		{ACD8EB7D-20C7-4BE5-90ED-32F1C81FEFE3} = {B8591FAA-E139-4C49-A7E6-F778E3E1D818}
 		{48C60C0C-8696-4AE0-8A56-75A77950113A} = {B8591FAA-E139-4C49-A7E6-F778E3E1D818}
 		{828EE7AC-CF42-45EA-9C48-CD1FF0CA813B} = {1F5BCC07-B841-40AB-92CF-D84858783E34}
+		{89FCE9F5-C94E-4472-8F71-CC0A8AA33608} = {99FE4087-4E70-45C3-8E24-0CAD0210CAF6}
+		{5EC3CFC4-4EF1-47E7-9E60-5D4FC6B2290E} = {669ADF7B-74B0-4DE4-8CAD-148DA133891E}
+		{808690E0-EEB3-483B-BF3F-4459288058FE} = {669ADF7B-74B0-4DE4-8CAD-148DA133891E}
+		{7EBB2A39-C5AD-4128-A8C7-30718D82350A} = {669ADF7B-74B0-4DE4-8CAD-148DA133891E}
+		{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D} = {669ADF7B-74B0-4DE4-8CAD-148DA133891E}
 	EndGlobalSection
 EndGlobal

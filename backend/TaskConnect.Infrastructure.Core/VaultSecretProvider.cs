@@ -1,4 +1,5 @@
 ﻿using VaultSharp;
+using System.Text.Json;
 
 namespace TaskConnect.Infrastructure.Core;
 
@@ -15,11 +16,10 @@ public class VaultSecretProvider : IVaultSecretProvider, IDisposable
         _vaultClient = factory.CreateClient();
     }
 
-    public async Task<string> GetSecretAsync(string environment, string path, string key)
+    public async Task<string> GetSecretAsync(string path, string key)
     {
-        environment = environment.ToLower();
-        var fullPath = $"eztalo-secret/{environment}/{path}";
-        var cacheKey = $"{environment}/{path}:{key}";
+        var fullPath = $"secret/data/{path}";
+        var cacheKey = $"{path}:{key}";
 
         if (_cache.TryGetValue(cacheKey, out var cached) &&
             DateTime.UtcNow - cached.lastFetched < _refreshInterval)
@@ -37,10 +37,9 @@ public class VaultSecretProvider : IVaultSecretProvider, IDisposable
                 return cached.value;
             }
 
-            // Example: mountPoint = "secret", path = "dev/my-service"
             var secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(
-                path: $"{environment}/{path}",
-                mountPoint: "eztalo-secret"
+                path: path,
+                mountPoint: "secret"
             );
 
             var data = secret.Data.Data;
@@ -53,6 +52,48 @@ public class VaultSecretProvider : IVaultSecretProvider, IDisposable
             _cache[cacheKey] = (value, DateTime.UtcNow);
 
             return value;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
+    public async Task<T> GetJsonSecretAsync<T>(string path)
+    {
+        var fullPath = $"secret/data/{path}";
+        var cacheKey = $"{path}:json";
+
+        if (_cache.TryGetValue(cacheKey, out var cached) &&
+            DateTime.UtcNow - cached.lastFetched < _refreshInterval)
+        {
+            return JsonSerializer.Deserialize<T>(cached.value)!;
+        }
+
+        await _lock.WaitAsync();
+        try
+        {
+            // Check again after acquiring lock (double-checked locking)
+            if (_cache.TryGetValue(cacheKey, out cached) &&
+                DateTime.UtcNow - cached.lastFetched < _refreshInterval)
+            {
+                return JsonSerializer.Deserialize<T>(cached.value)!;
+            }
+
+            var secret = await _vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(
+                path: path,
+                mountPoint: "secret"
+            );
+
+            var jsonString = JsonSerializer.Serialize(secret.Data.Data);
+            _cache[cacheKey] = (jsonString, DateTime.UtcNow);
+
+            return JsonSerializer.Deserialize<T>(jsonString)!;
         }
         catch (Exception e)
         {

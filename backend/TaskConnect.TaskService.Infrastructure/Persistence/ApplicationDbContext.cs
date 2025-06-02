@@ -11,8 +11,6 @@ namespace TaskConnect.TaskService.Infrastructure.Persistence
         }
 
         public DbSet<TaskItem> TaskItems { get; set; }
-        public DbSet<Note> Notes { get; set; }
-        public DbSet<ChecklistItem> ChecklistItems { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<WorkLog> WorkLogs { get; set; }
         public DbSet<Mindmap> Mindmaps { get; set; }
@@ -20,10 +18,6 @@ namespace TaskConnect.TaskService.Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Note>()
-                .HasIndex(n => n.OwnerId)
-                .HasDatabaseName("IX_Notes_UserId");
 
             modelBuilder.Entity<TaskItem>()
                 .HasIndex(n => n.OwnerId)

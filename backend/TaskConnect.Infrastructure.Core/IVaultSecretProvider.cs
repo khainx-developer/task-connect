@@ -2,5 +2,6 @@
 
 public interface IVaultSecretProvider
 {
-    Task<string> GetSecretAsync(string environment, string path, string key);
+    Task<string> GetSecretAsync(string path, string key);
+    Task<T> GetJsonSecretAsync<T>(string path);
 }
