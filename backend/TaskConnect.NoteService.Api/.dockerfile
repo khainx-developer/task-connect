@@ -11,6 +11,7 @@ WORKDIR /src
 # Copy the project file first to restore dependencies
 COPY ["backend/TaskConnect.NoteService.Api/TaskConnect.NoteService.Api.csproj", "TaskConnect.NoteService.Api/"]
 COPY ["backend/TaskConnect.NoteService.Domain/TaskConnect.NoteService.Domain.csproj", "TaskConnect.NoteService.Domain/"]
+COPY ["backend/TaskConnect.NoteService.Application/TaskConnect.NoteService.Application.csproj", "TaskConnect.NoteService.Application/"]
 COPY ["backend/TaskConnect.NoteService.Infrastructure/TaskConnect.NoteService.Infrastructure.csproj", "TaskConnect.NoteService.Infrastructure/"]
 
 # Restore dependencies
@@ -19,6 +20,7 @@ RUN dotnet restore "TaskConnect.NoteService.Api/TaskConnect.NoteService.Api.cspr
 # Copy only the necessary source files
 COPY ["backend/TaskConnect.NoteService.Api/", "TaskConnect.NoteService.Api/"]
 COPY ["backend/TaskConnect.NoteService.Domain/", "TaskConnect.NoteService.Domain/"]
+COPY ["backend/TaskConnect.NoteService.Application/", "TaskConnect.NoteService.Application/"]
 COPY ["backend/TaskConnect.NoteService.Infrastructure/", "TaskConnect.NoteService.Infrastructure/"]
 
 WORKDIR "/src/TaskConnect.NoteService.Api"
