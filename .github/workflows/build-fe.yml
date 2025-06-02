@@ -14,22 +14,24 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.inputs.branch }}
 
       - name: Create .env file
         run: |
           rm -f ./frontend/.env
-          echo "VITE_KEYCLOAK_AUTH_URL=https://auth.eztalo.com/realms/Eztalo">> ./frontend/.env
-          echo "VITE_KEYCLOAK_CLIENT_ID=eztalo-app">> ./frontend/.env
-          echo "VITE_KEYCLOAK_REDIRECT_URI=https://app.eztalo.com/auth/callback">> ./frontend/.env
-          echo "VITE_TASK_SERVICE_URL=${{ secrets.VITE_TASK_SERVICE_URL }}">> ./frontend/.env
-          echo "VITE_USER_SERVICE_URL=${{ secrets.VITE_USER_SERVICE_URL }}">> ./frontend/.env
+          echo "VITE_API_GATEWAY_URL=${{ secrets.VITE_API_GATEWAY_URL }}">> ./frontend/.env
+          echo "VITE_KEYCLOAK_AUTH_URL=https://${{ secrets.VITE_KEYCLOAK_DOMAIN }}/realms/task-connect">> ./frontend/.env
+          echo "VITE_KEYCLOAK_CLIENT_ID=task-connect-frontend">> ./frontend/.env
+          echo "VITE_KEYCLOAK_REDIRECT_URI=https://${{ secrets.VITE_APP_DOMAIN }}/auth/callback">> ./frontend/.env
 
       - name: Set Docker tag
+        id: vars
         run: |
-          echo "TAG=${{ github.event.inputs.branch }}-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+          SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          TAG="${{ github.event.inputs.branch }}-$SHORT_SHA"
+          echo "TAG=$TAG" >> $GITHUB_ENV
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -39,9 +41,11 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          docker build -f eztalo-fe.dockerfile \
-            -t ${{ secrets.DOCKER_USERNAME }}/eztalo-fe:latest .
+          docker build -f frontend/.dockerfile \
+            -t ${{ secrets.DOCKER_USERNAME }}/task-connect-fe:latest \
+            -t ${{ secrets.DOCKER_USERNAME }}/task-connect-fe:${{ env.TAG }} .
 
       - name: Push Docker images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/eztalo-fe:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/task-connect-fe:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/task-connect-fe:${{ env.TAG }}
