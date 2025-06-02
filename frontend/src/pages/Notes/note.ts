@@ -1,4 +1,4 @@
-import { NoteType } from "../../api/taskApiClient";
+import { NoteType } from "../../api/noteApiClient";
 
 export interface ChecklistItem {
   id?: string | null;

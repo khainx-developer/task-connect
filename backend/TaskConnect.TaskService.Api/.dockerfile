@@ -10,7 +10,7 @@ WORKDIR /src
 
 # Copy the project file first to restore dependencies
 COPY ["backend/TaskConnect.TaskService.Api/TaskConnect.TaskService.Api.csproj", "TaskConnect.TaskService.Api/"]
-COPY ["backend/TaskConnect.TaskService.Core/TaskConnect.TaskService.Core.csproj", "TaskConnect.TaskService.Core/"]
+COPY ["backend/TaskConnect.TaskService.Domain/TaskConnect.TaskService.Domain.csproj", "TaskConnect.TaskService.Domain/"]
 COPY ["backend/TaskConnect.TaskService.Infrastructure/TaskConnect.TaskService.Infrastructure.csproj", "TaskConnect.TaskService.Infrastructure/"]
 
 # Restore dependencies
@@ -18,7 +18,7 @@ RUN dotnet restore "TaskConnect.TaskService.Api/TaskConnect.TaskService.Api.cspr
 
 # Copy only the necessary source files
 COPY ["backend/TaskConnect.TaskService.Api/", "TaskConnect.TaskService.Api/"]
-COPY ["backend/TaskConnect.TaskService.Core/", "TaskConnect.TaskService.Core/"]
+COPY ["backend/TaskConnect.TaskService.Domain/", "TaskConnect.TaskService.Domain/"]
 COPY ["backend/TaskConnect.TaskService.Infrastructure/", "TaskConnect.TaskService.Infrastructure/"]
 
 WORKDIR "/src/TaskConnect.TaskService.Api"
