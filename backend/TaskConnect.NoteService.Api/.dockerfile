@@ -9,6 +9,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy the project file first to restore dependencies
+COPY ["backend/TaskConnect.Api.Core/TaskConnect.Api.Core.csproj", "TaskConnect.Api.Core/"]
+COPY ["backend/TaskConnect.Infrastructure.Core/TaskConnect.Infrastructure.Core.csproj", "TaskConnect.Infrastructure.Core/"]
 COPY ["backend/TaskConnect.NoteService.Api/TaskConnect.NoteService.Api.csproj", "TaskConnect.NoteService.Api/"]
 COPY ["backend/TaskConnect.NoteService.Domain/TaskConnect.NoteService.Domain.csproj", "TaskConnect.NoteService.Domain/"]
 COPY ["backend/TaskConnect.NoteService.Application/TaskConnect.NoteService.Application.csproj", "TaskConnect.NoteService.Application/"]
@@ -18,6 +20,8 @@ COPY ["backend/TaskConnect.NoteService.Infrastructure/TaskConnect.NoteService.In
 RUN dotnet restore "TaskConnect.NoteService.Api/TaskConnect.NoteService.Api.csproj"
 
 # Copy only the necessary source files
+COPY ["backend/TaskConnect.Api.Core/", "TaskConnect.Api.Core/"]
+COPY ["backend/TaskConnect.Infrastructure.Core/", "TaskConnect.Infrastructure.Core/"]
 COPY ["backend/TaskConnect.NoteService.Api/", "TaskConnect.NoteService.Api/"]
 COPY ["backend/TaskConnect.NoteService.Domain/", "TaskConnect.NoteService.Domain/"]
 COPY ["backend/TaskConnect.NoteService.Application/", "TaskConnect.NoteService.Application/"]

@@ -9,6 +9,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Copy the project file first to restore dependencies
+COPY ["backend/TaskConnect.Api.Core/TaskConnect.Api.Core.csproj", "TaskConnect.Api.Core/"]
+COPY ["backend/TaskConnect.Infrastructure.Core/TaskConnect.Infrastructure.Core.csproj", "TaskConnect.Infrastructure.Core/"]
 COPY ["backend/TaskConnect.UserService.Api/TaskConnect.UserService.Api.csproj", "TaskConnect.UserService.Api/"]
 COPY ["backend/TaskConnect.UserService.Domain/TaskConnect.UserService.Domain.csproj", "TaskConnect.UserService.Domain/"]
 COPY ["backend/TaskConnect.UserService.Application/TaskConnect.UserService.Application.csproj", "TaskConnect.UserService.Application/"]
@@ -18,6 +20,8 @@ COPY ["backend/TaskConnect.UserService.Infrastructure/TaskConnect.UserService.In
 RUN dotnet restore "TaskConnect.UserService.Api/TaskConnect.UserService.Api.csproj"
 
 # Copy only the necessary source files
+COPY ["backend/TaskConnect.Api.Core/", "TaskConnect.Api.Core/"]
+COPY ["backend/TaskConnect.Infrastructure.Core/", "TaskConnect.Infrastructure.Core/"]
 COPY ["backend/TaskConnect.UserService.Api/", "TaskConnect.UserService.Api/"]
 COPY ["backend/TaskConnect.UserService.Domain/", "TaskConnect.UserService.Domain/"]
 COPY ["backend/TaskConnect.UserService.Application/", "TaskConnect.UserService.Application/"]
