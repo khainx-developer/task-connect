@@ -22,7 +22,7 @@ jobs:
         run: |
           rm -f ./frontend/.env
           echo "VITE_API_GATEWAY_URL=${{ secrets.VITE_API_GATEWAY_URL }}">> ./frontend/.env
-          echo "VITE_KEYCLOAK_AUTH_URL=https://${{ secrets.VITE_KEYCLOAK_DOMAIN }}/realms/task-connect">> ./frontend/.env
+          echo "VITE_KEYCLOAK_AUTH_URL=${{ secrets.KEYCLOAK_AUTH_URL }}">> ./frontend/.env
           echo "VITE_KEYCLOAK_CLIENT_ID=task-connect-frontend">> ./frontend/.env
           echo "VITE_KEYCLOAK_REDIRECT_URI=https://${{ secrets.VITE_APP_DOMAIN }}/auth/callback">> ./frontend/.env
 
