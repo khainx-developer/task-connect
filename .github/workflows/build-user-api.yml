@@ -28,7 +28,7 @@ jobs:
       - name: Generate production settings
         run: |
           export LOKI_URI=${{ secrets.LOKI_URI }}
-          export AUTH_ISSUER=${{ secrets.AUTH_ISSUER }}
+          export AUTH_ISSUER=${{ secrets.KEYCLOAK_AUTH_URL }}
           envsubst < backend/TaskConnect.UserService.Api/appsettings.Production.template.json > backend/TaskConnect.UserService.Api/appsettings.Production.json
 
       - name: Log in to Docker Hub

@@ -28,7 +28,7 @@ jobs:
       - name: Generate production settings
         run: |
           export LOKI_URI=${{ secrets.LOKI_URI }}
-          export AUTH_ISSUER=${{ secrets.AUTH_ISSUER }}
+          export AUTH_ISSUER=${{ secrets.KEYCLOAK_AUTH_URL }}
           export ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
           export CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}
           envsubst < backend/TaskConnect.ApiGateway/appsettings.Production.template.json > backend/TaskConnect.ApiGateway/appsettings.Production.json

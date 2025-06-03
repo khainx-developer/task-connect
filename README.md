@@ -13,6 +13,35 @@
 
 ## 🏗️ System Architecture
 
+### **API Gateway & Service Architecture**
+
+```
+Frontend → API Gateway → Microservices
+```
+
+#### **1. API Gateway (Ocelot)**
+- **Purpose**: Single entry point for all client requests
+- **Responsibilities**:
+  - Request routing to appropriate microservices
+  - JWT token validation and authentication
+  - CORS policy enforcement
+  - Rate limiting and request throttling
+  - Request/response transformation
+  - Load balancing
+- **Security**:
+  - Validates JWT tokens from Keycloak
+  - Enforces HTTPS in production
+  - Manages allowed origins for CORS
+  - Acts as security boundary for internal services
+
+#### **2. Internal Services**
+All internal services are protected behind the API Gateway and:
+- Only accept requests from the API Gateway
+- Have simplified authentication (only validate token signature)
+- Don't handle CORS (managed by API Gateway)
+- Use wildcard allowed hosts (`*`)
+- Focus on business logic rather than security concerns
+
 ### **Microservices Breakdown**
 
 #### **1. Authentication & Authorization Service**
