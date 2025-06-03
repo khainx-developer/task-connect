@@ -125,9 +125,41 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+  
+  task-connect-redis:
+    image: redis:7
+    container_name: task-connect-redis
+    volumes:
+      - redis-data:/data
+    networks:
+      - task-connect-network
+
+  task-connect-loki:
+    image: grafana/loki:2.9.0
+    container_name: task-connect-loki
+    ports:
+      - "13100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki-data:/loki
+    networks:
+      - task-connect-network
+
+  task-connect-grafana:
+    image: grafana/grafana:10.0.0
+    container_name: task-connect-grafana
+    ports:
+      - "13200:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - task-connect-network
 
 volumes:
   postgres_data:
   vault_data:
   vault_logs:
   auth_data:
+  redis-data:
+  loki-data:
+  grafana-storage:

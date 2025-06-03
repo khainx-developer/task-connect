@@ -220,7 +220,7 @@ const TaskCalendar: React.FC = () => {
   return (
     <>
       <PageMeta
-        title="Task Calendar | Eztalo"
+        title="Task Calendar | Task Connect"
         description="Manage your project tasks and workLogs in a calendar view."
       />
       <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">

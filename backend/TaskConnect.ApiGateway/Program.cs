@@ -27,13 +27,38 @@ builder.Host.UseSerilog((context, _, configuration) =>
 builder.Services.AddOcelot(builder.Configuration);
 
 // Add CORS
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var allowedOrigins = builder.Configuration.GetSection("CorsOrigins").Get<List<string>>() ?? new List<string>();
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy",
-        builder => builder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
+    options.AddPolicy(name: myAllowSpecificOrigins,
+        policy =>
+        {
+            policy.SetIsOriginAllowed(origin =>
+                {
+                    foreach (var allowedOrigin in allowedOrigins)
+                    {
+                        if (allowedOrigin.StartsWith("."))
+                        {
+                            // Wildcard subdomain check
+                            if (origin.EndsWith(allowedOrigin))
+                                return true;
+                        }
+                        else
+                        {
+                            // Exact match
+                            if (origin == allowedOrigin)
+                                return true;
+                        }
+                    }
+
+                    return false;
+                })
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
 });
 
 // Add Authentication
@@ -63,7 +88,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
-app.UseCors("CorsPolicy");
+app.UseCors(myAllowSpecificOrigins);
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

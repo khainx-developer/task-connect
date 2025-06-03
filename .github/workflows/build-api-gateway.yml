@@ -25,6 +25,14 @@ jobs:
           TAG="${{ github.event.inputs.branch }}-$SHORT_SHA"
           echo "TAG=$TAG" >> $GITHUB_ENV
 
+      - name: Generate production settings
+        run: |
+          export LOKI_URI=${{ secrets.LOKI_URI }}
+          export AUTH_ISSUER=${{ secrets.AUTH_ISSUER }}
+          export ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+          export CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}
+          envsubst < backend/TaskConnect.ApiGateway/appsettings.Production.template.json > backend/TaskConnect.ApiGateway/appsettings.Production.json
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:

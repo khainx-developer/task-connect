@@ -21,6 +21,9 @@
       <Content Update="ocelot.production.json">
         <DependentUpon>ocelot.json</DependentUpon>
       </Content>
+      <Content Update="appsettings.Production.template.json">
+        <DependentUpon>appsettings.json</DependentUpon>
+      </Content>
     </ItemGroup>
 
 </Project>
