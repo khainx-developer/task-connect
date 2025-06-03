@@ -21,79 +21,18 @@ var vaultSecretProvider = new VaultSecretProvider(vaultClientFactory);
 var databaseConfig = await vaultSecretProvider.GetJsonSecretAsync<DatabaseConfig>("data/databases/tasks");
 
 AddAuthentication(builder);
-
-var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
-AddCors(builder, myAllowSpecificOrigins);
-
-builder.Services.AddAuthorization();
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-var connectionString =
-    $"Host={databaseConfig.Host};Port={databaseConfig.Port};Database={databaseConfig.Database};Username={databaseConfig.Username};Password={databaseConfig.Password}";
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
-builder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-
-builder.Services.AddScoped<IUserContextService, UserContextService>();
-builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllTasksQuery).Assembly));
-builder.Services.AddControllers();
-
+AddAuthorization(builder);
+AddDatabase(builder, databaseConfig);
+AddServices(builder);
 AddSwagger(builder);
-
-// Add health checks
-builder.Services.AddHealthChecks();
-builder.Host.UseSerilog((context, _, configuration) =>
-{
-    configuration
-        .ReadFrom.Configuration(context.Configuration)
-        .Enrich.FromLogContext();
-});
+AddHealthChecks(builder);
+AddSerilog(builder);
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await dbContext.Database.MigrateAsync(); // Auto-applies migrations
-}
-
-UseSwagger(app);
-app.Use(async (context, next) =>
-{
-    using (LogContext.PushProperty("RequestId", context.TraceIdentifier))
-    {
-        await next.Invoke();
-    }
-});
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseSerilogRequestLogging(opts =>
-{
-    opts.GetLevel = (httpContext, elapsed, ex) =>
-    {
-        // Suppress /metrics logging
-        if (httpContext.Request.Path.StartsWithSegments("/metrics"))
-        {
-            return LogEventLevel.Verbose; // Or return null to skip logging
-        }
-
-        return LogEventLevel.Information;
-    };
-});
-app.UseCors(myAllowSpecificOrigins);
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-
-// Enable Prometheus HTTP request metrics middleware
-app.UseHttpMetrics();
-
-// Expose /metrics endpoint
-app.MapMetrics();
-
-// Expose native ASP.NET Core /health endpoint (optional)
-app.MapHealthChecks("/health");
+await ApplyMigrations(app);
+ConfigureMiddleware(app);
+ConfigureEndpoints(app);
 
 try
 {
@@ -109,7 +48,47 @@ finally
     Log.CloseAndFlush();
 }
 
-return;
+void AddAuthentication(WebApplicationBuilder webApplicationBuilder)
+{
+    var issuer = webApplicationBuilder.Configuration["AuthSettings:Issuer"];
+
+    webApplicationBuilder.Services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.Authority = issuer;
+            options.RequireHttpsMetadata = !webApplicationBuilder.Environment.IsDevelopment();
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true
+            };
+        });
+}
+
+void AddAuthorization(WebApplicationBuilder webApplicationBuilder)
+{
+    webApplicationBuilder.Services.AddAuthorization();
+}
+
+void AddDatabase(WebApplicationBuilder webApplicationBuilder, DatabaseConfig config)
+{
+    var connectionString =
+        $"Host={config.Host};Port={config.Port};Database={config.Database};Username={config.Username};Password={config.Password}";
+    webApplicationBuilder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+    webApplicationBuilder.Services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+}
+
+void AddServices(WebApplicationBuilder webApplicationBuilder)
+{
+    webApplicationBuilder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    webApplicationBuilder.Services.AddScoped<IUserContextService, UserContextService>();
+    webApplicationBuilder.Services.AddHttpContextAccessor();
+    webApplicationBuilder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllTasksQuery).Assembly));
+    webApplicationBuilder.Services.AddControllers();
+}
 
 void AddSwagger(WebApplicationBuilder webApplication)
 {
@@ -123,7 +102,6 @@ void AddSwagger(WebApplicationBuilder webApplication)
             Description = "API for user authentication",
         });
 
-        // Add authentication support in Swagger UI
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             Name = "Authorization",
@@ -151,73 +129,70 @@ void AddSwagger(WebApplicationBuilder webApplication)
     });
 }
 
-void UseSwagger(WebApplication webApplication)
+void AddHealthChecks(WebApplicationBuilder webApplicationBuilder)
 {
-    if (!webApplication.Environment.IsProduction())
-    {
-        webApplication.UseSwagger();
-        webApplication.UseSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Manager Service API v1");
-            options.RoutePrefix = "swagger"; // Swagger at root URL
-        });
-    }
+    webApplicationBuilder.Services.AddHealthChecks();
 }
 
-void AddCors(WebApplicationBuilder webApplication, string originName)
+void AddSerilog(WebApplicationBuilder webApplicationBuilder)
 {
-    var allowedOrigins = webApplication.Configuration.GetSection("CorsOrigins").Get<List<string>>() ??
-                         new List<string>();
-
-    webApplication.Services.AddCors(options =>
+    webApplicationBuilder.Host.UseSerilog((context, _, configuration) =>
     {
-        options.AddPolicy(name: originName,
-            policy =>
-            {
-                policy.SetIsOriginAllowed(origin =>
-                    {
-                        foreach (var allowedOrigin in allowedOrigins)
-                        {
-                            if (allowedOrigin.StartsWith("."))
-                            {
-                                // Wildcard subdomain check
-                                if (origin.EndsWith(allowedOrigin))
-                                    return true;
-                            }
-                            else
-                            {
-                                // Exact match
-                                if (origin == allowedOrigin)
-                                    return true;
-                            }
-                        }
-
-                        return false;
-                    })
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
-            });
+        configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .Enrich.FromLogContext();
     });
 }
 
-void AddAuthentication(WebApplicationBuilder webApplicationBuilder)
+async Task ApplyMigrations(WebApplication app)
 {
-    var issuer = builder.Configuration["AuthSettings:Issuer"];
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
-    webApplicationBuilder.Services
-        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearer(options =>
+void ConfigureMiddleware(WebApplication app)
+{
+    if (!app.Environment.IsProduction())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
         {
-            options.Authority = issuer;
-            options.RequireHttpsMetadata = false;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = issuer,
-                ValidateAudience = true,
-                ValidAudience = "account",
-                ValidateLifetime = true
-            };
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Manager Service API v1");
+            options.RoutePrefix = "swagger";
         });
+    }
+
+    app.Use(async (context, next) =>
+    {
+        using (LogContext.PushProperty("RequestId", context.TraceIdentifier))
+        {
+            await next.Invoke();
+        }
+    });
+
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
+    app.UseSerilogRequestLogging(opts =>
+    {
+        opts.GetLevel = (httpContext, elapsed, ex) =>
+        {
+            if (httpContext.Request.Path.StartsWithSegments("/metrics"))
+            {
+                return LogEventLevel.Verbose;
+            }
+            return LogEventLevel.Information;
+        };
+    });
+
+    app.UseRouting();
+    app.UseAuthentication();
+    app.UseAuthorization();
+}
+
+void ConfigureEndpoints(WebApplication app)
+{
+    app.MapControllers();
+    app.UseHttpMetrics();
+    app.MapMetrics();
+    app.MapHealthChecks("/health");
 }
