@@ -7,6 +7,8 @@ import {
   WorkLogResponseModel,
   WorkLogCreateUpdateModel,
 } from "../../api/taskApiClient";
+import DateTimePicker from "../../components/form/datetime-picker";
+import { formatLocalDateTime } from "./utils";
 
 interface WorkLogModalProps {
   isOpen: boolean;
@@ -123,11 +125,11 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
       let newTask: TaskResponseModel | null = null;
 
       if (selectedWorkLog?.id) {
-        // Update existing work log - only update time fields
+        // Update existing work log
         const workLogData: WorkLogCreateUpdateModel = {
           taskItemId: selectedWorkLog.taskItemId,
-          fromTime: eventStartDate,
-          toTime: eventEndDate || eventStartDate,
+          fromTime: start.toISOString(),
+          toTime: end.toISOString(),
           title: selectedWorkLog.taskItem?.title,
           projectId: selectedWorkLog.taskItem?.projectId,
         };
@@ -156,8 +158,8 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
 
         const workLogData: WorkLogCreateUpdateModel = {
           taskItemId: taskId,
-          fromTime: eventStartDate,
-          toTime: eventEndDate || eventStartDate,
+          fromTime: start.toISOString(),
+          toTime: end.toISOString(),
           title: eventTitle,
           projectId: projectId || undefined,
         };
@@ -167,8 +169,8 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
       await onAddOrUpdateWorkLog(
         {
           taskItemId: taskId,
-          fromTime: eventStartDate,
-          toTime: eventEndDate || eventStartDate,
+          fromTime: start.toISOString(),
+          toTime: end.toISOString(),
           title: eventTitle,
           projectId: projectId || undefined,
         },
@@ -313,34 +315,28 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
           </div>
         </div>
         <div className="mt-4">
-          <label
-            htmlFor="eventStartDate"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-          >
-            Worklog Start Date & Time <span className="text-red-500">*</span>
-          </label>
-          <input
+          <DateTimePicker
             id="eventStartDate"
-            type="datetime-local"
+            label="Worklog Start Date & Time"
             value={eventStartDate}
-            onChange={(e) => setEventStartDate(e.target.value)}
-            className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+            onChange={(dates) => {
+              if (dates[0]) {
+                setEventStartDate(formatLocalDateTime(dates[0]));
+              }
+            }}
             required
           />
         </div>
         <div className="mt-4">
-          <label
-            htmlFor="eventEndDate"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-          >
-            Worklog End Date & Time
-          </label>
-          <input
+          <DateTimePicker
             id="eventEndDate"
-            type="datetime-local"
+            label="Worklog End Date & Time"
             value={eventEndDate}
-            onChange={(e) => setEventEndDate(e.target.value)}
-            className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+            onChange={(dates) => {
+              if (dates[0]) {
+                setEventEndDate(formatLocalDateTime(dates[0]));
+              }
+            }}
           />
         </div>
         <div className="mt-4">

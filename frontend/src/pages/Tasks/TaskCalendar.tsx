@@ -41,8 +41,9 @@ const TaskCalendar: React.FC = () => {
 
   // Fetch work logs based on calendar date range
   const fetchWorkLogs = useCallback(
-    async (start: Date, end: Date) => {
+    async (start: Date, end: Date, forceFetch = false) => {
       if (
+        !forceFetch &&
         lastFetchedRange &&
         lastFetchedRange.start === start.toISOString() &&
         lastFetchedRange.end === end.toISOString()
@@ -173,13 +174,9 @@ const TaskCalendar: React.FC = () => {
   };
 
   const handleAddOrUpdateWorkLog = async (data: WorkLogCreateUpdateModel, task: TaskResponseModel | null) => {
-    if (selectedWorkLog) {
-      // Note: API doesn't have updateWorkLog, so we'll create a new one
-      // You may need to add an updateWorkLog endpoint or handle differently
-      await baseTaskApi.workLogs.createWorkLog(data);
-    } else {
-      await baseTaskApi.workLogs.createWorkLog(data);
-    }
+    // The API call (create or update) is already handled in WorkLogModal.tsx
+    // This function should just update the state or perform other necessary actions in the parent component.
+    // Since the work logs are refetched after this, we might not even need to do anything here.
     setSelectedTask(task);
   };
 
@@ -196,10 +193,10 @@ const TaskCalendar: React.FC = () => {
     }
   };
 
-  const handleFetchWorkLogs = async () => {
+  const handleFetchWorkLogs = async (force = false) => {
     if (calendarRef.current) {
       const calendarApi = calendarRef.current.getApi();
-      await fetchWorkLogs(calendarApi.view.activeStart, calendarApi.view.activeEnd);
+      await fetchWorkLogs(calendarApi.view.activeStart, calendarApi.view.activeEnd, force);
     }
   };
 
@@ -260,7 +257,7 @@ const TaskCalendar: React.FC = () => {
               refreshButton: {
                 text: "Refresh",
                 click: () => {
-                  handleFetchWorkLogs();
+                  handleFetchWorkLogs(true);
                 },
               },
             }}
@@ -276,7 +273,7 @@ const TaskCalendar: React.FC = () => {
           eventEndDate={eventEndDate}
           onAddOrUpdateWorkLog={handleAddOrUpdateWorkLog}
           onDeleteWorklog={handleDeleteWorklog}
-          onFetchWorkLogs={handleFetchWorkLogs}
+          onFetchWorkLogs={() => handleFetchWorkLogs(true)}
         />
       </div>
     </>
