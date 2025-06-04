@@ -51,12 +51,33 @@ public class WorkLogsController : ControllerBase
         return await Get(result);
     }
 
+    [HttpPut("{workLogId}", Name = "Update work log")]
+    public async Task<ActionResult<WorkLogResponseModel>> Update(Guid workLogId, WorkLogCreateUpdateModel model)
+    {
+        var command = new UpdateWorkLogCommand(
+            workLogId,
+            _contextService.UserId,
+            model.FromTime,
+            model.ToTime);
+        var result = await _mediator.Send(command);
+
+        return await Get(result);
+    }
+
     [HttpGet("{workLogId}", Name = "Get work log by Id")]
     public async Task<ActionResult<WorkLogResponseModel>> Get(Guid workLogId)
     {
         var query = new GetWorkLogByIdQuery(workLogId, _contextService.UserId);
         var result = await _mediator.Send(query);
 
+        return Ok(result);
+    }
+
+    [HttpGet("summary", Name = "Get work log summary")]
+    public async Task<ActionResult<WorkLogSummaryModel>> GetSummary(DateTime? from, DateTime? to)
+    {
+        var query = new GetWorkLogSummaryQuery(_contextService.UserId, from, to);
+        var result = await _mediator.Send(query);
         return Ok(result);
     }
 }

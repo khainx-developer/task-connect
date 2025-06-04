@@ -1,40 +1,22 @@
-import EcommerceMetrics from "../../components/ecommerce/EcommerceMetrics";
-import MonthlySalesChart from "../../components/ecommerce/MonthlySalesChart";
-import StatisticsChart from "../../components/ecommerce/StatisticsChart";
-import MonthlyTarget from "../../components/ecommerce/MonthlyTarget";
-import RecentOrders from "../../components/ecommerce/RecentOrders";
-import DemographicCard from "../../components/ecommerce/DemographicCard";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
+import BasicTableOne from "../../components/tables/BasicTables/BasicTableOne";
+import UserStats from "../../components/UserStats";
 
-export default function Home() {
+export default function BasicTables() {
   return (
     <>
       <PageMeta
-        title="Task Manager | Efficient Task Organization & Tracking"
-        description="Task Manager is a powerful tool designed to help users organize, track, and complete tasks efficiently with an intuitive dashboard."
+        title="User Dashboard | Task Connect"
+        description="Dashboard showing user task, note, and worklog statistics."
       />
-      <div className="grid grid-cols-12 gap-4 md:gap-6">
-        <div className="col-span-12 space-y-6 xl:col-span-7">
-          <EcommerceMetrics />
-
-          <MonthlySalesChart />
-        </div>
-
-        <div className="col-span-12 xl:col-span-5">
-          <MonthlyTarget />
-        </div>
-
-        <div className="col-span-12">
-          <StatisticsChart />
-        </div>
-
-        <div className="col-span-12 xl:col-span-5">
-          <DemographicCard />
-        </div>
-
-        <div className="col-span-12 xl:col-span-7">
-          <RecentOrders />
-        </div>
+      {/* <PageBreadcrumb pageTitle="Basic Tables" /> */}
+      <div className="space-y-6">
+        {/* <ComponentCard title="Basic Table 1"> */}
+        {/* <BasicTableOne /> */}
+        {/* </ComponentCard> */}
+        <UserStats />
       </div>
     </>
   );

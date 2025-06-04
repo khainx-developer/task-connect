@@ -267,6 +267,23 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Notes
+     * @name GetTotalNotesCount
+     * @request GET:/api/Notes/count
+     * @secure
+     */
+    getTotalNotesCount: (params: RequestParams = {}) =>
+      this.http.request<number, any>({
+        path: `/api/Notes/count`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Notes
      * @name UpdateNoteOrder
      * @request PUT:/api/Notes
      * @secure

@@ -42,20 +42,29 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
   const [eventDescription, setEventDescription] = useState("");
   const [taskSuggestions, setTaskSuggestions] = useState<TaskResponseModel[]>([]);
   const [projectSuggestions, setProjectSuggestions] = useState<ProjectResponseModel[]>([]);
+  const [isNewTask, setIsNewTask] = useState(false);
+  const [displayProjectName, setDisplayProjectName] = useState("");
 
   // Update form state when selectedWorkLog, initialStartDate, or initialEndDate changes
   useEffect(() => {
     if (selectedWorkLog && selectedWorkLog.taskItem) {
       setEventTitle(selectedWorkLog.taskItem.title ?? "");
       setEventProject(selectedWorkLog.taskItem.projectId ?? "");
-      // Assuming WorkLogResponseModel has a description field; adjust if necessary
-      setEventDescription(""); // Replace with selectedWorkLog.description if available
+      setEventDescription(selectedWorkLog.taskItem.description ?? "");
       setSelectedTask(selectedWorkLog.taskItem);
+      setIsNewTask(false);
+      if (selectedWorkLog.taskItem.project) {
+        setDisplayProjectName(selectedWorkLog.taskItem.project.title ?? "");
+      } else {
+        setDisplayProjectName("");
+      }
     } else {
       setEventTitle("");
       setEventProject("");
       setEventDescription("");
       setSelectedTask(initialSelectedTask);
+      setIsNewTask(false);
+      setDisplayProjectName("");
     }
     setEventStartDate(initialStartDate);
     setEventEndDate(initialEndDate);
@@ -112,37 +121,62 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
     try {
       let taskId = selectedTask?.id;
       let projectId = eventProject;
+      let newTask: TaskResponseModel | null = null;
 
-      // Create new project if specified
-      if (eventNewProject && !eventProject) {
-        const projectResponse = await baseTaskApi.projects.createProject({
-          title: eventNewProject,
-        });
-        projectId = projectResponse.data.id ?? "";
-      }
+      if (selectedWorkLog?.id) {
+        // Update existing work log - only update time fields
+        const workLogData: WorkLogCreateUpdateModel = {
+          taskItemId: selectedWorkLog.taskItemId,
+          fromTime: eventStartDate,
+          toTime: eventEndDate || eventStartDate,
+          title: selectedWorkLog.taskItem?.title,
+          projectId: selectedWorkLog.taskItem?.projectId,
+        };
+        await baseTaskApi.workLogs.updateWorkLog(selectedWorkLog.id, workLogData);
+      } else {
+        // Create new work log
+        if (isNewTask) {
+          // Create new project if specified
+          if (eventNewProject && !eventProject) {
+            const projectResponse = await baseTaskApi.projects.createProject({
+              title: eventNewProject,
+            });
+            projectId = projectResponse.data.id ?? "";
+          }
 
-      // Create new task if no task selected or new title provided
-      if (!taskId || (eventTitle && eventTitle !== selectedTask?.title)) {
-        const taskResponse = await baseTaskApi.tasks.createTask({
-          title: eventTitle || "Untitled Task",
+          // Create new task
+          const taskResponse = await baseTaskApi.tasks.createTask({
+            title: eventTitle || "Untitled Task",
+            projectId: projectId || undefined,
+            description: eventDescription,
+          });
+          taskId = taskResponse.data.id;
+          newTask = taskResponse.data;
+          setSelectedTask(taskResponse.data);
+        }
+
+        const workLogData: WorkLogCreateUpdateModel = {
+          taskItemId: taskId,
+          fromTime: eventStartDate,
+          toTime: eventEndDate || eventStartDate,
+          title: eventTitle,
           projectId: projectId || undefined,
-        });
-        taskId = taskResponse.data.id;
-        setSelectedTask(taskResponse.data);
+        };
+        await baseTaskApi.workLogs.createWorkLog(workLogData);
       }
 
-      // Create or update work log
-      const workLogData: WorkLogCreateUpdateModel = {
-        taskItemId: taskId,
-        fromTime: eventStartDate,
-        toTime: eventEndDate || eventStartDate,
-        title: eventTitle,
-        projectId: projectId || undefined,
-      };
-
-      await onAddOrUpdateWorkLog(workLogData, selectedTask);
+      await onAddOrUpdateWorkLog(
+        {
+          taskItemId: taskId,
+          fromTime: eventStartDate,
+          toTime: eventEndDate || eventStartDate,
+          title: eventTitle,
+          projectId: projectId || undefined,
+        },
+        newTask || selectedTask
+      );
+      
       await onFetchWorkLogs();
-
       onClose();
       resetModalFields();
     } catch (error) {
@@ -173,7 +207,11 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
     setSelectedTask(null);
     setTaskSuggestions([]);
     setProjectSuggestions([]);
+    setIsNewTask(false);
+    setDisplayProjectName("");
   };
+
+  const isEditing = !!selectedWorkLog;
 
   return (
     <Modal
@@ -186,11 +224,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
     >
       <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
         <h5 className="mb-2 font-semibold text-gray-800 text-xl dark:text-white">
-          {modalMode === "workLog"
-            ? selectedWorkLog
-              ? "Edit Worklog"
-              : "Add Worklog"
-            : "Add Worklog"}
+          {isEditing ? "Edit Worklog" : "Add Worklog"}
         </h5>
         <div className="mt-6">
           <label
@@ -206,13 +240,17 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
               value={eventTitle}
               onChange={(e) => {
                 setEventTitle(e.target.value);
-                setSelectedTask(null);
-                searchTasks(e.target.value);
+                if (!isEditing) {
+                  setSelectedTask(null);
+                  setIsNewTask(true);
+                  searchTasks(e.target.value);
+                }
               }}
-              className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
-              placeholder="Search or enter new task title"
+              disabled={isEditing}
+              className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 disabled:opacity-50"
+              placeholder={isEditing ? "Task title" : "Search or enter new task title"}
             />
-            {taskSuggestions.length > 0 && (
+            {!isEditing && taskSuggestions.length > 0 && (
               <ul className="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded mt-1 max-h-40 overflow-y-auto">
                 {taskSuggestions.map((task) => (
                   <li
@@ -223,6 +261,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
                       setEventTitle(task.title || "");
                       setEventProject(task.projectId || "");
                       setTaskSuggestions([]);
+                      setIsNewTask(false);
                     }}
                   >
                     {task.title}
@@ -243,16 +282,19 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
             <input
               id="eventProject"
               type="text"
-              value={eventNewProject}
+              value={isEditing ? displayProjectName : (isNewTask ? eventNewProject : eventProject)}
               onChange={(e) => {
-                setEventNewProject(e.target.value);
-                setEventProject("");
-                searchProjects(e.target.value);
+                if (isNewTask) {
+                  setEventNewProject(e.target.value);
+                  setEventProject("");
+                  searchProjects(e.target.value);
+                }
               }}
-              className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
-              placeholder="Search or enter new project name"
+              disabled={isEditing || (!isNewTask && !!selectedTask)}
+              className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 disabled:opacity-50"
+              placeholder={isEditing ? "Project name" : "Search or enter new project name"}
             />
-            {projectSuggestions.length > 0 && (
+            {!isEditing && isNewTask && projectSuggestions.length > 0 && (
               <ul className="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded mt-1 max-h-40 overflow-y-auto">
                 {projectSuggestions.map((project) => (
                   <li
@@ -317,7 +359,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
           />
         </div>
         <div className="mt-6 flex justify-end gap-4">
-          {modalMode === "workLog" && selectedWorkLog && (
+          {isEditing && (
             <button
               onClick={handleDelete}
               className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
@@ -338,7 +380,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
             onClick={handleSubmit}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
-            {selectedWorkLog ? "Update Worklog" : "Add Worklog"}
+            {isEditing ? "Update Worklog" : "Add Worklog"}
           </button>
         </div>
       </div>

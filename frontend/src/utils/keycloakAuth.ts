@@ -50,6 +50,7 @@ export const initiateKeycloakLogin = async () => {
     scope: "openid email profile roles",
     code_challenge: codeChallenge,
     code_challenge_method: "S256",
+    kc_idp_hint: "google"
   });
 
   window.location.href = `${KEYCLOAK_AUTH_URL}?${params.toString()}`;

@@ -51,4 +51,26 @@ public class ProjectsController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpPut("{projectId}", Name = "Update project")]
+    public async Task<ActionResult<ProjectResponseModel>> Update(Guid projectId, ProjectCreateModel model)
+    {
+        var command = new UpdateProjectCommand(
+            projectId,
+            model.Title,
+            model.Description,
+            _contextService.UserId);
+        var result = await _mediator.Send(command);
+
+        return await Get(result);
+    }
+
+    [HttpPut("{projectId}/archive", Name = "Archive project")]
+    public async Task<ActionResult<ProjectResponseModel>> Archive(Guid projectId)
+    {
+        var command = new ArchiveProjectCommand(projectId, _contextService.UserId);
+        var result = await _mediator.Send(command);
+
+        return await Get(result);
+    }
 }

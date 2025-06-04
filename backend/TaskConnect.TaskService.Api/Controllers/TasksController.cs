@@ -31,6 +31,14 @@ public class TasksController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("count", Name = "Get total task count")]
+    public async Task<ActionResult<int>> GetTotalCount()
+    {
+        var query = new GetTotalTasksCountQuery(_contextService.UserId);
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
     [HttpPost(Name = "Create task")]
     public async Task<ActionResult<TaskResponseModel>> Create(TaskCreateModel model)
     {

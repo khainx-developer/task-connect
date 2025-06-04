@@ -232,7 +232,7 @@ const TaskCalendar: React.FC = () => {
             headerToolbar={{
               left: "prev,next addEventButton",
               center: "title",
-              right: "dayGridMonth,timeGridWeek,timeGridDay",
+              right: "dayGridMonth,timeGridWeek,timeGridDay refreshButton",
             }}
             events={events}
             selectable={true}
@@ -255,6 +255,12 @@ const TaskCalendar: React.FC = () => {
                   setEventStartDate(formattedNow);
                   setEventEndDate(formattedOneHourLater);
                   openModal();
+                },
+              },
+              refreshButton: {
+                text: "Refresh",
+                click: () => {
+                  handleFetchWorkLogs();
                 },
               },
             }}

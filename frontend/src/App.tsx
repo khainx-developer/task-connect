@@ -21,6 +21,7 @@ import Notes from "./pages/Notes/Index";
 import Mindmap from "./pages/Mindmap";
 import PrivateRoute from "./components/PrivateRoute";
 import KeycloakCallback from "./pages/AuthPages/KeycloakCallback";
+import Projects from "./pages/Projects/Index";
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
               
               <Route path="/tasks" element={<TaskCalendar />} />
               <Route path="/mindmap" element={<Mindmap />} />
+              <Route path="/projects" element={<Projects />} />
               
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />

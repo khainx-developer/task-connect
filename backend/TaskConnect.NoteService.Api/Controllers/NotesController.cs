@@ -46,6 +46,14 @@ public class NotesController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("count", Name = "Get total note count")]
+    public async Task<ActionResult<int>> GetTotalCount()
+    {
+        var query = new GetTotalNotesCountQuery(_contextService.UserId);
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
     [HttpGet("{id}", Name = "Get note by Id")]
     public async Task<ActionResult<NoteResponseModel>> GetById(Guid id)
     {

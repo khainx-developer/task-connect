@@ -440,6 +440,42 @@ export class Api<SecurityDataType extends unknown> {
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Projects
+     * @name UpdateProject
+     * @request PUT:/api/Projects/{projectId}
+     * @secure
+     */
+    updateProject: (projectId: string, data: ProjectCreateModel, params: RequestParams = {}) =>
+      this.http.request<ProjectResponseModel, any>({
+        path: `/api/Projects/${projectId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Projects
+     * @name ArchiveProject
+     * @request PUT:/api/Projects/{projectId}/archive
+     * @secure
+     */
+    archiveProject: (projectId: string, params: RequestParams = {}) =>
+      this.http.request<ProjectResponseModel, any>({
+        path: `/api/Projects/${projectId}/archive`,
+        method: "PUT",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
   };
   tasks = {
     /**
@@ -500,6 +536,23 @@ export class Api<SecurityDataType extends unknown> {
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Tasks
+     * @name GetTotalTasksCount
+     * @request GET:/api/Tasks/count
+     * @secure
+     */
+    getTotalTasksCount: (params: RequestParams = {}) =>
+      this.http.request<number, any>({
+        path: `/api/Tasks/count`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
   };
   workLogs = {
     /**
@@ -553,6 +606,25 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags WorkLogs
+     * @name UpdateWorkLog
+     * @request PUT:/api/WorkLogs/{workLogId}
+     * @secure
+     */
+    updateWorkLog: (workLogId: string, data: WorkLogCreateUpdateModel, params: RequestParams = {}) =>
+      this.http.request<WorkLogResponseModel, any>({
+        path: `/api/WorkLogs/${workLogId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags WorkLogs
      * @name GetWorkLogById
      * @request GET:/api/WorkLogs/{workLogId}
      * @secure
@@ -565,5 +637,36 @@ export class Api<SecurityDataType extends unknown> {
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags WorkLogs
+     * @name GetWorkLogSummary
+     * @request GET:/api/WorkLogs/summary
+     * @secure
+     */
+    getWorkLogSummary: (
+      query?: {
+        /** @format date-time */
+        from?: string;
+        /** @format date-time */
+        to?: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<WorkLogSummaryModel, any>({
+        path: `/api/WorkLogs/summary`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
   };
+}
+
+export interface WorkLogSummaryModel {
+    totalHours?: number;
+    // Add other summary properties here, e.g., count of worklogs, average duration, etc.
 }

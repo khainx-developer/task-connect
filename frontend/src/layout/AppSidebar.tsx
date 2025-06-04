@@ -30,8 +30,8 @@ const navItems: NavItem[] = [
     icon: <ListIcon />,
     subItems: [
       { name: "All Tasks", path: "/tasks" },
-      { name: "My Tasks", path: "/my-tasks" },
-      { name: "Completed Tasks", path: "/completed-tasks" },
+      // { name: "My Tasks", path: "/my-tasks" },
+      // { name: "Completed Tasks", path: "/completed-tasks" },
     ],
   },
   {
