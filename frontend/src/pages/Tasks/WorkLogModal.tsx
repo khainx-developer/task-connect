@@ -24,7 +24,6 @@ interface WorkLogModalProps {
 const WorkLogModal: React.FC<WorkLogModalProps> = ({
   isOpen,
   onClose,
-  modalMode,
   selectedTask: initialSelectedTask,
   selectedWorkLog,
   eventStartDate: initialStartDate,
