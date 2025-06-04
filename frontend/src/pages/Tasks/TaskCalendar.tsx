@@ -173,7 +173,7 @@ const TaskCalendar: React.FC = () => {
       });
   };
 
-  const handleAddOrUpdateWorkLog = async (data: WorkLogCreateUpdateModel, task: TaskResponseModel | null) => {
+  const handleAddOrUpdateWorkLog = async (_data: WorkLogCreateUpdateModel, task: TaskResponseModel | null) => {
     // The API call (create or update) is already handled in WorkLogModal.tsx
     // This function should just update the state or perform other necessary actions in the parent component.
     // Since the work logs are refetched after this, we might not even need to do anything here.
