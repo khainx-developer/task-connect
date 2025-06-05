@@ -40,10 +40,8 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
   const [eventStartDate, setEventStartDate] = useState(initialStartDate);
   const [eventEndDate, setEventEndDate] = useState(initialEndDate);
   const [eventProject, setEventProject] = useState("");
-  const [eventNewProject, setEventNewProject] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [taskSuggestions, setTaskSuggestions] = useState<TaskResponseModel[]>([]);
-  const [projectSuggestions, setProjectSuggestions] = useState<ProjectResponseModel[]>([]);
   const [isNewTask, setIsNewTask] = useState(false);
   const [displayProjectName, setDisplayProjectName] = useState("");
   const [isProjectSearchModalOpen, setIsProjectSearchModalOpen] = useState(false);
@@ -90,32 +88,13 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
     }
   };
 
-  // Search projects for autocomplete
-  const searchProjects = async (query: string) => {
-    if (!query) {
-      setProjectSuggestions([]);
-      return;
-    }
-    try {
-      const response = await baseTaskApi.projects.getAllProjects({
-        searchText: query,
-      });
-      setProjectSuggestions(response.data || []);
-    } catch (error) {
-      console.error("Failed to search projects:", error);
-      setProjectSuggestions([]);
-    }
-  };
-
   const handleProjectSelectFromModal = (project: ProjectResponseModel | null) => {
     if (project) {
       setEventProject(project.id || "");
       setDisplayProjectName(project.title || "");
-      setEventNewProject("");
     } else {
       setEventProject("");
       setDisplayProjectName("No Project");
-      setEventNewProject("");
     }
     setIsProjectSearchModalOpen(false);
   };
@@ -209,11 +188,9 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
     setEventStartDate("");
     setEventEndDate("");
     setEventProject("");
-    setEventNewProject("");
     setEventDescription("");
     setSelectedTask(null);
     setTaskSuggestions([]);
-    setProjectSuggestions([]);
     setIsNewTask(false);
     setDisplayProjectName("No Project");
   };
