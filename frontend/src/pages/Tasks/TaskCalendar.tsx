@@ -207,9 +207,9 @@ const TaskCalendar: React.FC = () => {
     const colorClass = `fc-bg-primary`;
     return (
       <div className={`event-fc-color flex fc-event-main ${colorClass} p-1 rounded-sm`}>
-        <div className="fc-daygrid-event-dot"></div>
+        {/* <div className="fc-daygrid-event-dot"></div> */}
         {/* <div className="fc-event-time">{eventInfo.timeText}</div> */}
-        <div className="fc-event-title">{eventInfo.event.title}</div>
+        <div className="fc-event-title" style={{ whiteSpace: 'normal', overflowWrap: 'break-word' }}>{eventInfo.event.title}</div>
       </div>
     );
   };
@@ -225,7 +225,7 @@ const TaskCalendar: React.FC = () => {
           <FullCalendar
             ref={calendarRef}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
+            initialView="timeGridWeek"
             headerToolbar={{
               left: "prev,next addEventButton",
               center: "title",

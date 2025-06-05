@@ -120,6 +120,11 @@ export interface WorkLogResponseModel {
   taskItem?: TaskResponseModel;
 }
 
+export interface WorkLogSummaryModel {
+  /** @format double */
+  totalHours?: number;
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
 import axios from "axios";
 
@@ -524,13 +529,13 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Tasks
-     * @name GetTaskById
-     * @request GET:/api/Tasks/{taskItemId}
+     * @name GetTotalTaskCount
+     * @request GET:/api/Tasks/count
      * @secure
      */
-    getTaskById: (taskItemId: string, params: RequestParams = {}) =>
-      this.http.request<TaskResponseModel, any>({
-        path: `/api/Tasks/${taskItemId}`,
+    getTotalTaskCount: (params: RequestParams = {}) =>
+      this.http.request<number, any>({
+        path: `/api/Tasks/count`,
         method: "GET",
         secure: true,
         format: "json",
@@ -541,13 +546,13 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Tasks
-     * @name GetTotalTasksCount
-     * @request GET:/api/Tasks/count
+     * @name GetTaskById
+     * @request GET:/api/Tasks/{taskItemId}
      * @secure
      */
-    getTotalTasksCount: (params: RequestParams = {}) =>
-      this.http.request<number, any>({
-        path: `/api/Tasks/count`,
+    getTaskById: (taskItemId: string, params: RequestParams = {}) =>
+      this.http.request<TaskResponseModel, any>({
+        path: `/api/Tasks/${taskItemId}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -664,9 +669,4 @@ export class Api<SecurityDataType extends unknown> {
         ...params,
       }),
   };
-}
-
-export interface WorkLogSummaryModel {
-    totalHours?: number;
-    // Add other summary properties here, e.g., count of worklogs, average duration, etc.
 }
