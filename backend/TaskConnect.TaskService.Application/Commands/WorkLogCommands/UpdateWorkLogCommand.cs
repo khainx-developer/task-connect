@@ -9,7 +9,8 @@ public record UpdateWorkLogCommand(
     Guid Id,
     string OwnerId,
     DateTime FromTime,
-    DateTime? ToTime
+    DateTime? ToTime,
+    string Title = null
 ) : IRequest<Guid>;
 
 public class UpdateWorkLogCommandHandler : IRequestHandler<UpdateWorkLogCommand, Guid>
@@ -38,9 +39,15 @@ public class UpdateWorkLogCommandHandler : IRequestHandler<UpdateWorkLogCommand,
             throw new Exception("You don't have permission to update this work log.");
         }
 
-        // Only update the time fields
+        // Update the time fields
         workLog.FromTime = request.FromTime.ToUniversalTime();
         workLog.ToTime = request.ToTime?.ToUniversalTime();
+
+        // Update task title if provided
+        if (!string.IsNullOrEmpty(request.Title))
+        {
+            workLog.TaskItem.Title = request.Title;
+        }
 
         await _context.SaveChangesAsync(cancellationToken);
 

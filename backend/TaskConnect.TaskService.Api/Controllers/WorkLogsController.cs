@@ -58,7 +58,8 @@ public class WorkLogsController : ControllerBase
             workLogId,
             _contextService.UserId,
             model.FromTime,
-            model.ToTime);
+            model.ToTime,
+            model.Title);
         var result = await _mediator.Send(command);
 
         return await Get(result);

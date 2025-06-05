@@ -67,8 +67,8 @@ public class CreateWorkLogCommandHandler(IApplicationDbContext context) : IReque
         {
             Id = Guid.NewGuid(),
             TaskItemId = taskItem.Id,
-            FromTime = request.FromDateTime,
-            ToTime = request.ToDateTime,
+            FromTime = request.FromDateTime.ToUniversalTime(),
+            ToTime = request.ToDateTime?.ToUniversalTime(),
         };
 
         await context.WorkLogs.AddAsync(workLog, cancellationToken);

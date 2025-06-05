@@ -9,6 +9,7 @@ import {
 } from "../../api/taskApiClient";
 import DateTimePicker from "../../components/form/datetime-picker";
 import { formatLocalDateTime } from "./utils";
+import ProjectSearchModal from "./ProjectSearchModal";
 
 interface WorkLogModalProps {
   isOpen: boolean;
@@ -45,6 +46,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
   const [projectSuggestions, setProjectSuggestions] = useState<ProjectResponseModel[]>([]);
   const [isNewTask, setIsNewTask] = useState(false);
   const [displayProjectName, setDisplayProjectName] = useState("");
+  const [isProjectSearchModalOpen, setIsProjectSearchModalOpen] = useState(false);
 
   // Update form state when selectedWorkLog, initialStartDate, or initialEndDate changes
   useEffect(() => {
@@ -57,7 +59,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
       if (selectedWorkLog.taskItem.project) {
         setDisplayProjectName(selectedWorkLog.taskItem.project.title ?? "");
       } else {
-        setDisplayProjectName("");
+        setDisplayProjectName("No Project");
       }
     } else {
       setEventTitle("");
@@ -65,7 +67,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
       setEventDescription("");
       setSelectedTask(initialSelectedTask);
       setIsNewTask(false);
-      setDisplayProjectName("");
+      setDisplayProjectName("No Project");
     }
     setEventStartDate(initialStartDate);
     setEventEndDate(initialEndDate);
@@ -105,6 +107,19 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
     }
   };
 
+  const handleProjectSelectFromModal = (project: ProjectResponseModel | null) => {
+    if (project) {
+      setEventProject(project.id || "");
+      setDisplayProjectName(project.title || "");
+      setEventNewProject("");
+    } else {
+      setEventProject("");
+      setDisplayProjectName("No Project");
+      setEventNewProject("");
+    }
+    setIsProjectSearchModalOpen(false);
+  };
+
   const handleSubmit = async () => {
     if (!eventStartDate) {
       alert("Start Date is required.");
@@ -130,25 +145,16 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
           taskItemId: selectedWorkLog.taskItemId,
           fromTime: start.toISOString(),
           toTime: end.toISOString(),
-          title: selectedWorkLog.taskItem?.title,
-          projectId: selectedWorkLog.taskItem?.projectId,
+          title: eventTitle,
+          projectId: projectId === "" ? undefined : projectId,
         };
         await baseTaskApi.workLogs.updateWorkLog(selectedWorkLog.id, workLogData);
       } else {
         // Create new work log
         if (isNewTask) {
-          // Create new project if specified
-          if (eventNewProject && !eventProject) {
-            const projectResponse = await baseTaskApi.projects.createProject({
-              title: eventNewProject,
-            });
-            projectId = projectResponse.data.id ?? "";
-          }
-
-          // Create new task
           const taskResponse = await baseTaskApi.tasks.createTask({
             title: eventTitle || "Untitled Task",
-            projectId: projectId || undefined,
+            projectId: projectId === "" ? undefined : projectId,
             description: eventDescription,
           });
           taskId = taskResponse.data.id;
@@ -161,7 +167,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
           fromTime: start.toISOString(),
           toTime: end.toISOString(),
           title: eventTitle,
-          projectId: projectId || undefined,
+          projectId: projectId === "" ? undefined : projectId,
         };
         await baseTaskApi.workLogs.createWorkLog(workLogData);
       }
@@ -172,7 +178,7 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
           fromTime: start.toISOString(),
           toTime: end.toISOString(),
           title: eventTitle,
-          projectId: projectId || undefined,
+          projectId: projectId === "" ? undefined : projectId,
         },
         newTask || selectedTask
       );
@@ -209,177 +215,161 @@ const WorkLogModal: React.FC<WorkLogModalProps> = ({
     setTaskSuggestions([]);
     setProjectSuggestions([]);
     setIsNewTask(false);
-    setDisplayProjectName("");
+    setDisplayProjectName("No Project");
   };
 
   const isEditing = !!selectedWorkLog;
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={() => {
-        onClose();
-        resetModalFields();
-      }}
-      className="max-w-[700px] p-6 lg:p-10"
-    >
-      <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
-        <h5 className="mb-2 font-semibold text-gray-800 text-xl dark:text-white">
-          {isEditing ? "Edit Worklog" : "Add Worklog"}
-        </h5>
-        <div className="mt-6">
-          <label
-            htmlFor="eventTask"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-          >
-            Task <span className="text-red-500">*</span>
-          </label>
-          <div className="relative">
-            <input
-              id="eventTask"
-              type="text"
-              value={eventTitle}
-              onChange={(e) => {
-                setEventTitle(e.target.value);
-                if (!isEditing) {
-                  setSelectedTask(null);
-                  setIsNewTask(true);
-                  searchTasks(e.target.value);
-                }
-              }}
-              disabled={isEditing}
-              className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 disabled:opacity-50"
-              placeholder={isEditing ? "Task title" : "Search or enter new task title"}
-            />
-            {!isEditing && taskSuggestions.length > 0 && (
-              <ul className="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded mt-1 max-h-40 overflow-y-auto">
-                {taskSuggestions.map((task) => (
-                  <li
-                    key={task.id}
-                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                    onClick={() => {
-                      setSelectedTask(task);
-                      setEventTitle(task.title || "");
-                      setEventProject(task.projectId || "");
-                      setTaskSuggestions([]);
-                      setIsNewTask(false);
-                    }}
-                  >
-                    {task.title}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-        <div className="mt-4">
-          <label
-            htmlFor="eventProject"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-          >
-            Project
-          </label>
-          <div className="relative">
-            <input
-              id="eventProject"
-              type="text"
-              value={isEditing ? displayProjectName : (isNewTask ? eventNewProject : eventProject)}
-              onChange={(e) => {
-                if (isNewTask) {
-                  setEventNewProject(e.target.value);
-                  setEventProject("");
-                  searchProjects(e.target.value);
-                }
-              }}
-              disabled={isEditing || (!isNewTask && !!selectedTask)}
-              className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 disabled:opacity-50"
-              placeholder={isEditing ? "Project name" : "Search or enter new project name"}
-            />
-            {!isEditing && isNewTask && projectSuggestions.length > 0 && (
-              <ul className="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded mt-1 max-h-40 overflow-y-auto">
-                {projectSuggestions.map((project) => (
-                  <li
-                    key={project.id}
-                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                    onClick={() => {
-                      setEventProject(project.id || "");
-                      setEventNewProject(project.title || "");
-                      setProjectSuggestions([]);
-                    }}
-                  >
-                    {project.title}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-        <div className="mt-4">
-          <DateTimePicker
-            id="eventStartDate"
-            label="Worklog Start Date & Time"
-            value={eventStartDate}
-            onChange={(dates) => {
-              if (dates[0]) {
-                setEventStartDate(formatLocalDateTime(dates[0]));
-              }
-            }}
-            required
-          />
-        </div>
-        <div className="mt-4">
-          <DateTimePicker
-            id="eventEndDate"
-            label="Worklog End Date & Time"
-            value={eventEndDate}
-            onChange={(dates) => {
-              if (dates[0]) {
-                setEventEndDate(formatLocalDateTime(dates[0]));
-              }
-            }}
-          />
-        </div>
-        <div className="mt-4">
-          <label
-            htmlFor="eventDescription"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-          >
-            Worklog Description
-          </label>
-          <textarea
-            id="eventDescription"
-            value={eventDescription}
-            onChange={(e) => setEventDescription(e.target.value)}
-            className="w-full h-20 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
-          />
-        </div>
-        <div className="mt-6 flex justify-end gap-4">
-          {isEditing && (
-            <button
-              onClick={handleDelete}
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+    <>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+          resetModalFields();
+        }}
+        className="max-w-[700px] p-6 lg:p-10"
+      >
+        <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
+          <h5 className="mb-2 font-semibold text-gray-800 text-xl dark:text-white">
+            {isEditing ? "Edit Worklog" : "Add Worklog"}
+          </h5>
+          <div className="mt-6">
+            <label
+              htmlFor="eventTask"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200"
             >
-              Delete Worklog
+              Task <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <input
+                id="eventTask"
+                type="text"
+                value={eventTitle}
+                onChange={(e) => {
+                  setEventTitle(e.target.value);
+                  if (!isEditing) {
+                    setSelectedTask(null);
+                    setIsNewTask(true);
+                    searchTasks(e.target.value);
+                  }
+                }}
+                disabled={false}
+                className="w-full h-11 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200 disabled:opacity-50"
+                placeholder={isEditing ? "Task title" : "Search or enter new task title"}
+              />
+              {!isEditing && taskSuggestions.length > 0 && (
+                <ul className="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded mt-1 max-h-40 overflow-y-auto">
+                  {taskSuggestions.map((task) => (
+                    <li
+                      key={task.id}
+                      className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                      onClick={() => {
+                        setSelectedTask(task);
+                        setEventTitle(task.title || "");
+                        setEventProject(task.projectId || "");
+                        setTaskSuggestions([]);
+                        setIsNewTask(false);
+                        setDisplayProjectName(task.project?.title || "No Project");
+                      }}
+                    >
+                      {task.title}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+          <div className="mt-4">
+            <label
+              htmlFor="eventProject"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+            >
+              Project
+            </label>
+            <div className="relative">
+              <div
+                className="w-full h-11 border rounded p-2 flex items-center justify-between cursor-pointer dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+                onClick={() => {!isEditing && setIsProjectSearchModalOpen(true)}}
+              >
+                <span>{displayProjectName || "No Project"}</span>
+                {!isEditing && <span>🔍</span>}
+              </div>
+            </div>
+          </div>
+          <div className="mt-4">
+            <DateTimePicker
+              id="eventStartDate"
+              label="Worklog Start Date & Time"
+              value={eventStartDate}
+              onChange={(dates) => {
+                if (dates[0]) {
+                  setEventStartDate(formatLocalDateTime(dates[0]));
+                }
+              }}
+              required
+            />
+          </div>
+          <div className="mt-4">
+            <DateTimePicker
+              id="eventEndDate"
+              label="Worklog End Date & Time"
+              value={eventEndDate}
+              onChange={(dates) => {
+                if (dates[0]) {
+                  setEventEndDate(formatLocalDateTime(dates[0]));
+                }
+              }}
+            />
+          </div>
+          <div className="mt-4">
+            <label
+              htmlFor="eventDescription"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+            >
+              Worklog Description
+            </label>
+            <textarea
+              id="eventDescription"
+              value={eventDescription}
+              onChange={(e) => setEventDescription(e.target.value)}
+              className="w-full h-20 border rounded p-2 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200"
+            />
+          </div>
+          <div className="mt-6 flex justify-end gap-4">
+            {isEditing && (
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Delete Worklog
+              </button>
+            )}
+            <button
+              onClick={() => {
+                onClose();
+                resetModalFields();
+              }}
+              className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+            >
+              Cancel
             </button>
-          )}
-          <button
-            onClick={() => {
-              onClose();
-              resetModalFields();
-            }}
-            className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            {isEditing ? "Update Worklog" : "Add Worklog"}
-          </button>
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              {isEditing ? "Update Worklog" : "Add Worklog"}
+            </button>
+          </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+
+      <ProjectSearchModal
+        isOpen={isProjectSearchModalOpen}
+        onClose={() => setIsProjectSearchModalOpen(false)}
+        onSelectProject={handleProjectSelectFromModal}
+      />
+    </>
   );
 };
 

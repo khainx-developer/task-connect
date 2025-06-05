@@ -208,7 +208,7 @@ const TaskCalendar: React.FC = () => {
     return (
       <div className={`event-fc-color flex fc-event-main ${colorClass} p-1 rounded-sm`}>
         <div className="fc-daygrid-event-dot"></div>
-        <div className="fc-event-time">{eventInfo.timeText}</div>
+        {/* <div className="fc-event-time">{eventInfo.timeText}</div> */}
         <div className="fc-event-title">{eventInfo.event.title}</div>
       </div>
     );

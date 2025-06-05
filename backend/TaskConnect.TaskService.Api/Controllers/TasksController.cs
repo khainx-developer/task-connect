@@ -52,6 +52,20 @@ public class TasksController : ControllerBase
         return await Get(result);
     }
     
+    // [HttpPut("{taskItemId}", Name = "Update task")]
+    // public async Task<ActionResult<TaskResponseModel>> Update(Guid taskItemId, TaskCreateModel model)
+    // {
+    //     var command = new UpdateTaskCommand(
+    //         taskItemId,
+    //         model.Title,
+    //         model.Description,
+    //         model.ProjectId,
+    //         _contextService.UserId);
+    //     var result = await _mediator.Send(command);
+    //
+    //     return await Get(result);
+    // }
+    
     [HttpGet("{taskItemId}", Name = "Get task by Id")]
     public async Task<ActionResult<TaskResponseModel>> Get(Guid taskItemId)
     {
