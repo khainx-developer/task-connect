@@ -4,14 +4,12 @@ using TaskConnect.TaskService.Domain.Entities;
 
 namespace TaskConnect.TaskService.Infrastructure.Persistence
 {
-    public class ApplicationDbContext : DbContext, IApplicationDbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : DbContext(options), IApplicationDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-        }
-
         public DbSet<TaskItem> TaskItems { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectSetting> ProjectSettings { get; set; }
         public DbSet<WorkLog> WorkLogs { get; set; }
         public DbSet<Mindmap> Mindmaps { get; set; }
 

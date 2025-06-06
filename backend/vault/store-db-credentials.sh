@@ -29,6 +29,7 @@ store_database_credentials() {
 # Store credentials for each database
 store_database_credentials "users" "users_user" "${USERS_DB_PASSWORD}"
 store_database_credentials "tasks" "tasks_user" "${TASKS_DB_PASSWORD}"
+store_database_credentials "task_scheduler" "task_scheduler_user" "${TASK_SCHEDULER_DB_PASSWORD}"
 store_database_credentials "notes" "notes_user" "${NOTES_DB_PASSWORD}"
 store_database_credentials "notifications" "notifications_user" "${NOTIFICATIONS_DB_PASSWORD}"
 store_database_credentials "payments" "payments_user" "${PAYMENTS_DB_PASSWORD}"

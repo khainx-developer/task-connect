@@ -17,3 +17,5 @@ fi
 
 # Start the databases
 docker-compose -f docker-compose-databases.yml --env-file .docker-env up -d
+sleep 10
+docker exec -i task-connect-postgres bash < ./init-databases.sh

@@ -73,4 +73,11 @@ public class ProjectsController : ControllerBase
 
         return await Get(result);
     }
+
+    [HttpPost("{projectId}/settings/{settingId}", Name = "Add setting to project")]
+    public async Task<ActionResult> AddSetting(Guid projectId, Guid settingId)
+    {
+        await _mediator.Send(new AddProjectSettingCommand(projectId, settingId, _contextService.UserId));
+        return Ok();
+    }
 }

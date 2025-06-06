@@ -93,6 +93,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.NoteService.Inf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.NoteService.Domain", "TaskConnect.NoteService.Domain\TaskConnect.NoteService.Domain.csproj", "{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.TaskSchedulerService", "TaskConnect.TaskSchedulerService\TaskConnect.TaskSchedulerService.csproj", "{7DC2D746-E2BB-4DC7-B840-4B837F42D158}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,10 @@ Global
 		{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DC2D746-E2BB-4DC7-B840-4B837F42D158}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DC2D746-E2BB-4DC7-B840-4B837F42D158}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DC2D746-E2BB-4DC7-B840-4B837F42D158}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DC2D746-E2BB-4DC7-B840-4B837F42D158}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99FE4087-4E70-45C3-8E24-0CAD0210CAF6} = {2A3FCC39-CDEA-45D8-B06F-DFCA64939BD7}
@@ -193,5 +199,6 @@ Global
 		{808690E0-EEB3-483B-BF3F-4459288058FE} = {669ADF7B-74B0-4DE4-8CAD-148DA133891E}
 		{7EBB2A39-C5AD-4128-A8C7-30718D82350A} = {669ADF7B-74B0-4DE4-8CAD-148DA133891E}
 		{2EEE2AF6-B5C0-4AA0-804E-68ED7187F19D} = {669ADF7B-74B0-4DE4-8CAD-148DA133891E}
+		{7DC2D746-E2BB-4DC7-B840-4B837F42D158} = {28CC78BF-CD29-466D-90A0-145A62B86F74}
 	EndGlobalSection
 EndGlobal

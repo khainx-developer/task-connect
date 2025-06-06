@@ -9,5 +9,6 @@ public class Project
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
     public ICollection<TaskItem> Tasks { get; set; } = new List<TaskItem>();
+    public ICollection<ProjectSetting> ProjectSettings { get; set; } = new List<ProjectSetting>();
     public bool IsArchived { get; set; }
 }
