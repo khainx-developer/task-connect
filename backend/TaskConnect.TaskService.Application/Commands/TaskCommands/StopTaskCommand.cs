@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using TaskConnect.TaskService.Application.Common.Interfaces;
+using TaskConnect.TaskService.Domain.Common.Interfaces;
 
 namespace TaskConnect.TaskService.Application.Commands.TaskCommands;
 

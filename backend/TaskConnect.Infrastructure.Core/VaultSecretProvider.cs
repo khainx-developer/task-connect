@@ -3,18 +3,13 @@ using System.Text.Json;
 
 namespace TaskConnect.Infrastructure.Core;
 
-public class VaultSecretProvider : IVaultSecretProvider, IDisposable
+public class VaultSecretProvider(IVaultClientFactory factory) : IVaultSecretProvider, IDisposable
 {
-    private readonly IVaultClient _vaultClient;
+    private readonly IVaultClient _vaultClient = factory.CreateClient();
     private readonly SemaphoreSlim _lock = new(1, 1);
 
     private readonly Dictionary<string, (string value, DateTime lastFetched)> _cache = new();
     private readonly TimeSpan _refreshInterval = TimeSpan.FromMinutes(5);
-
-    public VaultSecretProvider(IVaultClientFactory factory)
-    {
-        _vaultClient = factory.CreateClient();
-    }
 
     public async Task<string> GetSecretAsync(string path, string key)
     {
@@ -109,5 +104,36 @@ public class VaultSecretProvider : IVaultSecretProvider, IDisposable
     public void Dispose()
     {
         _lock.Dispose();
+    }
+
+    public async Task WriteJsonSecretAsync<T>(string path, T value)
+    {
+        var fullPath = $"secret/data/{path}";
+        var cacheKey = $"{path}:json";
+
+        await _lock.WaitAsync();
+        try
+        {
+            var jsonString = JsonSerializer.Serialize(value);
+            var data = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
+
+            await _vaultClient.V1.Secrets.KeyValue.V2.WriteSecretAsync(
+                path: path,
+                data: data,
+                mountPoint: "secret"
+            );
+
+            // Update cache after successful write
+            _cache[cacheKey] = (jsonString, DateTime.UtcNow);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        finally
+        {
+            _lock.Release();
+        }
     }
 }

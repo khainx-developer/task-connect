@@ -1,6 +1,5 @@
 using TaskConnect.Api.Core.Middlewares;
 using TaskConnect.Infrastructure.Core;
-using TaskConnect.UserService.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,7 +8,9 @@ using Prometheus;
 using Serilog;
 using Serilog.Context;
 using Serilog.Events;
+using TaskConnect.Api.Core.Services;
 using TaskConnect.Infrastructure.Core.Models;
+using TaskConnect.UserService.Domain.Common.Interfaces;
 using TaskConnect.UserService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -81,6 +82,9 @@ void AddDatabase(WebApplicationBuilder webApplicationBuilder, DatabaseConfig con
 
 void AddServices(WebApplicationBuilder webApplicationBuilder)
 {
+    webApplicationBuilder.Services.AddScoped<IVaultClientFactory, VaultClientFactory>();
+    webApplicationBuilder.Services.AddScoped<IVaultSecretProvider, VaultSecretProvider>();
+    webApplicationBuilder.Services.AddScoped<IUserContextService, UserContextService>();
     webApplicationBuilder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IApplicationDbContext).Assembly));
     webApplicationBuilder.Services.AddControllers();
 }

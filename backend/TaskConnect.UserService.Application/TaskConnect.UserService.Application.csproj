@@ -8,10 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.4.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TaskConnect.Infrastructure.Core\TaskConnect.Infrastructure.Core.csproj" />
     <ProjectReference Include="..\TaskConnect.UserService.Domain\TaskConnect.UserService.Domain.csproj" />
   </ItemGroup>
 

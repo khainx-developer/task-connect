@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskConnect.Api.Core.Services;
 using TaskConnect.NoteService.Application.Commands.NoteCommands;
 using TaskConnect.NoteService.Application.Queries.NoteQueries;
 using TaskConnect.NoteService.Domain.Models;
-using TaskConnect.TaskService.Api.Services;
 
 namespace TaskConnect.NoteService.Api.Controllers;
 

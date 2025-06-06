@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskConnect.TaskService.Domain.Entities;
 
-namespace TaskConnect.TaskService.Application.Common.Interfaces;
+namespace TaskConnect.TaskService.Domain.Common.Interfaces;
 
 public interface IApplicationDbContext
 {

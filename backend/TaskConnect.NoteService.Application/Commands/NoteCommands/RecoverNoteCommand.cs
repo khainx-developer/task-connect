@@ -1,5 +1,5 @@
 using MediatR;
-using TaskConnect.NoteService.Application.Common.Interfaces;
+using TaskConnect.NoteService.Domain.Common.Interfaces;
 
 namespace TaskConnect.NoteService.Application.Commands.NoteCommands;
 

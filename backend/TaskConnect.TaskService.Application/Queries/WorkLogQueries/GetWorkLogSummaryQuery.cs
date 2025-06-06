@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using TaskConnect.TaskService.Application.Common.Interfaces;
+using TaskConnect.TaskService.Domain.Common.Interfaces;
 using TaskConnect.TaskService.Domain.Models;
 
 namespace TaskConnect.TaskService.Application.Queries.WorkLogQueries;

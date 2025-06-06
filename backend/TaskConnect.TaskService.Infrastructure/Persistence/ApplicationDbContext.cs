@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskConnect.TaskService.Application.Common.Interfaces;
+using TaskConnect.TaskService.Domain.Common.Interfaces;
 using TaskConnect.TaskService.Domain.Entities;
 
 namespace TaskConnect.TaskService.Infrastructure.Persistence

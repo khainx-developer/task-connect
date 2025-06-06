@@ -2,7 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskConnect.TaskService.Api.Services;
+using TaskConnect.Api.Core.Services;
 using TaskConnect.TaskService.Domain.Models;
 using CreateTaskCommand = TaskConnect.TaskService.Application.Commands.TaskCommands.CreateTaskCommand;
 

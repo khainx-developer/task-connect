@@ -1,7 +1,6 @@
 using System.Text.Json;
 using TaskConnect.Api.Core.Middlewares;
 using TaskConnect.Infrastructure.Core;
-using TaskConnect.TaskService.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,9 +9,10 @@ using Prometheus;
 using Serilog;
 using Serilog.Context;
 using Serilog.Events;
+using TaskConnect.Api.Core.Services;
 using TaskConnect.Infrastructure.Core.Models;
-using TaskConnect.NoteService.Application.Common.Interfaces;
 using TaskConnect.NoteService.Application.Queries.NoteQueries;
+using TaskConnect.NoteService.Domain.Common.Interfaces;
 using TaskConnect.NoteService.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);

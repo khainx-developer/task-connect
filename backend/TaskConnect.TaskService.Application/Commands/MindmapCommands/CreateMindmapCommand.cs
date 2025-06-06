@@ -3,7 +3,7 @@ using AutoMapper;
 using TaskConnect.TaskService.Domain.Entities;
 using TaskConnect.TaskService.Domain.Models;
 using MediatR;
-using TaskConnect.TaskService.Application.Common.Interfaces;
+using TaskConnect.TaskService.Domain.Common.Interfaces;
 
 namespace TaskConnect.TaskService.Application.Commands.MindmapCommands;
 

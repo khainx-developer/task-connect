@@ -1,7 +1,7 @@
 ﻿using TaskConnect.TaskService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using TaskConnect.TaskService.Application.Common.Interfaces;
+using TaskConnect.TaskService.Domain.Common.Interfaces;
 
 namespace TaskConnect.TaskService.Application.Commands.WorkLogCommands;
 

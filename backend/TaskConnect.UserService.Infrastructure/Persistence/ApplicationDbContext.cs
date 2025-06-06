@@ -1,16 +1,14 @@
-﻿using TaskConnect.UserService.Application.Common.Interfaces;
-using TaskConnect.UserService.Domain.Entities;
+﻿using TaskConnect.UserService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using TaskConnect.UserService.Domain.Common.Interfaces;
 
 namespace TaskConnect.UserService.Infrastructure.Persistence;
 
-public class ApplicationDbContext : DbContext, IApplicationDbContext
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : DbContext(options), IApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<User> Users { get; set; }
+    public DbSet<UserSetting> UserSettings { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<UserProduct> UserProducts { get; set; }
     public DbSet<Role> Roles { get; set; }

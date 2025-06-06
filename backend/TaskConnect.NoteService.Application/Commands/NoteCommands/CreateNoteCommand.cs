@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
-using TaskConnect.NoteService.Application.Common.Interfaces;
+using TaskConnect.NoteService.Domain.Common.Interfaces;
 using TaskConnect.NoteService.Domain.Entities;
 using TaskConnect.NoteService.Domain.Models;
 

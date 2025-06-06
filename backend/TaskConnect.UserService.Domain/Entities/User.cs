@@ -11,6 +11,8 @@ namespace TaskConnect.UserService.Domain.Entities
         public string DisplayName { get; set; }
 
         public List<UserProduct> UserProducts { get; set; } = new();
+
+        public List<UserSetting> UserSettings { get; set; } = new();
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
     }

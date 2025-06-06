@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using TaskConnect.NoteService.Application.Common.Interfaces;
+using TaskConnect.NoteService.Domain.Common.Interfaces;
 using TaskConnect.NoteService.Domain.Entities;
 
 namespace TaskConnect.NoteService.Application.Commands.NoteCommands;

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using TaskConnect.UserService.Application.Common.Interfaces;
+using TaskConnect.UserService.Domain.Common.Interfaces;
 using TaskConnect.UserService.Domain.Entities;
 
 public record GetUserByUidQuery(string Uid) : IRequest<User?>;

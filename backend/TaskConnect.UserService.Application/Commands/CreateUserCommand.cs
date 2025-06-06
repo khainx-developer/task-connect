@@ -1,18 +1,11 @@
 ﻿using MediatR;
-using TaskConnect.UserService.Application.Common.Interfaces;
+using TaskConnect.UserService.Domain.Common.Interfaces;
 using TaskConnect.UserService.Domain.Entities;
 
 public record CreateUserCommand(string Uid, string Email, string Name) : IRequest<User>;
 
-public class CreateUserHandler : IRequestHandler<CreateUserCommand, User>
+public class CreateUserHandler(IApplicationDbContext context) : IRequestHandler<CreateUserCommand, User>
 {
-    private readonly IApplicationDbContext _context;
-
-    public CreateUserHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<User> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         var user = new User
@@ -23,8 +16,8 @@ public class CreateUserHandler : IRequestHandler<CreateUserCommand, User>
             CreatedAt = DateTime.UtcNow
         };
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Users.Add(user);
+        await context.SaveChangesAsync(cancellationToken);
         return user;
     }
 }

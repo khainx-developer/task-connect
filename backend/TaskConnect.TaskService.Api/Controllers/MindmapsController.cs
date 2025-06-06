@@ -3,7 +3,7 @@ using TaskConnect.TaskService.Application.Queries.MindmapQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskConnect.TaskService.Api.Services;
+using TaskConnect.Api.Core.Services;
 using TaskConnect.TaskService.Domain.Models;
 
 namespace TaskConnect.TaskService.Api.Controllers;

@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TaskConnect.Api.Core.Services;
 using TaskConnect.UserService.Domain.Entities;
 
 namespace TaskConnect.UserService.Api.Controllers;
@@ -8,29 +9,21 @@ namespace TaskConnect.UserService.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/auth")]
-public class AuthController : ControllerBase
+public class AuthController(IMediator mediator, IUserContextService userContextService) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public AuthController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
     [Authorize]
-    [HttpPost("verify-user")]
+    [HttpPost("verify-user",Name = "Verify User")]
     public async Task<ActionResult<User>> VerifyUser()
     {
-        var authUid = User.Claims.SingleOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
-        var email = User.Claims.SingleOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
-        var name = User.Claims.SingleOrDefault(c => c.Type == "name")?.Value ?? "New User";
-        if (string.IsNullOrEmpty(authUid) || string.IsNullOrEmpty(email))
+        var userClaimsInfo = userContextService.UserClaimsInfo;
+        if (string.IsNullOrEmpty(userClaimsInfo.UserId) || string.IsNullOrEmpty(userClaimsInfo.Email))
             return BadRequest(new { message = "Invalid user data" });
 
         // Check if user exists
         // Create new user
-        var user = await _mediator.Send(new GetUserByUidQuery(authUid)) ??
-                   await _mediator.Send(new CreateUserCommand(authUid, email, name));
+        var user = await mediator.Send(new GetUserByUidQuery(userClaimsInfo.UserId)) ??
+                   await mediator.Send(new CreateUserCommand(userClaimsInfo.UserId, userClaimsInfo.Email,
+                       userClaimsInfo.Name));
 
         return Ok(user);
     }

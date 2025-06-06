@@ -1,7 +1,5 @@
 using TaskConnect.Api.Core.Middlewares;
 using TaskConnect.Infrastructure.Core;
-using TaskConnect.TaskService.Api.Services;
-using TaskConnect.TaskService.Application.Common.Interfaces;
 using TaskConnect.TaskService.Application.Queries.TaskQueries;
 using TaskConnect.TaskService.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,7 +10,9 @@ using Prometheus;
 using Serilog;
 using Serilog.Context;
 using Serilog.Events;
+using TaskConnect.Api.Core.Services;
 using TaskConnect.Infrastructure.Core.Models;
+using TaskConnect.TaskService.Domain.Common.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
