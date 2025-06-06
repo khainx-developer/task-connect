@@ -81,6 +81,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "vault", "vault", "{828EE7AC
 		vault\create-token.sh = vault\create-token.sh
 		vault\token.txt = vault\token.txt
 		vault\store-db-credentials.sh = vault\store-db-credentials.sh
+		vault\store-scheduler-credentials.sh = vault\store-scheduler-credentials.sh
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskConnect.ApiGateway", "TaskConnect.ApiGateway\TaskConnect.ApiGateway.csproj", "{89FCE9F5-C94E-4472-8F71-CC0A8AA33608}"

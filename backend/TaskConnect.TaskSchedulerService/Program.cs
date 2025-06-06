@@ -16,7 +16,8 @@ var vaultClientFactory = new VaultClientFactory();
 var vaultSecretProvider = new VaultSecretProvider(vaultClientFactory);
 var databaseConfig = await vaultSecretProvider.GetJsonSecretAsync<DatabaseConfig>("data/databases/task_scheduler");
 
-var connectionString = $"Host={databaseConfig.Host};Port={databaseConfig.Port};Database={databaseConfig.Database};Username={databaseConfig.Username};Password={databaseConfig.Password}";
+var connectionString =
+    $"Host={databaseConfig.Host};Port={databaseConfig.Port};Database={databaseConfig.Database};Username={databaseConfig.Username};Password={databaseConfig.Password}";
 
 builder.Services.AddHangfire(configuration => configuration
     .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -58,20 +59,17 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Configure Hangfire dashboard
-var hangfireUsername = builder.Configuration["Hangfire:Username"];
-var hangfirePassword = builder.Configuration["Hangfire:Password"];
-
+var scheduleConfig = await vaultSecretProvider.GetJsonSecretAsync<ScheduleConfig>("data/schedulers/task_scheduler");
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
-    Authorization = new[]
-    {
+    Authorization =
+    [
         new HangfireCustomBasicAuthenticationFilter
         {
-            User = hangfireUsername,
-            Pass = hangfirePassword
+            User = scheduleConfig.Username,
+            Pass = scheduleConfig.Password
         }
-    },
+    ],
     DashboardTitle = "TaskConnect Scheduler Dashboard"
 });
 

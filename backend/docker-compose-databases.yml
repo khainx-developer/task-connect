@@ -86,6 +86,7 @@ services:
       USERS_DB_PASSWORD: ${USERS_DB_PASSWORD}
       TASKS_DB_PASSWORD: ${TASKS_DB_PASSWORD}
       TASK_SCHEDULER_DB_PASSWORD: ${TASK_SCHEDULER_DB_PASSWORD}
+      TASK_SCHEDULER_DASHBOARD_PASSWORD: ${TASK_SCHEDULER_DASHBOARD_PASSWORD}
       NOTES_DB_PASSWORD: ${NOTES_DB_PASSWORD}
       NOTIFICATIONS_DB_PASSWORD: ${NOTIFICATIONS_DB_PASSWORD}
       PAYMENTS_DB_PASSWORD: ${PAYMENTS_DB_PASSWORD}
@@ -96,6 +97,7 @@ services:
       - ./vault/unseal.sh:/vault/scripts/unseal.sh:ro
       - ./vault/create-token.sh:/vault/scripts/create-token.sh:ro
       - ./vault/store-db-credentials.sh:/vault/scripts/store-db-credentials.sh:ro
+      - ./vault/store-scheduler-credentials.sh:/vault/scripts/store-scheduler-credentials.sh:ro
       - ./vault/keys.json:/vault/config/keys.json
       - ./vault/token.txt:/vault/config/token.txt
       - vault_data:/vault/data

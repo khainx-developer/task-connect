@@ -54,4 +54,8 @@ sh /vault/scripts/create-token.sh
 echo "Storing database credentials..."
 /vault/scripts/store-db-credentials.sh
 
+# Store scheduler credentials
+echo "Storing scheduler credentials..."
+/vault/scripts/store-scheduler-credentials.sh
+
 echo "Vault setup completed successfully!"
