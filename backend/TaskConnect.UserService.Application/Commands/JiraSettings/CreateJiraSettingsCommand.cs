@@ -26,7 +26,7 @@ public class CreateJiraSettingsCommandHandler(IApplicationDbContext context, IVa
             UserId = user.Id,
             Name = request.JiraSettingsModel.Name,
             Type = UserSettingType.Jira,
-            CreatedAt = DateTime.Now
+            CreatedAt = DateTime.Now.ToUniversalTime()
         };
         context.UserSettings.Add(newSetting);
 

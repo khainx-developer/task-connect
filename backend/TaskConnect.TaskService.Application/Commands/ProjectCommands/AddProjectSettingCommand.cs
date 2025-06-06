@@ -21,17 +21,17 @@ public class AddProjectSettingCommandHandler(IApplicationDbContext context) : IR
         }
 
         // Check if setting is already associated with the project
-        if (project.ProjectSettings.Any(ps => ps.SettingId == request.SettingId))
+        if (project.ProjectSettings.Any(ps => ps.UserSettingId == request.SettingId))
         {
             throw new Exception("Setting is already associated with this project");
         }
 
-        project.ProjectSettings.Add(new ProjectSetting
+        context.ProjectSettings.Add(new ProjectSetting
         {
             Id = Guid.NewGuid(),
             ProjectId = project.Id,
-            SettingId = request.SettingId,
-            CreatedAt = DateTime.Now
+            UserSettingId = request.SettingId,
+            CreatedAt = DateTime.Now.ToUniversalTime()
         });
 
         await context.SaveChangesAsync(cancellationToken);

@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using TaskConnect.Infrastructure.Core;
 using TaskConnect.Infrastructure.Core.Models;
 using TaskConnect.TaskSchedulerService;
+using TaskConnect.TaskSchedulerService.Jobs;
+using TaskConnect.TaskSchedulerService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,6 +48,9 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddHttpClient<IJiraService, JiraService>();
+builder.Services.AddHttpClient<IBitbucketService, BitbucketService>();
+builder.Services.AddScoped<DataSyncJob>();
 
 var app = builder.Build();
 
@@ -72,6 +77,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
     ],
     DashboardTitle = "TaskConnect Scheduler Dashboard"
 });
+JobScheduler.ConfigureRecurringJobs();
 
 app.MapGet("/", () => "TaskConnect Scheduler Service is running!");
 

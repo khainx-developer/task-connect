@@ -27,16 +27,16 @@ AddSwagger(builder);
 AddHealthChecks(builder);
 AddSerilog(builder);
 
-var app = builder.Build();
+var webApplication = builder.Build();
 
-await ApplyMigrations(app);
-ConfigureMiddleware(app);
-ConfigureEndpoints(app);
+await ApplyMigrations(webApplication);
+ConfigureMiddleware(webApplication);
+ConfigureEndpoints(webApplication);
 
 try
 {
     Log.Information("Starting up...");
-    await app.RunAsync();
+    await webApplication.RunAsync();
 }
 catch (Exception ex)
 {
@@ -82,17 +82,18 @@ void AddDatabase(WebApplicationBuilder webApplicationBuilder, DatabaseConfig con
 
 void AddServices(WebApplicationBuilder webApplicationBuilder)
 {
+    webApplicationBuilder.Services.AddHttpContextAccessor();
     webApplicationBuilder.Services.AddScoped<IVaultClientFactory, VaultClientFactory>();
     webApplicationBuilder.Services.AddScoped<IVaultSecretProvider, VaultSecretProvider>();
     webApplicationBuilder.Services.AddScoped<IUserContextService, UserContextService>();
-    webApplicationBuilder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IApplicationDbContext).Assembly));
+    webApplicationBuilder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetUserByUidQuery).Assembly));
     webApplicationBuilder.Services.AddControllers();
 }
 
-void AddSwagger(WebApplicationBuilder webApplication)
+void AddSwagger(WebApplicationBuilder app)
 {
-    webApplication.Services.AddEndpointsApiExplorer();
-    webApplication.Services.AddSwaggerGen(options =>
+    app.Services.AddEndpointsApiExplorer();
+    app.Services.AddSwaggerGen(options =>
     {
         options.SwaggerDoc("v1", new OpenApiInfo
         {
@@ -178,7 +179,7 @@ void ConfigureMiddleware(WebApplication app)
     app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseSerilogRequestLogging(opts =>
     {
-        opts.GetLevel = (httpContext, elapsed, ex) =>
+        opts.GetLevel = (httpContext, _, _) =>
         {
             if (httpContext.Request.Path.StartsWithSegments("/metrics"))
             {
@@ -187,7 +188,7 @@ void ConfigureMiddleware(WebApplication app)
             return LogEventLevel.Information;
         };
     });
-
+    
     app.UseRouting();
     app.UseAuthentication();
     app.UseAuthorization();

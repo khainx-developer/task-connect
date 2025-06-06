@@ -27,7 +27,7 @@ public class UpdateJiraSettingsCommandHandler(IApplicationDbContext context, IVa
         }
 
         setting.Name = request.JiraSettingsModel.Name;
-        setting.UpdatedAt = DateTime.Now;
+        setting.UpdatedAt = DateTime.Now.ToUniversalTime();
 
         await vaultSecretProvider.WriteJsonSecretAsync($"data/user-settings/{user.Id}/{setting.Id}",
             request.JiraSettingsModel);

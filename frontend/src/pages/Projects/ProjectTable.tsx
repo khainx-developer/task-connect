@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import Badge from "../../components/ui/badge/Badge";
+import { Link } from "react-router-dom";
 
 const ProjectTable = () => {
   const [projects, setProjects] = useState<ProjectResponseModel[]>([]);
@@ -175,9 +176,12 @@ const ProjectTable = () => {
               {projects.map((project) => (
                 <TableRow key={project.id}>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
-                    <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                    <Link
+                      to={`/projects/${project.id}`}
+                      className="block font-medium text-gray-800 text-theme-sm dark:text-white/90 hover:text-brand-500 dark:hover:text-brand-400"
+                    >
                       {project.title}
-                    </span>
+                    </Link>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     {project.description}

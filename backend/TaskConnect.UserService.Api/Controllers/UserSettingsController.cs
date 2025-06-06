@@ -13,13 +13,21 @@ namespace TaskConnect.UserService.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/user-settings")]
-public class UserSettings(IMediator mediator, IUserContextService userContextService) : ControllerBase
+public class UserSettingsController(IMediator mediator, IUserContextService userContextService) : ControllerBase
 {
     [Authorize]
     [HttpGet(Name = "Get User Settings")]
     public async Task<ActionResult<List<UserSettingsModel>>> GetUserSettings()
     {
         var settings = await mediator.Send(new GetUserSettingsQuery(userContextService.UserId));
+        return Ok(settings);
+    }
+
+    [Authorize]
+    [HttpGet("{settingsId}", Name = "Get User Settings by Id")]
+    public async Task<ActionResult<UserSettingsDetailModel>> GetUserSettingsById(Guid settingsId)
+    {
+        var settings = await mediator.Send(new GetUserSettingsByIdQuery(userContextService.UserId, settingsId));
         return Ok(settings);
     }
 

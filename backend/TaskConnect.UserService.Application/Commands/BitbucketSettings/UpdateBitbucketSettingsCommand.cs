@@ -27,7 +27,7 @@ public class UpdateBitbucketSettingsCommandHandler(IApplicationDbContext context
         }
 
         setting.Name = request.BitbucketSettingsModel.Name;
-        setting.UpdatedAt = DateTime.Now;
+        setting.UpdatedAt = DateTime.Now.ToUniversalTime();
 
         await vaultSecretProvider.WriteJsonSecretAsync($"data/user-settings/{user.Id}/{setting.Id}",
             request.BitbucketSettingsModel);

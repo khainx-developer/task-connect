@@ -80,4 +80,11 @@ public class ProjectsController : ControllerBase
         await _mediator.Send(new AddProjectSettingCommand(projectId, settingId, _contextService.UserId));
         return Ok();
     }
+
+    [HttpDelete("{projectId}/settings/{settingId}", Name = "Remove setting from project")]
+    public async Task<ActionResult> RemoveSetting(Guid projectId, Guid settingId)
+    {
+        await _mediator.Send(new RemoveProjectSettingCommand(projectId, settingId, _contextService.UserId));
+        return Ok();
+    }
 }

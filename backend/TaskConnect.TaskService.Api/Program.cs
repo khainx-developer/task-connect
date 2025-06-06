@@ -12,6 +12,7 @@ using Serilog.Context;
 using Serilog.Events;
 using TaskConnect.Api.Core.Services;
 using TaskConnect.Infrastructure.Core.Models;
+using TaskConnect.TaskService.Application.MappingProfile;
 using TaskConnect.TaskService.Domain.Common.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,16 +29,16 @@ AddSwagger(builder);
 AddHealthChecks(builder);
 AddSerilog(builder);
 
-var app = builder.Build();
+var webApplication = builder.Build();
 
-await ApplyMigrations(app);
-ConfigureMiddleware(app);
-ConfigureEndpoints(app);
+await ApplyMigrations(webApplication);
+ConfigureMiddleware(webApplication);
+ConfigureEndpoints(webApplication);
 
 try
 {
     Log.Information("Starting up...");
-    await app.RunAsync();
+    await webApplication.RunAsync();
 }
 catch (Exception ex)
 {
@@ -83,17 +84,17 @@ void AddDatabase(WebApplicationBuilder webApplicationBuilder, DatabaseConfig con
 
 void AddServices(WebApplicationBuilder webApplicationBuilder)
 {
-    webApplicationBuilder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+    webApplicationBuilder.Services.AddAutoMapper(typeof(ProjectMappingProfile).Assembly);
     webApplicationBuilder.Services.AddScoped<IUserContextService, UserContextService>();
     webApplicationBuilder.Services.AddHttpContextAccessor();
     webApplicationBuilder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllTasksQuery).Assembly));
     webApplicationBuilder.Services.AddControllers();
 }
 
-void AddSwagger(WebApplicationBuilder webApplication)
+void AddSwagger(WebApplicationBuilder webApplicationBuilder)
 {
-    webApplication.Services.AddEndpointsApiExplorer();
-    webApplication.Services.AddSwaggerGen(options =>
+    webApplicationBuilder.Services.AddEndpointsApiExplorer();
+    webApplicationBuilder.Services.AddSwaggerGen(options =>
     {
         options.SwaggerDoc("v1", new OpenApiInfo
         {
@@ -174,7 +175,7 @@ void ConfigureMiddleware(WebApplication app)
     app.UseMiddleware<ExceptionHandlingMiddleware>();
     app.UseSerilogRequestLogging(opts =>
     {
-        opts.GetLevel = (httpContext, elapsed, ex) =>
+        opts.GetLevel = (httpContext, _, _) =>
         {
             if (httpContext.Request.Path.StartsWithSegments("/metrics"))
             {

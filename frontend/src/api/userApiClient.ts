@@ -9,6 +9,20 @@
  * ---------------------------------------------------------------
  */
 
+export interface BitbucketSettingsViewModel {
+  username?: string | null;
+  appPassword?: string | null;
+  workspace?: string | null;
+  repositorySlug?: string | null;
+}
+
+export interface JiraSettingsViewModel {
+  name?: string | null;
+  apiToken?: string | null;
+  atlassianEmailAddress?: string | null;
+  jiraCloudDomain?: string | null;
+}
+
 export interface Product {
   /** @format uuid */
   id?: string;
@@ -34,6 +48,7 @@ export interface User {
   email: string;
   displayName?: string | null;
   userProducts?: UserProduct[] | null;
+  userSettings?: UserSetting[] | null;
   /** @format date-time */
   createdAt?: string;
   /** @format date-time */
@@ -61,6 +76,69 @@ export interface UserRole {
   /** @format uuid */
   roleId: string;
   role?: Role;
+}
+
+export interface UserSetting {
+  /** @format uuid */
+  id?: string;
+  /** @minLength 1 */
+  userId: string;
+  user?: User;
+  type: UserSettingType;
+  /** @minLength 1 */
+  name: string;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string | null;
+}
+
+/** @format int32 */
+export enum UserSettingType {
+  Value100 = 100,
+  Value101 = 101,
+}
+
+export interface UserSettingsDetailModel {
+  /** @format uuid */
+  settingId?: string;
+  settingName: string;
+  settingTypeName: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt?: string | null;
+  settingTypeId: UserSettingType;
+  
+  // Jira specific fields
+  atlassianEmailAddress: string;
+  jiraCloudDomain: string;
+  
+  // Bitbucket specific fields
+  username: string;
+  workspace: string;
+  repositorySlug: string;
+}
+
+export interface UserSettingsModel {
+  /** @format uuid */
+  settingId?: string;
+  settingName?: string | null;
+  settingTypeName?: string | null;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string | null;
+  settingTypeId?: UserSettingType;
+  
+  // Jira specific fields
+  atlassianEmailAddress?: string | null;
+  jiraCloudDomain?: string | null;
+  
+  // Bitbucket specific fields
+  username?: string | null;
+  workspace?: string | null;
+  repositorySlug?: string | null;
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
@@ -215,11 +293,11 @@ export class Api<SecurityDataType extends unknown> {
      * No description
      *
      * @tags Auth
-     * @name AuthVerifyUserCreate
+     * @name VerifyUser
      * @request POST:/api/auth/verify-user
      * @secure
      */
-    authVerifyUserCreate: (params: RequestParams = {}) =>
+    verifyUser: (params: RequestParams = {}) =>
       this.http.request<User, any>({
         path: `/api/auth/verify-user`,
         method: "POST",
@@ -242,6 +320,113 @@ export class Api<SecurityDataType extends unknown> {
         path: `/`,
         method: "GET",
         secure: true,
+        ...params,
+      }),
+  };
+  userSettings = {
+    /**
+     * No description
+     *
+     * @tags UserSettings
+     * @name GetUserSettings
+     * @request GET:/api/user-settings
+     * @secure
+     */
+    getUserSettings: (params: RequestParams = {}) =>
+      this.http.request<UserSettingsModel[], any>({
+        path: `/api/user-settings`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags UserSettings
+     * @name GetUserSettingsById
+     * @request GET:/api/user-settings/{settingsId}
+     * @secure
+     */
+    getUserSettingsById: (settingsId: string, params: RequestParams = {}) =>
+      this.http.request<UserSettingsDetailModel, any>({
+        path: `/api/user-settings/${settingsId}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags UserSettings
+     * @name CreateJiraSettings
+     * @request POST:/api/user-settings/jira
+     * @secure
+     */
+    createJiraSettings: (data: JiraSettingsViewModel, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/user-settings/jira`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags UserSettings
+     * @name UpdateJiraSettings
+     * @request PUT:/api/user-settings/jira/{settingsId}
+     * @secure
+     */
+    updateJiraSettings: (settingsId: string, data: JiraSettingsViewModel, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/user-settings/jira/${settingsId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags UserSettings
+     * @name CreateBitbucketSettings
+     * @request POST:/api/user-settings/bitbucket
+     * @secure
+     */
+    createBitbucketSettings: (data: BitbucketSettingsViewModel, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/user-settings/bitbucket`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags UserSettings
+     * @name UpdateBitbucketSettings
+     * @request PUT:/api/user-settings/bitbucket/{settingsId}
+     * @secure
+     */
+    updateBitbucketSettings: (settingsId: string, data: BitbucketSettingsViewModel, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/user-settings/bitbucket/${settingsId}`,
+        method: "PUT",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         ...params,
       }),
   };

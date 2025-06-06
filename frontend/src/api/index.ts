@@ -1,13 +1,6 @@
 import { Api as UserApi, HttpClient as UserClient } from "./userApiClient";
-import {
-  Api as TaskApi,
-  HttpClient as TaskClient,
-} from "./taskApiClient";
-import {
-  Api as NoteApi,
-  HttpClient as NoteClient,
-} from "./noteApiClient";
-import qs from "qs";
+import { Api as TaskApi, HttpClient as TaskClient } from "./taskApiClient";
+import { Api as NoteApi, HttpClient as NoteClient } from "./noteApiClient";
 import { AxiosInstance, AxiosError } from "axios";
 import { toast } from "react-toastify";
 
@@ -106,18 +99,26 @@ const applyAxiosInterceptors = (instance: AxiosInstance) => {
   );
 };
 
-const paramsSerializer = (params: unknown): string => {
-  return qs.stringify(params, { arrayFormat: "repeat" });
+const paramsSerializer = (params: any) => {
+  return Object.entries(params)
+    .filter(([_, value]) => value !== undefined && value !== null)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
+    .join("&");
 };
 
 const userClient = new UserClient({
   baseURL: `${import.meta.env.VITE_API_GATEWAY_URL}/user-api`,
-  paramsSerializer,
+});
+
+const taskClient = new TaskClient({
+  baseURL: `${import.meta.env.VITE_API_GATEWAY_URL}/task-api`,
 });
 
 applyAxiosInterceptors(userClient.instance);
+applyAxiosInterceptors(taskClient.instance);
 
 export const baseUserApi = new UserApi(userClient);
+export const baseTaskApi = new TaskApi(taskClient);
 
 const noteClient = new NoteClient({
   baseURL: `${import.meta.env.VITE_API_GATEWAY_URL}/note-api`,
@@ -126,11 +127,3 @@ const noteClient = new NoteClient({
 
 applyAxiosInterceptors(noteClient.instance);
 export const baseNoteApi = new NoteApi(noteClient);
-
-const taskClient = new TaskClient({
-  baseURL: `${import.meta.env.VITE_API_GATEWAY_URL}/task-api`,
-  paramsSerializer,
-});
-
-applyAxiosInterceptors(taskClient.instance);
-export const baseTaskApi = new TaskApi(taskClient);

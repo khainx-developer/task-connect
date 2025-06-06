@@ -13,21 +13,13 @@ public class GetAllProjectsQuery(string ownerId, string searchText) : IRequest<L
     public string SearchText { get; set; } = searchText;
 }
 
-public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, List<ProjectResponseModel>>
+public class GetAllProjectsQueryHandler(IApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<GetAllProjectsQuery, List<ProjectResponseModel>>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetAllProjectsQueryHandler(IApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
-
     public async Task<List<ProjectResponseModel>> Handle(GetAllProjectsQuery request,
         CancellationToken cancellationToken)
     {
-        var query = _context.Projects
+        var query = context.Projects
             .Where(n => n.OwnerId == request.OwnerId)
             .OrderBy(n => n.Title)
             .AsQueryable();
@@ -40,6 +32,6 @@ public class GetAllProjectsQueryHandler : IRequestHandler<GetAllProjectsQuery, L
 
         var projects = await query.ToListAsync(cancellationToken);
 
-        return _mapper.Map<List<ProjectResponseModel>>(projects);
+        return mapper.Map<List<ProjectResponseModel>>(projects);
     }
 }

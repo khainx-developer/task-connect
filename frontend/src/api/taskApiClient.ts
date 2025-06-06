@@ -66,6 +66,16 @@ export interface ProjectResponseModel {
   /** @format date-time */
   updatedAt?: string | null;
   isArchived?: boolean;
+  projectSettings?: ProjectSettingModel[] | null;
+}
+
+export interface ProjectSettingModel {
+  /** @format uuid */
+  id?: string;
+  /** @format uuid */
+  userSettingId?: string;
+  /** @format date-time */
+  createdAt?: string;
 }
 
 export interface TaskCreateModel {
@@ -479,6 +489,38 @@ export class Api<SecurityDataType extends unknown> {
         method: "PUT",
         secure: true,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Projects
+     * @name AddSettingToProject
+     * @request POST:/api/Projects/{projectId}/settings/{settingId}
+     * @secure
+     */
+    addSettingToProject: (projectId: string, settingId: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/Projects/${projectId}/settings/${settingId}`,
+        method: "POST",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Projects
+     * @name RemoveSettingFromProject
+     * @request DELETE:/api/Projects/{projectId}/settings/{settingId}
+     * @secure
+     */
+    removeSettingFromProject: (projectId: string, settingId: string, params: RequestParams = {}) =>
+      this.http.request<void, any>({
+        path: `/api/Projects/${projectId}/settings/${settingId}`,
+        method: "DELETE",
+        secure: true,
         ...params,
       }),
   };

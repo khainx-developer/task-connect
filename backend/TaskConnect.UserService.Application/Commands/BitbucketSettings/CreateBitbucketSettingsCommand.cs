@@ -26,7 +26,7 @@ public class CreateBitbucketSettingsCommandHandler(IApplicationDbContext context
             UserId = user.Id,
             Name = request.BitbucketSettingsModel.Name,
             Type = UserSettingType.BitbucketOrg,
-            CreatedAt = DateTime.Now
+            CreatedAt = DateTime.Now.ToUniversalTime()
         };
         context.UserSettings.Add(newSetting);
 
