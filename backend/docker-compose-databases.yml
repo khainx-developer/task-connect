@@ -158,6 +158,35 @@ services:
       - grafana-storage:/var/lib/grafana
     networks:
       - task-connect-network
+  
+  task-connect-ai:
+    image: ollama/ollama:latest
+    container_name: task-connect-ai
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./models:/models
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
+    networks:
+      - task-connect-network
+        
+#  task-connect-ai-ui:
+#    image: ghcr.io/open-webui/open-webui:main
+#    container_name: task-connect-ai-ui
+#    ports:
+#      - "18090:8080"
+#    environment:
+#      - OLLAMA_BASE_URL=http://task-connect-ai:11434
+#      - WEBUI_SECRET_KEY=${AI_WEBUI_SECRET_KEY}
+#    volumes:
+#      - task_connect_ai_ui_data:/app/backend/data
+#    depends_on:
+#      - task-connect-ai
+#    networks:
+#      - task-connect-network
 
 volumes:
   postgres_data:
@@ -167,3 +196,5 @@ volumes:
   redis-data:
   loki-data:
   grafana-storage:
+  ollama_data:
+  task_connect_ai_ui_data:

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -25,17 +24,18 @@ public class DataSyncJob
     private readonly IVaultSecretProvider _vaultSecretProvider;
     private readonly IApplicationDbContext _taskDbContext;
     private readonly UserService.Domain.Common.Interfaces.IApplicationDbContext _userDbContext;
-    private readonly HttpClient _httpClient;
+    private readonly IAIService _aiService;
 
     public DataSyncJob(ILogger<DataSyncJob> logger,
         IVaultSecretProvider vaultSecretProvider, IApplicationDbContext taskDbContext,
-        UserService.Domain.Common.Interfaces.IApplicationDbContext userDbContext, HttpClient httpClient)
+        UserService.Domain.Common.Interfaces.IApplicationDbContext userDbContext,
+        IAIService aiService)
     {
         _logger = logger;
         _vaultSecretProvider = vaultSecretProvider;
         _taskDbContext = taskDbContext;
         _userDbContext = userDbContext;
-        _httpClient = httpClient;
+        _aiService = aiService;
     }
 
     [DisableConcurrentExecution(timeoutInSeconds: 60 * 10)] // 10 minutes timeout
@@ -111,9 +111,9 @@ public class DataSyncJob
                 }
 
                 // Generate work summary
-                var workSummary = GenerateWorkSummary(jiraTickets, pullRequests);
+                // var workSummary = GenerateWorkSummary(jiraTickets, pullRequests);
+                var workSummary = await GenerateAIEnhancedSummaryAsync(jiraTickets, pullRequests);
 
-                // Save to your Eztalo app
                 await SaveWorkSummaryAsync(workSummary, project.Id);
 
                 _logger.LogInformation("Data sync completed successfully for project {ProjectId} at {Time}",
@@ -212,23 +212,159 @@ public class DataSyncJob
         return nextSteps.Length > 0 ? nextSteps.ToString() : "✅ All caught up! Good work.";
     }
 
+    private async Task<WorkSummaryModel> GenerateAIEnhancedSummaryAsync(List<JiraTicket> tickets,
+        List<BitbucketPullRequest> prs)
+    {
+        var summary = new WorkSummaryModel
+        {
+            SyncDate = DateTime.UtcNow,
+            ActiveTickets = tickets,
+            ActivePRs = prs
+        };
+
+        // Generate basic action items (fallback)
+        summary.ActionItems.AddRange(GenerateBasicActionItems(tickets, prs));
+        summary.NextSteps = GenerateBasicNextSteps(tickets, prs);
+
+        var aiEnable = Environment.GetEnvironmentVariable("AI_ENABLE") ?? "true";
+        if (aiEnable == "true")
+        {
+            // Generate AI-enhanced content
+            await GenerateAISummaryAsync(summary, tickets, prs);
+            await GenerateAISuggestionsAsync(summary, tickets, prs);
+            await GenerateAIInsightsAsync(summary, tickets, prs);
+            await GenerateAIRiskAnalysisAsync(summary, tickets, prs);
+            await GenerateAIProductivityScoreAsync(summary, tickets, prs);
+        }
+
+        return summary;
+    }
+
+    private async Task GenerateAISummaryAsync(WorkSummaryModel summary, List<JiraTicket> tickets,
+        List<BitbucketPullRequest> prs)
+    {
+        try
+        {
+            summary.AISummary = await _aiService.GenerateWorkSummaryAsync(tickets, prs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to generate AI summary");
+            summary.AISummary = "AI summary generation failed";
+        }
+    }
+
+    private async Task GenerateAISuggestionsAsync(WorkSummaryModel summary, List<JiraTicket> tickets,
+        List<BitbucketPullRequest> prs)
+    {
+        try
+        {
+            summary.AISuggestions = await _aiService.GenerateSuggestionsAsync(tickets, prs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to generate AI suggestions");
+            summary.AISuggestions = new List<string> { "AI suggestions unavailable" };
+        }
+    }
+
+    private async Task GenerateAIInsightsAsync(WorkSummaryModel summary, List<JiraTicket> tickets,
+        List<BitbucketPullRequest> prs)
+    {
+        try
+        {
+            summary.ProductivityInsights = await _aiService.GenerateProductivityInsightsAsync(tickets, prs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to generate AI insights");
+            summary.ProductivityInsights = "AI insights unavailable";
+        }
+    }
+
+    private async Task GenerateAIRiskAnalysisAsync(WorkSummaryModel summary, List<JiraTicket> tickets,
+        List<BitbucketPullRequest> prs)
+    {
+        try
+        {
+            summary.RiskAnalysis = await _aiService.GenerateRiskAnalysisAsync(tickets, prs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to generate AI risk analysis");
+            summary.RiskAnalysis = "AI risk analysis unavailable";
+        }
+    }
+
+    private async Task GenerateAIProductivityScoreAsync(WorkSummaryModel summary, List<JiraTicket> tickets,
+        List<BitbucketPullRequest> prs)
+    {
+        try
+        {
+            summary.ProductivityScore = await _aiService.CalculateProductivityScoreAsync(tickets, prs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to calculate AI productivity score");
+            summary.ProductivityScore = 0;
+        }
+    }
+
+    // Fallback methods (same as before)
+    private List<string> GenerateBasicActionItems(List<JiraTicket> tickets, List<BitbucketPullRequest> prs)
+    {
+        var actionItems = new List<string>();
+
+        var highPriorityTickets = tickets.Where(t => t.Priority == "High" || t.Priority == "Critical").ToList();
+        if (highPriorityTickets.Any())
+        {
+            actionItems.Add($"Review {highPriorityTickets.Count} high priority tickets");
+        }
+
+        var prsNeedingReview = prs.Where(pr => pr.CommentsCount > 0 && pr.Status == "OPEN").ToList();
+        if (prsNeedingReview.Any())
+        {
+            actionItems.Add($"Address comments on {prsNeedingReview.Count} PRs");
+        }
+
+        return actionItems;
+    }
+
+    private string GenerateBasicNextSteps(List<JiraTicket> tickets, List<BitbucketPullRequest> prs)
+    {
+        if (tickets.Any(t => t.Priority == "Critical"))
+            return "Focus on critical priority tickets first";
+
+        if (prs.Any(pr => pr.CommentsCount > 0))
+            return "Address PR review comments";
+
+        return "Continue with current work progress";
+    }
+
     private async Task SaveWorkSummaryAsync(WorkSummaryModel summaryModel, Guid projectId)
     {
-        var syncDate = summaryModel.SyncDate.Date; // Get date only, ignore time
+        var syncDate = summaryModel.SyncDate.Date;
 
-        // Check if a WorkSummary already exists for this project and date
         var existingWorkSummary = await _taskDbContext.WorkSummaries
-            .FirstOrDefaultAsync(ws => ws.ProjectId == projectId &&
-                                       ws.SyncDate.Date == syncDate);
+            .FirstOrDefaultAsync(ws => ws.ProjectId == projectId && ws.SyncDate.Date == syncDate);
+
+        var serializedTickets = JsonSerializer.Serialize(summaryModel.ActiveTickets);
+        var serializedPRs = JsonSerializer.Serialize(summaryModel.ActivePRs);
+        var serializedActionItems = JsonSerializer.Serialize(summaryModel.ActionItems);
+        var serializedAiSuggestions = JsonSerializer.Serialize(summaryModel.AISuggestions);
 
         if (existingWorkSummary != null)
         {
-            // Update existing record
-            existingWorkSummary.SyncDate = summaryModel.SyncDate; // Keep latest sync time
-            existingWorkSummary.TicketsJson = JsonSerializer.Serialize(summaryModel.ActiveTickets);
-            existingWorkSummary.PRsJson = JsonSerializer.Serialize(summaryModel.ActivePRs);
-            existingWorkSummary.ActionItemsJson = JsonSerializer.Serialize(summaryModel.ActionItems);
+            existingWorkSummary.SyncDate = summaryModel.SyncDate;
+            existingWorkSummary.TicketsJson = serializedTickets;
+            existingWorkSummary.PRsJson = serializedPRs;
+            existingWorkSummary.ActionItemsJson = serializedActionItems;
             existingWorkSummary.NextSteps = summaryModel.NextSteps;
+            existingWorkSummary.AISummary = summaryModel.AISummary;
+            existingWorkSummary.ProductivityInsights = summaryModel.ProductivityInsights;
+            existingWorkSummary.RiskAnalysis = summaryModel.RiskAnalysis;
+            existingWorkSummary.ProductivityScore = summaryModel.ProductivityScore;
+            existingWorkSummary.AISuggestions = serializedAiSuggestions;
 
             _logger.LogInformation(
                 "Work summary updated for project {ProjectId} on {Date} with {TicketCount} tickets and {PRCount} PRs",
@@ -236,20 +372,24 @@ public class DataSyncJob
         }
         else
         {
-            // Create new record
-            var workSummaryEntity = new WorkSummary
+            var newSummary = new WorkSummary
             {
                 Id = Guid.NewGuid(),
                 ProjectId = projectId,
                 SyncDate = summaryModel.SyncDate,
-                TicketsJson = JsonSerializer.Serialize(summaryModel.ActiveTickets),
-                PRsJson = JsonSerializer.Serialize(summaryModel.ActivePRs),
-                ActionItemsJson = JsonSerializer.Serialize(summaryModel.ActionItems),
+                TicketsJson = serializedTickets,
+                PRsJson = serializedPRs,
+                ActionItemsJson = serializedActionItems,
                 NextSteps = summaryModel.NextSteps,
+                AISummary = summaryModel.AISummary,
+                ProductivityInsights = summaryModel.ProductivityInsights,
+                RiskAnalysis = summaryModel.RiskAnalysis,
+                ProductivityScore = summaryModel.ProductivityScore,
+                AISuggestions = serializedAiSuggestions,
                 CreatedAt = DateTime.UtcNow
             };
 
-            _taskDbContext.WorkSummaries.Add(workSummaryEntity);
+            _taskDbContext.WorkSummaries.Add(newSummary);
 
             _logger.LogInformation(
                 "Work summary created for project {ProjectId} on {Date} with {TicketCount} tickets and {PRCount} PRs",

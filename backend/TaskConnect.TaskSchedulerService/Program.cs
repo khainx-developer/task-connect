@@ -11,6 +11,7 @@ using TaskConnect.Infrastructure.Core;
 using TaskConnect.Infrastructure.Core.Models;
 using TaskConnect.TaskSchedulerService;
 using TaskConnect.TaskSchedulerService.Jobs;
+using TaskConnect.TaskSchedulerService.Services;
 using TaskConnect.TaskService.Domain.Common.Interfaces;
 using TaskConnect.TaskService.Infrastructure.Persistence;
 
@@ -57,6 +58,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddHttpClient<DataSyncJob>();
 builder.Services.AddScoped<IVaultClientFactory, VaultClientFactory>();
 builder.Services.AddScoped<IVaultSecretProvider, VaultSecretProvider>();
+builder.Services.AddScoped<IAIService, OllamaAIService>();
 builder.Services.AddScoped<DataSyncJob>();
 
 var app = builder.Build();

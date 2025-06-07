@@ -13,5 +13,10 @@ public class WorkSummary
     public string PRsJson { get; set; }
     public string ActionItemsJson { get; set; }
     public string NextSteps { get; set; }
+    public string AISummary { get; set; }
+    public string AISuggestions { get; set; }
+    public string ProductivityInsights { get; set; }
+    public string RiskAnalysis { get; set; }
+    public int ProductivityScore { get; set; }
     public DateTime CreatedAt { get; set; }
 }
