@@ -1,8 +1,6 @@
 using MediatR;
 using TaskConnect.Infrastructure.Core;
 using TaskConnect.UserService.Domain.Common.Interfaces;
-using TaskConnect.UserService.Domain.Constants;
-using TaskConnect.UserService.Domain.Entities;
 using TaskConnect.UserService.Domain.Models;
 
 namespace TaskConnect.UserService.Application.Commands.JiraSettings;

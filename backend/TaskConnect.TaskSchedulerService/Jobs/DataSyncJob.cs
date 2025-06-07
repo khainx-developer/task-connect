@@ -58,6 +58,8 @@ public class DataSyncJob
 
             foreach (var project in projects)
             {
+                List<JiraTicket> jiraTickets = new List<JiraTicket>();
+                List<BitbucketPullRequest> pullRequests = new List<BitbucketPullRequest>();
                 foreach (var userSettingId in project.ProjectSettingIds)
                 {
                     var userSetting = _userDbContext.UserSettings.SingleOrDefault(ps => ps.Id == userSettingId);
@@ -68,8 +70,6 @@ public class DataSyncJob
 
                     try
                     {
-                        List<JiraTicket> jiraTickets = null;
-                        List<BitbucketPullRequest> pullRequests = null;
                         if (userSetting.Type == UserSettingType.Jira)
                         {
                             // Get Jira settings from Vault
@@ -79,9 +79,9 @@ public class DataSyncJob
                             // Fetch Jira tickets
                             var jiraUrl = $"https://{jiraSettings.JiraCloudDomain}";
                             IJiraService jiraService = new JiraService(jiraUrl,
-                                jiraSettings.ApiToken, jiraSettings.AtlassianEmailAddress, _httpClient);
-                            jiraTickets =
-                                await jiraService.GetAssignedTicketsAsync(jiraSettings.AtlassianEmailAddress);
+                                jiraSettings.ApiToken, jiraSettings.AtlassianEmailAddress);
+                            jiraTickets.AddRange(
+                                await jiraService.GetAssignedTicketsAsync(jiraSettings.AtlassianEmailAddress));
                             _logger.LogInformation("Fetched {Count} Jira tickets for project {ProjectId}",
                                 jiraTickets.Count, project.Id);
                         }
@@ -93,25 +93,15 @@ public class DataSyncJob
 
                             // Fetch Jira tickets
                             IBitbucketService bitbucketService = new BitbucketService(bitbucketSettings.AppPassword,
-                                bitbucketSettings.Username, _httpClient);
+                                bitbucketSettings.Username);
                             // Fetch Bitbucket PRs
-                            pullRequests = await bitbucketService.GetPullRequestsByAuthorAsync(
+                            pullRequests.AddRange(await bitbucketService.GetPullRequestsAsync(
                                 bitbucketSettings.Workspace,
                                 bitbucketSettings.RepositorySlug,
-                                bitbucketSettings.DefaultAuthor);
+                                bitbucketSettings.DefaultAuthor));
                             _logger.LogInformation("Fetched {Count} pull requests for project {ProjectId}",
                                 pullRequests.Count, project.Id);
                         }
-
-
-                        // Generate work summary
-                        var workSummary = GenerateWorkSummary(jiraTickets, pullRequests);
-
-                        // Save to your Eztalo app
-                        await SaveWorkSummaryAsync(workSummary, project.Id);
-
-                        _logger.LogInformation("Data sync completed successfully for project {ProjectId} at {Time}",
-                            project.Id, DateTime.UtcNow);
                     }
                     catch (Exception ex)
                     {
@@ -119,6 +109,15 @@ public class DataSyncJob
                         // Continue with next project instead of failing the entire job
                     }
                 }
+
+                // Generate work summary
+                var workSummary = GenerateWorkSummary(jiraTickets, pullRequests);
+
+                // Save to your Eztalo app
+                await SaveWorkSummaryAsync(workSummary, project.Id);
+
+                _logger.LogInformation("Data sync completed successfully for project {ProjectId} at {Time}",
+                    project.Id, DateTime.UtcNow);
             }
         }
         catch (Exception ex)
@@ -128,11 +127,11 @@ public class DataSyncJob
         }
     }
 
-    private Models.WorkSummary GenerateWorkSummary(List<JiraTicket> tickets, List<BitbucketPullRequest> prs)
+    private WorkSummaryModel GenerateWorkSummary(List<JiraTicket> tickets, List<BitbucketPullRequest> prs)
     {
         tickets ??= [];
         prs ??= [];
-        var summary = new Models.WorkSummary
+        var summary = new WorkSummaryModel
         {
             SyncDate = DateTime.UtcNow,
             ActiveTickets = tickets,
@@ -151,7 +150,7 @@ public class DataSyncJob
         var actionItems = new List<string>();
 
         // Check for high priority tickets
-        var highPriorityTickets = tickets.Where(t => t.Priority == "High" || t.Priority == "Critical").ToList();
+        var highPriorityTickets = tickets.Where(t => t.Priority is "High" or "Critical").ToList();
         if (highPriorityTickets.Any())
         {
             actionItems.Add(
@@ -174,7 +173,7 @@ public class DataSyncJob
         }
 
         // Check for tickets in progress without PRs
-        var inProgressTickets = tickets.Where(t => t.Status == "In Progress" || t.Status == "Development").ToList();
+        var inProgressTickets = tickets.Where(t => t.Status is "In Progress" or "Development").ToList();
         var ticketsWithoutPRs = inProgressTickets.Where(ticket =>
             !prs.Any(pr => pr.Title.Contains(ticket.Key) || pr.SourceBranch.Contains(ticket.Key))).ToList();
 
@@ -200,7 +199,7 @@ public class DataSyncJob
             nextSteps.AppendLine("💬 Address PR review comments");
         }
 
-        if (tickets.Count(t => t.Status == "To Do") > 5)
+        if (tickets.Count(t => t.Status == "To Do") > 3)
         {
             nextSteps.AppendLine("📋 Prioritize backlog - too many tickets in To Do");
         }
@@ -213,26 +212,50 @@ public class DataSyncJob
         return nextSteps.Length > 0 ? nextSteps.ToString() : "✅ All caught up! Good work.";
     }
 
-    private async Task SaveWorkSummaryAsync(Models.WorkSummary summary, Guid projectId)
+    private async Task SaveWorkSummaryAsync(WorkSummaryModel summaryModel, Guid projectId)
     {
-        // Save to the task database
-        var workSummaryEntity = new WorkSummary
+        var syncDate = summaryModel.SyncDate.Date; // Get date only, ignore time
+
+        // Check if a WorkSummary already exists for this project and date
+        var existingWorkSummary = await _taskDbContext.WorkSummaries
+            .FirstOrDefaultAsync(ws => ws.ProjectId == projectId &&
+                                       ws.SyncDate.Date == syncDate);
+
+        if (existingWorkSummary != null)
         {
-            Id = Guid.NewGuid(),
-            ProjectId = projectId,
-            SyncDate = summary.SyncDate,
-            TicketsJson = JsonSerializer.Serialize(summary.ActiveTickets),
-            PRsJson = JsonSerializer.Serialize(summary.ActivePRs),
-            ActionItemsJson = JsonSerializer.Serialize(summary.ActionItems),
-            NextSteps = summary.NextSteps,
-            CreatedAt = DateTime.UtcNow
-        };
+            // Update existing record
+            existingWorkSummary.SyncDate = summaryModel.SyncDate; // Keep latest sync time
+            existingWorkSummary.TicketsJson = JsonSerializer.Serialize(summaryModel.ActiveTickets);
+            existingWorkSummary.PRsJson = JsonSerializer.Serialize(summaryModel.ActivePRs);
+            existingWorkSummary.ActionItemsJson = JsonSerializer.Serialize(summaryModel.ActionItems);
+            existingWorkSummary.NextSteps = summaryModel.NextSteps;
 
-        _taskDbContext.WorkSummaries.Add(workSummaryEntity);
+            _logger.LogInformation(
+                "Work summary updated for project {ProjectId} on {Date} with {TicketCount} tickets and {PRCount} PRs",
+                projectId, syncDate, summaryModel.ActiveTickets.Count, summaryModel.ActivePRs.Count);
+        }
+        else
+        {
+            // Create new record
+            var workSummaryEntity = new WorkSummary
+            {
+                Id = Guid.NewGuid(),
+                ProjectId = projectId,
+                SyncDate = summaryModel.SyncDate,
+                TicketsJson = JsonSerializer.Serialize(summaryModel.ActiveTickets),
+                PRsJson = JsonSerializer.Serialize(summaryModel.ActivePRs),
+                ActionItemsJson = JsonSerializer.Serialize(summaryModel.ActionItems),
+                NextSteps = summaryModel.NextSteps,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _taskDbContext.WorkSummaries.Add(workSummaryEntity);
+
+            _logger.LogInformation(
+                "Work summary created for project {ProjectId} on {Date} with {TicketCount} tickets and {PRCount} PRs",
+                projectId, syncDate, summaryModel.ActiveTickets.Count, summaryModel.ActivePRs.Count);
+        }
+
         await _taskDbContext.SaveChangesAsync(CancellationToken.None);
-
-        _logger.LogInformation(
-            "Work summary saved for project {ProjectId} with {TicketCount} tickets and {PRCount} PRs",
-            projectId, summary.ActiveTickets.Count, summary.ActivePRs.Count);
     }
 }

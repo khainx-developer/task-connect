@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TaskConnect.TaskService.Domain.Models;
+﻿namespace TaskConnect.TaskService.Domain.Models;
 
 public class ProjectResponseModel
 {

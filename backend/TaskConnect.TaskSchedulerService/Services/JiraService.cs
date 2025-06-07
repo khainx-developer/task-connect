@@ -14,10 +14,9 @@ public class JiraService : IJiraService
 {
     private readonly HttpClient _httpClient;
 
-    public JiraService(string jiraUrl, string token, string email, HttpClient httpClient)
+    public JiraService(string jiraUrl, string token, string email)
     {
-        _httpClient = httpClient;
-
+        _httpClient = new HttpClient();
         _httpClient.BaseAddress = new Uri(jiraUrl);
         var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{email}:{token}"));
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);

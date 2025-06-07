@@ -35,7 +35,7 @@ public class UserSettingsController(IMediator mediator, IUserContextService user
     [HttpPost("jira", Name = "Create Jira Settings")]
     public async Task<ActionResult> CreateJiraSettings(JiraSettingsViewModel model)
     {
-        await mediator.Send(new CreateJiraSettingsCommand(userContextService.UserId,
+        var newId = await mediator.Send(new CreateJiraSettingsCommand(userContextService.UserId,
             new JiraSettingsModel
             {
                 Name = model.Name,
@@ -43,7 +43,8 @@ public class UserSettingsController(IMediator mediator, IUserContextService user
                 AtlassianEmailAddress = model.AtlassianEmailAddress,
                 JiraCloudDomain = model.JiraCloudDomain
             }));
-        return Ok();
+        var settings = await mediator.Send(new GetUserSettingsByIdQuery(userContextService.UserId, newId));
+        return Ok(settings);
     }
 
     [Authorize]
@@ -63,17 +64,20 @@ public class UserSettingsController(IMediator mediator, IUserContextService user
 
     [Authorize]
     [HttpPost("bitbucket", Name = "Create Bitbucket Settings")]
-    public async Task<ActionResult> CreateBitbucketSettings(BitbucketSettingsViewModel model)
+    public async Task<ActionResult<UserSettingsDetailModel>> CreateBitbucketSettings(BitbucketSettingsViewModel model)
     {
-        await mediator.Send(new CreateBitbucketSettingsCommand(userContextService.UserId,
+        var newId = await mediator.Send(new CreateBitbucketSettingsCommand(userContextService.UserId,
             new BitbucketOrgSettingsModel
             {
+                Name = model.Name,
                 Username = model.Username,
                 AppPassword = model.AppPassword,
                 Workspace = model.Workspace,
-                RepositorySlug = model.RepositorySlug
+                RepositorySlug = model.RepositorySlug,
+                DefaultAuthor = model.DefaultAuthor
             }));
-        return Ok();
+        var settings = await mediator.Send(new GetUserSettingsByIdQuery(userContextService.UserId, newId));
+        return Ok(settings);
     }
 
     [Authorize]
@@ -83,10 +87,12 @@ public class UserSettingsController(IMediator mediator, IUserContextService user
         await mediator.Send(new UpdateBitbucketSettingsCommand(userContextService.UserId, settingsId,
             new BitbucketOrgSettingsModel
             {
+                Name = model.Name,
                 Username = model.Username,
                 AppPassword = model.AppPassword,
                 Workspace = model.Workspace,
-                RepositorySlug = model.RepositorySlug
+                RepositorySlug = model.RepositorySlug,
+                DefaultAuthor = model.DefaultAuthor
             }));
         return Ok();
     }

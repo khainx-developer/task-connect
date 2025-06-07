@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TaskConnect.TaskSchedulerService.Models;
 
-public class WorkSummary
+public class WorkSummaryModel
 {
     public DateTime SyncDate { get; set; }
     public List<JiraTicket> ActiveTickets { get; set; } = new List<JiraTicket>();

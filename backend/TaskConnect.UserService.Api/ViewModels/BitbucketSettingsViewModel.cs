@@ -6,4 +6,6 @@ public class BitbucketSettingsViewModel
     public string AppPassword { get; set; }
     public string Workspace { get; set; }
     public string RepositorySlug { get; set; }
+    public string Name { get; set; }
+    public string DefaultAuthor { get; set; }
 } 

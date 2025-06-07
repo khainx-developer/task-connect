@@ -7,12 +7,12 @@ using TaskConnect.UserService.Domain.Models;
 
 namespace TaskConnect.UserService.Application.Commands.JiraSettings;
 
-public record CreateJiraSettingsCommand(string UserId, JiraSettingsModel JiraSettingsModel) : IRequest<bool>;
+public record CreateJiraSettingsCommand(string UserId, JiraSettingsModel JiraSettingsModel) : IRequest<Guid>;
 
 public class CreateJiraSettingsCommandHandler(IApplicationDbContext context, IVaultSecretProvider vaultSecretProvider)
-    : IRequestHandler<CreateJiraSettingsCommand, bool>
+    : IRequestHandler<CreateJiraSettingsCommand, Guid>
 {
-    public async Task<bool> Handle(CreateJiraSettingsCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateJiraSettingsCommand request, CancellationToken cancellationToken)
     {
         var user = context.Users.SingleOrDefault(u => u.Id == request.UserId);
         if (user == null)
@@ -33,6 +33,6 @@ public class CreateJiraSettingsCommandHandler(IApplicationDbContext context, IVa
         await vaultSecretProvider.WriteJsonSecretAsync($"data/user-settings/{user.Id}/{newSetting.Id}",
             request.JiraSettingsModel);
         await context.SaveChangesAsync(cancellationToken);
-        return true;
+        return newSetting.Id;
     }
 }

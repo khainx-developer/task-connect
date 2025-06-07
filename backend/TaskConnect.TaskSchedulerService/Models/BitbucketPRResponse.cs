@@ -20,6 +20,9 @@ public class BitbucketPR
     [JsonPropertyName("state")]
     public string State { get; set; }
     
+    [JsonPropertyName("draft")]
+    public bool Draft { get; set; }
+    
     [JsonPropertyName("source")]
     public BitbucketBranch Source { get; set; }
     

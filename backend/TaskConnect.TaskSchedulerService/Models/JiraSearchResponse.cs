@@ -23,7 +23,9 @@ public class JiraFields
 
     [JsonPropertyName("priority")] public JiraPriority Priority { get; set; }
 
-    [JsonPropertyName("description")] public string Description { get; set; }
+    [JsonPropertyName("description")]
+    [JsonConverter(typeof(DescriptionConverter))]
+    public string Description { get; set; }
 
     [JsonPropertyName("assignee")] public JiraUser Assignee { get; set; }
 

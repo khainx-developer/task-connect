@@ -1,4 +1,3 @@
-using System.Text.Json;
 using TaskConnect.Api.Core.Middlewares;
 using TaskConnect.Infrastructure.Core;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

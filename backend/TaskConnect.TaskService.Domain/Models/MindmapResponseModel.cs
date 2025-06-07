@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace TaskConnect.TaskService.Domain.Models;
 
 public class MindmapResponseModel

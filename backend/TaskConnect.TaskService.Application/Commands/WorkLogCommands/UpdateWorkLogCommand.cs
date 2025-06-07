@@ -1,4 +1,3 @@
-using TaskConnect.TaskService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TaskConnect.TaskService.Domain.Common.Interfaces;

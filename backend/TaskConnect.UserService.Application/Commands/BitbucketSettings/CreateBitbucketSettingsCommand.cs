@@ -7,12 +7,12 @@ using TaskConnect.UserService.Domain.Models;
 
 namespace TaskConnect.UserService.Application.Commands.BitbucketSettings;
 
-public record CreateBitbucketSettingsCommand(string UserId, BitbucketOrgSettingsModel BitbucketSettingsModel) : IRequest<bool>;
+public record CreateBitbucketSettingsCommand(string UserId, BitbucketOrgSettingsModel BitbucketSettingsModel) : IRequest<Guid>;
 
 public class CreateBitbucketSettingsCommandHandler(IApplicationDbContext context, IVaultSecretProvider vaultSecretProvider)
-    : IRequestHandler<CreateBitbucketSettingsCommand, bool>
+    : IRequestHandler<CreateBitbucketSettingsCommand, Guid>
 {
-    public async Task<bool> Handle(CreateBitbucketSettingsCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateBitbucketSettingsCommand request, CancellationToken cancellationToken)
     {
         var user = context.Users.SingleOrDefault(u => u.Id == request.UserId);
         if (user == null)
@@ -33,6 +33,6 @@ public class CreateBitbucketSettingsCommandHandler(IApplicationDbContext context
         await vaultSecretProvider.WriteJsonSecretAsync($"data/user-settings/{user.Id}/{newSetting.Id}",
             request.BitbucketSettingsModel);
         await context.SaveChangesAsync(cancellationToken);
-        return true;
+        return newSetting.Id;
     }
 } 

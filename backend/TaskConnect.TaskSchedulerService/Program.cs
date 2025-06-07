@@ -11,7 +11,6 @@ using TaskConnect.Infrastructure.Core;
 using TaskConnect.Infrastructure.Core.Models;
 using TaskConnect.TaskSchedulerService;
 using TaskConnect.TaskSchedulerService.Jobs;
-using TaskConnect.TaskSchedulerService.Services;
 using TaskConnect.TaskService.Domain.Common.Interfaces;
 using TaskConnect.TaskService.Infrastructure.Persistence;
 

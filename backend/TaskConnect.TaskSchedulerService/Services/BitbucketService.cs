@@ -14,9 +14,9 @@ public class BitbucketService : IBitbucketService
 {
     private readonly HttpClient _httpClient;
 
-    public BitbucketService(string token, string username, HttpClient httpClient)
+    public BitbucketService(string token, string username)
     {
-        _httpClient = httpClient;
+        _httpClient = new HttpClient();
 
         _httpClient.BaseAddress = new Uri("https://api.bitbucket.org/2.0/");
         var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{token}"));
@@ -35,7 +35,7 @@ public class BitbucketService : IBitbucketService
             var content = await response.Content.ReadAsStringAsync();
             var prResponse = JsonSerializer.Deserialize<BitbucketPRResponse>(content);
 
-            return prResponse.Values.Select(pr => new BitbucketPullRequest
+            return prResponse.Values.Where(pr => !pr.Draft).Select(pr => new BitbucketPullRequest
             {
                 Id = pr.Id,
                 Title = pr.Title,
@@ -56,10 +56,10 @@ public class BitbucketService : IBitbucketService
         }
     }
 
-    public async Task<List<BitbucketPullRequest>> GetPullRequestsByAuthorAsync(string workspace, string repository,
+    public async Task<List<BitbucketPullRequest>> GetPullRequestsAsync(string workspace, string repository,
         string author)
     {
         var allPRs = await GetPullRequestsAsync(workspace, repository);
-        return allPRs.Where(pr => pr.Author?.Equals(author, StringComparison.OrdinalIgnoreCase) == true).ToList();
+        return allPRs;
     }
 }

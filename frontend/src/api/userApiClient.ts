@@ -14,6 +14,7 @@ export interface BitbucketSettingsViewModel {
   appPassword?: string | null;
   workspace?: string | null;
   repositorySlug?: string | null;
+  name?: string | null;
 }
 
 export interface JiraSettingsViewModel {
@@ -117,14 +118,15 @@ export interface UserSettingsDetailModel {
 }
 
 export interface UserSettingsModel {
+  /** @format uuid */
   settingId?: string;
-  settingName?: string;
-  settingTypeId?: number;
-  settingTypeName?: string;
-  atlassianEmailAddress?: string;
-  jiraCloudDomain?: string;
-  workspace?: string;
-  repositorySlug?: string;
+  settingName?: string | null;
+  settingTypeName?: string | null;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date-time */
+  updatedAt?: string | null;
+  settingTypeId?: UserSettingType;
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";
@@ -389,12 +391,13 @@ export class Api<SecurityDataType extends unknown> {
      * @secure
      */
     createBitbucketSettings: (data: BitbucketSettingsViewModel, params: RequestParams = {}) =>
-      this.http.request<void, any>({
+      this.http.request<UserSettingsDetailModel, any>({
         path: `/api/user-settings/bitbucket`,
         method: "POST",
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: "json",
         ...params,
       }),
 

@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { baseUserApi } from "../../api";
+import { baseUserApi, baseTaskApi } from "../../api";
 import { toast } from "react-toastify";
 import Button from "../../components/ui/button/Button";
 import { Modal } from "../../components/ui/modal";
 import Input from "../../components/form/input/InputField";
+import { useParams } from "react-router-dom";
 
 interface IntegrationSettingsProps {
   onSettingsCreated: () => void;
@@ -18,6 +19,7 @@ interface IntegrationSettingsProps {
     username?: string;
     workspace?: string;
     repositorySlug?: string;
+    defaultAuthor?: string;
   };
   settingId?: string;
 }
@@ -31,6 +33,7 @@ const IntegrationSettings = ({
   existingSettings,
   settingId
 }: IntegrationSettingsProps) => {
+  const { projectId } = useParams<{ projectId: string }>();
   const [integrationType, setIntegrationType] = useState<"jira" | "bitbucket" | null>(initialIntegrationType || null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -44,10 +47,12 @@ const IntegrationSettings = ({
 
   // Bitbucket form state
   const [bitbucketForm, setBitbucketForm] = useState({
+    name: "",
     username: "",
     appPassword: "",
     workspace: "",
     repositorySlug: "",
+    defaultAuthor: "",
   });
 
   // Reset form state and integration type when modal opens/closes or when existingSettings changes
@@ -64,10 +69,12 @@ const IntegrationSettings = ({
           });
         } else if (initialIntegrationType === "bitbucket") {
           setBitbucketForm({
+            name: existingSettings.name || "",
             username: existingSettings.username || "",
             appPassword: "", // Don't populate app password for security
             workspace: existingSettings.workspace || "",
             repositorySlug: existingSettings.repositorySlug || "",
+            defaultAuthor: existingSettings.defaultAuthor || "",
           });
         }
       }
@@ -101,7 +108,19 @@ const IntegrationSettings = ({
       } else {
         await baseUserApi.userSettings.createJiraSettings(settingsToSave);
         toast.success("Jira settings saved successfully");
+        
+        // Fetch the latest settings to get the new setting ID
+        const settings = await baseUserApi.userSettings.getUserSettings();
+        const newSetting = settings.data.find(s => 
+          s.settingTypeId === 100 && // Jira type
+          s.settingName === jiraForm.name
+        );
+        
+        if (newSetting?.settingId && projectId) {
+          await baseTaskApi.projects.addSettingToProject(projectId, newSetting.settingId);
+        }
       }
+
       onClose();
       onSettingsCreated();
     } catch (error) {
@@ -114,13 +133,13 @@ const IntegrationSettings = ({
 
   const handleSaveBitbucketSettings = async () => {
     if (!isUpdate) {
-      if (!bitbucketForm.username || !bitbucketForm.appPassword || !bitbucketForm.workspace || !bitbucketForm.repositorySlug) {
+      if (!bitbucketForm.name || !bitbucketForm.username || !bitbucketForm.appPassword || !bitbucketForm.workspace || !bitbucketForm.repositorySlug || !bitbucketForm.defaultAuthor) {
         toast.error("All fields are required");
         return;
       }
     } else {
-      if (!bitbucketForm.username || !bitbucketForm.workspace || !bitbucketForm.repositorySlug) {
-        toast.error("Username, Workspace, and Repository Slug are required");
+      if (!bitbucketForm.name || !bitbucketForm.username || !bitbucketForm.workspace || !bitbucketForm.repositorySlug || !bitbucketForm.defaultAuthor) {
+        toast.error("Name, Username, Workspace, Repository Slug, and Default Author are required");
         return;
       }
     }
@@ -139,7 +158,19 @@ const IntegrationSettings = ({
       } else {
         await baseUserApi.userSettings.createBitbucketSettings(settingsToSave);
         toast.success("Bitbucket settings saved successfully");
+        
+        // Fetch the latest settings to get the new setting ID
+        const settings = await baseUserApi.userSettings.getUserSettings();
+        const newSetting = settings.data.find(s => 
+          s.settingTypeId === 101 && // Bitbucket type
+          s.settingName === bitbucketForm.name
+        );
+        
+        if (newSetting?.settingId && projectId) {
+          await baseTaskApi.projects.addSettingToProject(projectId, newSetting.settingId);
+        }
       }
+
       onClose();
       onSettingsCreated();
     } catch (error) {
@@ -231,6 +262,18 @@ const IntegrationSettings = ({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">
+                    Name
+                  </label>
+                  <Input
+                    type="text"
+                    value={bitbucketForm.name}
+                    onChange={(e) => setBitbucketForm({ ...bitbucketForm, name: e.target.value })}
+                    placeholder="Enter integration name"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">
                     Username
                   </label>
                   <Input
@@ -274,6 +317,18 @@ const IntegrationSettings = ({
                     value={bitbucketForm.repositorySlug}
                     onChange={(e) => setBitbucketForm({ ...bitbucketForm, repositorySlug: e.target.value })}
                     placeholder="Enter repository slug"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">
+                    Default Author
+                  </label>
+                  <Input
+                    type="text"
+                    value={bitbucketForm.defaultAuthor}
+                    onChange={(e) => setBitbucketForm({ ...bitbucketForm, defaultAuthor: e.target.value })}
+                    placeholder="Enter default author username"
                     className="w-full"
                   />
                 </div>
