@@ -5,19 +5,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Update="appsettings.Development.json">
-        <DependentUpon>appsettings.json</DependentUpon>
-      </Content>
+        <Content Update="appsettings.Development.json">
+            <DependentUpon>appsettings.json</DependentUpon>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Hangfire" Version="1.8.6" />
-      <PackageReference Include="Hangfire.PostgreSql" Version="1.20.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
+        <PackageReference Include="Hangfire" Version="1.8.6"/>
+        <PackageReference Include="Hangfire.PostgreSql" Version="1.20.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TaskConnect.Infrastructure.Core\TaskConnect.Infrastructure.Core.csproj" />
+        <ProjectReference Include="..\TaskConnect.Infrastructure.Core\TaskConnect.Infrastructure.Core.csproj"/>
+        <ProjectReference Include="..\TaskConnect.TaskService.Domain\TaskConnect.TaskService.Domain.csproj"/>
+        <ProjectReference Include="..\TaskConnect.TaskService.Infrastructure\TaskConnect.TaskService.Infrastructure.csproj"/>
+        <ProjectReference Include="..\TaskConnect.UserService.Domain\TaskConnect.UserService.Domain.csproj"/>
+        <ProjectReference Include="..\TaskConnect.UserService.Infrastructure\TaskConnect.UserService.Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>

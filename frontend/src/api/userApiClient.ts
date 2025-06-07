@@ -102,27 +102,6 @@ export enum UserSettingType {
 export interface UserSettingsDetailModel {
   /** @format uuid */
   settingId?: string;
-  settingName: string;
-  settingTypeName: string;
-  /** @format date-time */
-  createdAt: string;
-  /** @format date-time */
-  updatedAt?: string | null;
-  settingTypeId: UserSettingType;
-  
-  // Jira specific fields
-  atlassianEmailAddress: string;
-  jiraCloudDomain: string;
-  
-  // Bitbucket specific fields
-  username: string;
-  workspace: string;
-  repositorySlug: string;
-}
-
-export interface UserSettingsModel {
-  /** @format uuid */
-  settingId?: string;
   settingName?: string | null;
   settingTypeName?: string | null;
   /** @format date-time */
@@ -130,15 +109,22 @@ export interface UserSettingsModel {
   /** @format date-time */
   updatedAt?: string | null;
   settingTypeId?: UserSettingType;
-  
-  // Jira specific fields
   atlassianEmailAddress?: string | null;
   jiraCloudDomain?: string | null;
-  
-  // Bitbucket specific fields
   username?: string | null;
   workspace?: string | null;
   repositorySlug?: string | null;
+}
+
+export interface UserSettingsModel {
+  settingId?: string;
+  settingName?: string;
+  settingTypeId?: number;
+  settingTypeName?: string;
+  atlassianEmailAddress?: string;
+  jiraCloudDomain?: string;
+  workspace?: string;
+  repositorySlug?: string;
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from "axios";

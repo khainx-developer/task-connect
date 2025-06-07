@@ -10,6 +10,7 @@ namespace TaskConnect.TaskService.Infrastructure.Persistence
         public DbSet<TaskItem> TaskItems { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectSetting> ProjectSettings { get; set; }
+        public DbSet<WorkSummary> WorkSummaries { get; set; }
         public DbSet<WorkLog> WorkLogs { get; set; }
         public DbSet<Mindmap> Mindmaps { get; set; }
 

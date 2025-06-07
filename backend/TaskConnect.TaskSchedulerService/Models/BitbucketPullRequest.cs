@@ -11,7 +11,7 @@ public class BitbucketPullRequest
     public string SourceBranch { get; set; }
     public string DestinationBranch { get; set; }
     public string Author { get; set; }
-    public DateTime Created { get; set; }
+    public DateTime? Created { get; set; }
     public DateTime? Updated { get; set; }
     public List<string> Reviewers { get; set; } = new List<string>();
     public int CommentsCount { get; set; }

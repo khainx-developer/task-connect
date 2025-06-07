@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { baseUserApi } from "../../api";
 import { toast } from "react-toastify";
 import Button from "../../components/ui/button/Button";
@@ -9,10 +9,29 @@ interface IntegrationSettingsProps {
   onSettingsCreated: () => void;
   isOpen: boolean;
   onClose: () => void;
+  isUpdate?: boolean;
+  integrationType?: "jira" | "bitbucket" | null;
+  existingSettings?: {
+    name: string;
+    atlassianEmailAddress: string;
+    jiraCloudDomain: string;
+    username?: string;
+    workspace?: string;
+    repositorySlug?: string;
+  };
+  settingId?: string;
 }
 
-const IntegrationSettings = ({ onSettingsCreated, isOpen, onClose }: IntegrationSettingsProps) => {
-  const [integrationType, setIntegrationType] = useState<"jira" | "bitbucket" | null>(null);
+const IntegrationSettings = ({ 
+  onSettingsCreated, 
+  isOpen, 
+  onClose, 
+  isUpdate = false,
+  integrationType: initialIntegrationType,
+  existingSettings,
+  settingId
+}: IntegrationSettingsProps) => {
+  const [integrationType, setIntegrationType] = useState<"jira" | "bitbucket" | null>(initialIntegrationType || null);
   const [isSaving, setIsSaving] = useState(false);
 
   // Jira form state
@@ -31,16 +50,58 @@ const IntegrationSettings = ({ onSettingsCreated, isOpen, onClose }: Integration
     repositorySlug: "",
   });
 
+  // Reset form state and integration type when modal opens/closes or when existingSettings changes
+  useEffect(() => {
+    if (isOpen) {
+      setIntegrationType(initialIntegrationType || null);
+      if (existingSettings) {
+        if (initialIntegrationType === "jira") {
+          setJiraForm({
+            name: existingSettings.name || "",
+            apiToken: "", // Don't populate API token for security
+            atlassianEmailAddress: existingSettings.atlassianEmailAddress || "",
+            jiraCloudDomain: existingSettings.jiraCloudDomain || "",
+          });
+        } else if (initialIntegrationType === "bitbucket") {
+          setBitbucketForm({
+            username: existingSettings.username || "",
+            appPassword: "", // Don't populate app password for security
+            workspace: existingSettings.workspace || "",
+            repositorySlug: existingSettings.repositorySlug || "",
+          });
+        }
+      }
+    }
+  }, [isOpen, existingSettings, initialIntegrationType]);
+
   const handleSaveJiraSettings = async () => {
-    if (!jiraForm.name || !jiraForm.apiToken || !jiraForm.atlassianEmailAddress || !jiraForm.jiraCloudDomain) {
-      toast.error("All fields are required");
-      return;
+    if (!isUpdate) {
+      if (!jiraForm.name || !jiraForm.apiToken || !jiraForm.atlassianEmailAddress || !jiraForm.jiraCloudDomain) {
+        toast.error("All fields are required");
+        return;
+      }
+    } else {
+      if (!jiraForm.name || !jiraForm.atlassianEmailAddress || !jiraForm.jiraCloudDomain) {
+        toast.error("Name, Atlassian Email, and Jira Cloud Domain are required");
+        return;
+      }
     }
 
     setIsSaving(true);
     try {
-      await baseUserApi.userSettings.createJiraSettings(jiraForm);
-      toast.success("Jira settings saved successfully");
+      // Only include apiToken in the request if it's provided
+      const settingsToSave = {
+        ...jiraForm,
+        apiToken: jiraForm.apiToken || undefined
+      };
+
+      if (isUpdate && settingId) {
+        await baseUserApi.userSettings.updateJiraSettings(settingId, settingsToSave);
+        toast.success("Jira settings updated successfully");
+      } else {
+        await baseUserApi.userSettings.createJiraSettings(settingsToSave);
+        toast.success("Jira settings saved successfully");
+      }
       onClose();
       onSettingsCreated();
     } catch (error) {
@@ -52,15 +113,33 @@ const IntegrationSettings = ({ onSettingsCreated, isOpen, onClose }: Integration
   };
 
   const handleSaveBitbucketSettings = async () => {
-    if (!bitbucketForm.username || !bitbucketForm.appPassword || !bitbucketForm.workspace || !bitbucketForm.repositorySlug) {
-      toast.error("All fields are required");
-      return;
+    if (!isUpdate) {
+      if (!bitbucketForm.username || !bitbucketForm.appPassword || !bitbucketForm.workspace || !bitbucketForm.repositorySlug) {
+        toast.error("All fields are required");
+        return;
+      }
+    } else {
+      if (!bitbucketForm.username || !bitbucketForm.workspace || !bitbucketForm.repositorySlug) {
+        toast.error("Username, Workspace, and Repository Slug are required");
+        return;
+      }
     }
 
     setIsSaving(true);
     try {
-      await baseUserApi.userSettings.createBitbucketSettings(bitbucketForm);
-      toast.success("Bitbucket settings saved successfully");
+      // Only include appPassword in the request if it's provided
+      const settingsToSave = {
+        ...bitbucketForm,
+        appPassword: bitbucketForm.appPassword || undefined
+      };
+
+      if (isUpdate && settingId) {
+        await baseUserApi.userSettings.updateBitbucketSettings(settingId, settingsToSave);
+        toast.success("Bitbucket settings updated successfully");
+      } else {
+        await baseUserApi.userSettings.createBitbucketSettings(settingsToSave);
+        toast.success("Bitbucket settings saved successfully");
+      }
       onClose();
       onSettingsCreated();
     } catch (error) {
@@ -78,7 +157,7 @@ const IntegrationSettings = ({ onSettingsCreated, isOpen, onClose }: Integration
       className="max-w-[600px] p-6"
     >
       <div className="flex flex-col">
-        <h3 className="text-lg font-semibold mb-4">Add Integration</h3>
+        <h3 className="text-lg font-semibold mb-4">{isUpdate ? 'Update Integration' : 'Add Integration'}</h3>
 
         {!integrationType ? (
           <div className="mb-4">
@@ -113,13 +192,13 @@ const IntegrationSettings = ({ onSettingsCreated, isOpen, onClose }: Integration
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">
-                    API Token
+                    API Token {isUpdate && "(Leave blank to keep existing)"}
                   </label>
                   <Input
                     type="password"
                     value={jiraForm.apiToken}
                     onChange={(e) => setJiraForm({ ...jiraForm, apiToken: e.target.value })}
-                    placeholder="Enter Jira API token"
+                    placeholder={isUpdate ? "Leave blank to keep existing" : "Enter Jira API token"}
                     className="w-full"
                   />
                 </div>
@@ -164,13 +243,13 @@ const IntegrationSettings = ({ onSettingsCreated, isOpen, onClose }: Integration
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">
-                    App Password
+                    App Password {isUpdate && "(Leave blank to keep existing)"}
                   </label>
                   <Input
                     type="password"
                     value={bitbucketForm.appPassword}
                     onChange={(e) => setBitbucketForm({ ...bitbucketForm, appPassword: e.target.value })}
-                    placeholder="Enter Bitbucket app password"
+                    placeholder={isUpdate ? "Leave blank to keep existing" : "Enter Bitbucket app password"}
                     className="w-full"
                   />
                 </div>
@@ -213,7 +292,7 @@ const IntegrationSettings = ({ onSettingsCreated, isOpen, onClose }: Integration
               onClick={integrationType === "jira" ? handleSaveJiraSettings : handleSaveBitbucketSettings}
               disabled={isSaving}
             >
-              {isSaving ? "Saving..." : "Save"}
+              {isSaving ? "Saving..." : isUpdate ? "Update" : "Save"}
             </Button>
           )}
         </div>

@@ -6,7 +6,6 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using TaskConnect.TaskSchedulerService.Models;
 
 namespace TaskConnect.TaskSchedulerService.Services;
@@ -14,17 +13,11 @@ namespace TaskConnect.TaskSchedulerService.Services;
 public class JiraService : IJiraService
 {
     private readonly HttpClient _httpClient;
-    private readonly IConfiguration _config;
 
-    public JiraService(HttpClient httpClient, IConfiguration config)
+    public JiraService(string jiraUrl, string token, string email, HttpClient httpClient)
     {
         _httpClient = httpClient;
-        _config = config;
-        
-        var jiraUrl = _config["JiraSettings:BaseUrl"];
-        var token = _config["JiraSettings:ApiToken"];
-        var email = _config["JiraSettings:Email"];
-        
+
         _httpClient.BaseAddress = new Uri(jiraUrl);
         var authToken = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{email}:{token}"));
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
@@ -41,8 +34,9 @@ public class JiraService : IJiraService
         try
         {
             var encodedJql = Uri.EscapeDataString(jql);
-            var response = await _httpClient.GetAsync($"/rest/api/3/search?jql={encodedJql}&fields=key,summary,status,priority,description,assignee,updated,labels");
-            
+            var response = await _httpClient.GetAsync(
+                $"/rest/api/3/search?jql={encodedJql}&fields=key,summary,status,priority,description,assignee,updated,labels");
+
             if (!response.IsSuccessStatusCode)
                 return new List<JiraTicket>();
 
@@ -61,7 +55,7 @@ public class JiraService : IJiraService
                 Labels = issue.Fields.Labels ?? new List<string>()
             }).ToList();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log exception
             return new List<JiraTicket>();

@@ -33,7 +33,7 @@ fi
 # Define the policy
 cat <<EOF > "$POLICY_FILE"
 path "secret/data/*" {
-  capabilities = ["create", "read", "list"]
+  capabilities = ["create", "update", "read", "list"]
 }
 EOF
 
